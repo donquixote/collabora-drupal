@@ -1,0 +1,6 @@
+collabora_online:
+  settings:
+    # The address of the COOL server.
+    server: https://localhost:9980/
+    # The wopi endpoint root.
+    wopi_root: /wopi/
