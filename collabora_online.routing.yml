@@ -5,3 +5,11 @@ collabora-online.view:
     _title: 'Collabora Online'
   requirements:
     _permission: 'access content'
+
+collabora-online.settings:
+  path: '/admin/config/collabora/settings'
+  defaults:
+    _form: 'Drupal\collabora_online\Form\ConfigForm'
+    _title: 'Collabora Online configuration'
+  requirements:
+    _permission: 'administer site configuration'
