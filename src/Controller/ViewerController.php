@@ -17,7 +17,7 @@ class ViewerController extends ControllerBase {
      */
     public function view() {
         $default_config = \Drupal::config('collabora_online.settings');
-        $server = $default_config->get('server');
+        $server = $default_config->get('collabora')['server'];
 
         $req = new CoolRequest();
         $req->getWopiSource();
@@ -25,6 +25,8 @@ class ViewerController extends ControllerBase {
         return [
             '#markup' => '<p>Hello from Collabora</p>' .
                 '<p>We\'ll be loading from ' . $req->wopiSrc . '</p>' .
+                '<p>Error: ' . $req->errorString() . '</p>' .
+                '<p>server is set to ' . $server . '</p>' .
                 '<iframe id="collabora-online-viewer" name="collabora-online-viewer" style="width:95%;height:80%;position:absolute;" src="' . $req->wopiSrc . '"></iframe>',
 
         ];
