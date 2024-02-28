@@ -13,3 +13,48 @@ collabora-online.settings:
     _title: 'Collabora Online configuration'
   requirements:
     _permission: 'administer site configuration'
+
+collabora-online.wopi.info:
+  path: '/collabora/wopi/files/{id}'
+  defaults:
+    _controller: '\Drupal\collabora_online\Controller\ViewerController::wopi'
+    action: 'info'
+  methods: [ GET ]
+  requirements:
+    _permission: 'access content'
+  options:
+    parameters:
+      action:
+        type: string
+      id:
+        type: string
+
+collabora-online.wopi.contents:
+  path: '/collabora/wopi/files/{id}/contents'
+  defaults:
+    _controller: '\Drupal\collabora_online\Controller\ViewerController::wopi'
+    action: 'content'
+  methods: [ GET ]
+  requirements:
+    _permission: 'access content'
+  options:
+    parameters:
+      action:
+        type: string
+      id:
+        type: string
+
+collabora-online.wopi.save:
+  path: '/collabora/wopi/files/{id}/contents'
+  defaults:
+    _controller: '\Drupal\collabora_online\Controller\ViewerController::wopi'
+    action: 'save'
+  methods: [ POST ]
+  requirements:
+    _permission: 'access content'
+  options:
+    parameters:
+      action:
+        type: string
+      id:
+        type: string
