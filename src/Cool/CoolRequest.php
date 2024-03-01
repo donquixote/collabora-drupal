@@ -4,8 +4,14 @@ namespace Drupal\collabora_online\Cool;
 
 function getDiscovery($server) {
     $discoveryUrl = $server.'/hosting/discovery';
+
+    $default_config = \Drupal::config('collabora_online.settings');
+    $disable_checks = (bool)$default_config->get('collabora')['disable_cert_check'];
+
     $stream_context = stream_context_create([
         'ssl' => [
+            'verify_peer'       => !$disable_checks,
+            'verify_peer_name'  => !$disable_checks,
         ]]);
     $res = file_get_contents($discoveryUrl, false, $stream_context);
     return $res;

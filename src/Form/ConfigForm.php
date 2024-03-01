@@ -45,6 +45,12 @@ class ConfigForm extends ConfigFormBase {
             '#required' => TRUE,
         ];
 
+        $form['disable_cert_check'] = [
+            '#type' => 'checkbox',
+            '#title' => $this->t('Disable TLS certificate check for COOL.'),
+            '#default_value' => $config->get('collabora')['disable_cert_check'],
+        ];
+
         return parent::buildForm($form, $form_state);
     }
 
@@ -55,6 +61,7 @@ class ConfigForm extends ConfigFormBase {
         $this->config(static::SETTINGS)
             ->set('collabora.server', $form_state->getValue('server'))
             ->set('collabora.wopi_base', $form_state->getValue('wopi_base'))
+            ->set('collabora.disable_cert_check', $form_state->getValue('disable_cert_check'))
             ->save();
 
         parent::submitForm($form, $form_state);

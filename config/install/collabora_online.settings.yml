@@ -3,3 +3,5 @@ collabora:
   server: https://localhost:9980/
   # The WOPI base
   wopi_base: https://localhost/collabora/
+  # Disable cert checks.
+  disable_cert_check: false
