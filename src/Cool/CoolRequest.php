@@ -4,7 +4,10 @@ namespace Drupal\collabora_online\Cool;
 
 function getDiscovery($server) {
     $discoveryUrl = $server.'/hosting/discovery';
-    $res = file_get_contents($discoveryUrl);
+    $stream_context = stream_context_create([
+        'ssl' => [
+        ]]);
+    $res = file_get_contents($discoveryUrl, false, $stream_context);
     return $res;
 }
 

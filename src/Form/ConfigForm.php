@@ -38,6 +38,13 @@ class ConfigForm extends ConfigFormBase {
             '#required' => TRUE,
         ];
 
+        $form['wopi_base'] = [
+            '#type' => 'textfield',
+            '#title' => $this->t('WOPI host base URL. Likely https://<drupal_server>/collabora/'),
+            '#default_value' => $config->get('collabora')['wopi_base'],
+            '#required' => TRUE,
+        ];
+
         return parent::buildForm($form, $form_state);
     }
 
@@ -47,6 +54,7 @@ class ConfigForm extends ConfigFormBase {
     public function submitForm(array &$form, FormStateInterface $form_state) {
         $this->config(static::SETTINGS)
             ->set('collabora.server', $form_state->getValue('server'))
+            ->set('collabora.wopi_base', $form_state->getValue('wopi_base'))
             ->save();
 
         parent::submitForm($form, $form_state);

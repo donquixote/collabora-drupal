@@ -1,3 +1,5 @@
 collabora:
   # The address of the COOL server.
   server: https://localhost:9980/
+  # The WOPI base
+  wopi_base: https://localhost/collabora/
