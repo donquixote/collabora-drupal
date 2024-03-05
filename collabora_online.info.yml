@@ -1,6 +1,7 @@
 name: Collabora Online
 description: Integrate Collabora Online for document viewing and editing.
 package: Custom
+configure: collabora-online.settings
 
 type: module
 core_version_requirement: ^10
