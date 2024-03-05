@@ -1,7 +1,7 @@
 collabora-online.view:
   path: '/collabora/view'
   defaults:
-    _controller: '\Drupal\collabora_online\Controller\ViewerController::view'
+    _controller: '\Drupal\collabora_online\Controller\ViewerController::editor'
     _title: 'Collabora Online'
   requirements:
     _permission: 'access content'

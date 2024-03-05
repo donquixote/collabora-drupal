@@ -48,7 +48,7 @@ class CoolRequest {
         204 => 'Warning! You have to specify the scheme protocol too (http|https) for the server address.'
     ];
 
-    public $wopiSrc;
+    private $wopiSrc;
 
     public function __construct() {
         $this->errorCode = 0;
@@ -59,7 +59,8 @@ class CoolRequest {
         return $this->errorCode . ': ' . static::ERROR_MSG[$this->errorCode];
     }
 
-    public function getWopiSource() {
+    /** Return the wopi client URL */
+    public function getWopiClientURL() {
         $_HOST_SCHEME = isset($_SERVER['HTTPS']) ? 'https' : 'http';
         $default_config = \Drupal::config('collabora_online.settings');
         $server = $default_config->get('collabora')['server'];
@@ -109,6 +110,8 @@ class CoolRequest {
             $this->errorCode = 103;
             return;
         }
+
+        return $this->wopiSrc;
     }
 }
 

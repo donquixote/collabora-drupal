@@ -2,13 +2,32 @@
 namespace Drupal\collabora_online\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Render\RendererInterface;
 use Drupal\collabora_online\Cool\CoolRequest;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Provides route responses for the Collabora module.
  */
 class ViewerController extends ControllerBase {
+
+    private $renderer;
+
+    /**
+     * The controller constructor.
+     */
+    public function __construct(RendererInterface $renderer) {
+        $this->renderer = $renderer;
+    }
+    /**
+     * {@inheritdoc}
+     */
+    public static function create(ContainerInterface $container): self {
+        return new self(
+            $container->get('renderer'),
+        );
+    }
 
     function wopiCheckFileInfo(string $id) {
         // test.txt is just a fake text file
@@ -72,6 +91,33 @@ class ViewerController extends ControllerBase {
     }
 
     /**
+     * Returns a raw page for the iframe embed..
+     *
+     * @return array
+     *   A simple renderable array.
+     */
+    public function editor() {
+        $default_config = \Drupal::config('collabora_online.settings');
+        $wopiBase = $default_config->get('collabora')['wopi_base'];
+
+        $req = new CoolRequest();
+        $wopiClient = $req->getWopiClientURL();
+
+        $render_array = [
+            'editor' => [
+                '#wopiClient' => $wopiClient,
+                '#wopiSrc' => urlencode($wopiBase . '/wopi/files/123'),
+                '#accessToken' => 'test',
+                '#theme' => 'collabora_online_full'
+            ]
+        ];
+        $response = new Response();
+        $response->setContent($this->renderer->renderRoot($render_array));
+
+        return $response;
+    }
+
+    /**
      * Returns a simple page.
      *
      * @return array
@@ -82,15 +128,15 @@ class ViewerController extends ControllerBase {
         $wopiBase = $default_config->get('collabora')['wopi_base'];
 
         $req = new CoolRequest();
-        $req->getWopiSource();
+        $wopiClient = $req->getWopiClientURL();
 
-        $coolUrl = $req->wopiSrc . 'WOPISrc=' . urlencode($wopiBase . '/wopi/files/123');
+        $coolUrl = $wopiClient . 'WOPISrc=' . urlencode($wopiBase . '/wopi/files/123');
 
         return [
             '#theme' => 'collabora_online',
             '#wopiSrc' => $coolUrl,
             '#message1' => '<p>Hello from Collabora</p>' .
-                '<p>We\'ll be loading from ' . $req->wopiSrc . '</p>' .
+                '<p>We\'ll be loading from ' . $wopiClient . '</p>' .
                 '<p>Error: ' . $req->errorString() . '</p>' .
                 '<p>wopi base is set to ' . $wopiBase . '</p>',
 
