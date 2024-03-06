@@ -1,8 +1,12 @@
 collabora-online.view:
-  path: '/collabora/view'
+  path: '/collabora/view/{media}'
   defaults:
     _controller: '\Drupal\collabora_online\Controller\ViewerController::editor'
     _title: 'Collabora Online'
+  options:
+    parameters:
+      media:
+        type: entity:media
   requirements:
     _permission: 'access content'
 

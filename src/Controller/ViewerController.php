@@ -4,7 +4,10 @@ namespace Drupal\collabora_online\Controller;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\collabora_online\Cool\CoolRequest;
+use Drupal\file\Entity\File;
+use Drupal\media\Entity\Media;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -20,6 +23,7 @@ class ViewerController extends ControllerBase {
     public function __construct(RendererInterface $renderer) {
         $this->renderer = $renderer;
     }
+
     /**
      * {@inheritdoc}
      */
@@ -30,11 +34,13 @@ class ViewerController extends ControllerBase {
     }
 
     function wopiCheckFileInfo(string $id) {
+        $media = \Drupal::entityTypeManager()->getStorage('media')->load($id);
+
         // test.txt is just a fake text file
         // the Size property is the length of the string
         // returned in wopiGetFile
         $payload = [
-            'BaseFileName' => 'test.txt',
+            'BaseFileName' => $media->name,
             'Size' => 11,
             'UserId' => 1,
             'UserCanWrite' => true
@@ -50,11 +56,17 @@ class ViewerController extends ControllerBase {
         return $response;
     }
 
-    function wopiGetFile() {
-        $response = new Response(
-            'Hello WOPI ' . $id . ' action ' . $action,
+    function wopiGetFile(string $id) {
+        $media = \Drupal::entityTypeManager()->getStorage('media')->load($id);
+        $fid = $media->getSource()->getSourceFieldValue($media);
+        $file = File::load($fid);
+
+        // XXX set the proper content type.
+        // And maybe other WOPI header.
+        $response = new BinaryFileResponse(
+            $file->getFileUri(),
             Response::HTTP_OK,
-            ['content-type' => 'text/plain']
+            ['content-type' => 'application/octet-stream']
         );
         return $response;
     }
@@ -96,17 +108,19 @@ class ViewerController extends ControllerBase {
      * @return array
      *   A simple renderable array.
      */
-    public function editor() {
+    public function editor(Media $media) {
         $default_config = \Drupal::config('collabora_online.settings');
         $wopiBase = $default_config->get('collabora')['wopi_base'];
 
         $req = new CoolRequest();
         $wopiClient = $req->getWopiClientURL();
 
+        $id = $media->id();
+
         $render_array = [
             'editor' => [
                 '#wopiClient' => $wopiClient,
-                '#wopiSrc' => urlencode($wopiBase . '/wopi/files/123'),
+                '#wopiSrc' => urlencode($wopiBase . '/wopi/files/' . $id),
                 '#accessToken' => 'test',
                 '#theme' => 'collabora_online_full'
             ]
