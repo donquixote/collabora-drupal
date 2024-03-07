@@ -4,6 +4,7 @@ namespace Drupal\collabora_online\Controller;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\collabora_online\Cool\CoolRequest;
+use Drupal\collabora_online\Cool\CoolUtils;
 use Drupal\file\Entity\File;
 use Drupal\media\Entity\Media;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -57,9 +58,7 @@ class ViewerController extends ControllerBase {
     }
 
     function wopiGetFile(string $id) {
-        $media = \Drupal::entityTypeManager()->getStorage('media')->load($id);
-        $fid = $media->getSource()->getSourceFieldValue($media);
-        $file = File::load($fid);
+        $file = CoolUtils::getFileById($id);
 
         // XXX set the proper content type.
         // And maybe other WOPI header.

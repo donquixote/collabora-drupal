@@ -1,5 +1,10 @@
 <?php
 
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\collabora_online\Cool\CoolUtils;
+use Drupal\file\Entity\File;
+use Drupal\media\Entity\Media;
+
 /**
  * Implements hook_theme().
  *
@@ -35,4 +40,42 @@ function collabora_online_theme($existing, $type, $theme, $path) {
       ],
   ];
 
+}
+
+/**
+ * Implements hook_entity_operation().
+ */
+function collabora_online_entity_operation(EntityInterface $entity) {
+    if (($entity->getEntityTypeId() != "media") ||
+        ($entity->getSource()->getPluginId() != "file")) {
+      return [];
+  }
+
+  $media = $entity;
+
+  $account = \Drupal::currentUser()->getAccount();
+  if (!$entity->access("view", $account)) {
+      return [];
+  }
+
+  $file = CoolUtils::getFile($media);
+  $type = CoolUtils::getDocumentType($file);
+
+  if ($type == NULL) {
+      return [];
+  }
+
+  if (CoolUtils::canEdit($media) && $media->access("update", $account)) {
+      $title = t("Edit in Collabora Online");
+  } else {
+      $title = t("View in Collabora Online");
+  }
+
+  return [
+    'collabora_online' => [
+      'title' => $title,
+      'weight' => 50,
+      'url' => CoolUtils::getEditorUrl($media),
+    ],
+  ];
 }
