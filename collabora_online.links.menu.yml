@@ -1,0 +1,6 @@
+collabora-online.settings:
+  title: 'Collabora Online settings'
+  description: 'Manage Collabora Online'
+  parent: system.admin_config_media
+  route_name: collabora-online.settings
+  weight: 10
