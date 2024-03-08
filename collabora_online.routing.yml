@@ -21,7 +21,7 @@ collabora-online.settings:
 collabora-online.wopi.info:
   path: '/collabora/wopi/files/{id}'
   defaults:
-    _controller: '\Drupal\collabora_online\Controller\ViewerController::wopi'
+    _controller: '\Drupal\collabora_online\Controller\WopiController::wopi'
     action: 'info'
   methods: [ GET ]
   requirements:
@@ -36,7 +36,7 @@ collabora-online.wopi.info:
 collabora-online.wopi.contents:
   path: '/collabora/wopi/files/{id}/contents'
   defaults:
-    _controller: '\Drupal\collabora_online\Controller\ViewerController::wopi'
+    _controller: '\Drupal\collabora_online\Controller\WopiController::wopi'
     action: 'content'
   methods: [ GET ]
   requirements:
@@ -51,7 +51,7 @@ collabora-online.wopi.contents:
 collabora-online.wopi.save:
   path: '/collabora/wopi/files/{id}/contents'
   defaults:
-    _controller: '\Drupal\collabora_online\Controller\ViewerController::wopi'
+    _controller: '\Drupal\collabora_online\Controller\WopiController::wopi'
     action: 'save'
   methods: [ POST ]
   requirements:

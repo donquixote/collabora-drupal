@@ -35,105 +35,10 @@ class ViewerController extends ControllerBase {
         );
     }
 
-    static function permissionDenied() {
-        return new Response(
-            'Authentication failed.',
-            Response::HTTP_FORBIDDEN,
-            ['content-type' => 'text/plain'],
-        );
-    }
-
-    function wopiCheckFileInfo(string $id, Request $request) {
-        $token = $request->query->get('access_token');
-
-        $jwt_payload = CoolUtils::verifyTokenForId($token, $id);
-        if ($jwt_payload == null) {
-            return static::permissionDenied();
-        }
-
-        $file = CoolUtils::getFileById($id);
-
-        // the Size property is the length of the string
-        // returned in wopiGetFile
-        $payload = [
-            'BaseFileName' => $file->getFilename(),
-            'Size' => $file->getSize(),
-            'UserId' => $jwt_payload->uid,
-            'UserCanWrite' => true
-        ];
-
-        $jsonPayload = json_encode($payload);
-
-        $response = new Response(
-            $jsonPayload,
-            Response::HTTP_OK,
-            ['content-type' => 'application/json']
-        );
-        return $response;
-    }
-
-    function wopiGetFile(string $id, Request $request) {
-        $token = $request->query->get('access_token');
-
-        if (!CoolUtils::verifyTokenForId($token, $id)) {
-            return static::permissionDenied();
-        }
-
-        $file = CoolUtils::getFileById($id);
-        $mimetype = $file->getMimeType();
-
-        $response = new BinaryFileResponse(
-            $file->getFileUri(),
-            Response::HTTP_OK,
-            ['content-type' => $mimetype]
-        );
-        return $response;
-    }
-
-    function wopiPutFile(string $id, Request $request) {
-        $token = $request->query->get('access_token');
-
-        if (!CoolUtils::verifyTokenForId($token, $id)) {
-            return static::permissionDenied();
-        }
-
-        $file = CoolUtils::getFileById($id);
-
-        $response = new Response(
-            'Put File not implemented',
-            Response::HTTP_OK,
-            ['content-type' => 'text/plain']
-        );
-        return $response;
-    }
-
-    public function wopi(string $action, string $id, Request $request) {
-        $returnCode = Response::HTTP_BAD_REQUEST;
-        switch ($action) {
-        case 'info':
-            return $this->wopiCheckFileInfo($id, $request);
-            break;
-        case 'content':
-            return $this->wopiGetFile($id, $request);
-            break;
-        case 'save':
-            return $this->wopiPutFile($id, $request);
-            break;
-        }
-
-        $response = new Response(
-            'Invalid WOPI action ' . $action,
-            $returnCode,
-            ['content-type' => 'text/plain']
-        );
-        return $response;
-    }
-
     /**
      * Returns a raw page for the iframe embed..
      *
-     * @return array
-     *   A simple renderable array.
+     * @return Response
      */
     public function editor(Media $media) {
         $default_config = \Drupal::config('collabora_online.settings');
