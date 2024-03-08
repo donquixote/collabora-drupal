@@ -10,6 +10,7 @@ use Drupal\media\Entity\Media;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Provides route responses for the Collabora module.
@@ -34,16 +35,30 @@ class ViewerController extends ControllerBase {
         );
     }
 
-    function wopiCheckFileInfo(string $id) {
-        $media = \Drupal::entityTypeManager()->getStorage('media')->load($id);
+    static function permissionDenied() {
+        return new Response(
+            'Authentication failed.',
+            Response::HTTP_FORBIDDEN,
+            ['content-type' => 'text/plain'],
+        );
+    }
 
-        // test.txt is just a fake text file
+    function wopiCheckFileInfo(string $id, Request $request) {
+        $token = $request->query->get('access_token');
+
+        $jwt_payload = CoolUtils::verifyTokenForId($token, $id);
+        if ($jwt_payload == null) {
+            return static::permissionDenied();
+        }
+
+        $file = CoolUtils::getFileById($id);
+
         // the Size property is the length of the string
         // returned in wopiGetFile
         $payload = [
-            'BaseFileName' => $media->name,
-            'Size' => 11,
-            'UserId' => 1,
+            'BaseFileName' => $file->getFilename(),
+            'Size' => $file->getSize(),
+            'UserId' => $jwt_payload->uid,
             'UserCanWrite' => true
         ];
 
@@ -57,44 +72,57 @@ class ViewerController extends ControllerBase {
         return $response;
     }
 
-    function wopiGetFile(string $id) {
-        $file = CoolUtils::getFileById($id);
+    function wopiGetFile(string $id, Request $request) {
+        $token = $request->query->get('access_token');
 
-        // XXX set the proper content type.
-        // And maybe other WOPI header.
+        if (!CoolUtils::verifyTokenForId($token, $id)) {
+            return static::permissionDenied();
+        }
+
+        $file = CoolUtils::getFileById($id);
+        $mimetype = $file->getMimeType();
+
         $response = new BinaryFileResponse(
             $file->getFileUri(),
             Response::HTTP_OK,
-            ['content-type' => 'application/octet-stream']
+            ['content-type' => $mimetype]
         );
         return $response;
     }
 
-    function wopiPutFile() {
+    function wopiPutFile(string $id, Request $request) {
+        $token = $request->query->get('access_token');
+
+        if (!CoolUtils::verifyTokenForId($token, $id)) {
+            return static::permissionDenied();
+        }
+
+        $file = CoolUtils::getFileById($id);
+
         $response = new Response(
-            '<p>WOPI ' . $id . ' action ' . $action . '</p>',
+            'Put File not implemented',
             Response::HTTP_OK,
             ['content-type' => 'text/plain']
         );
         return $response;
     }
 
-    public function wopi(string $action, string $id) {
+    public function wopi(string $action, string $id, Request $request) {
         $returnCode = Response::HTTP_BAD_REQUEST;
         switch ($action) {
         case 'info':
-            return $this->wopiCheckFileInfo($id);
+            return $this->wopiCheckFileInfo($id, $request);
             break;
         case 'content':
-            return $this->wopiGetFile($id);
+            return $this->wopiGetFile($id, $request);
             break;
         case 'save':
-            $returnCode = Response::HTTP_OK;
+            return $this->wopiPutFile($id, $request);
             break;
         }
 
         $response = new Response(
-            '<p>WOPI ' . $id . ' action ' . $action . '</p>',
+            'Invalid WOPI action ' . $action,
             $returnCode,
             ['content-type' => 'text/plain']
         );
@@ -116,11 +144,13 @@ class ViewerController extends ControllerBase {
 
         $id = $media->id();
 
+        $accessToken = CoolUtils::tokenForFileId($id);
+
         $render_array = [
             'editor' => [
                 '#wopiClient' => $wopiClient,
                 '#wopiSrc' => urlencode($wopiBase . '/wopi/files/' . $id),
-                '#accessToken' => 'test',
+                '#accessToken' => $accessToken,
                 '#theme' => 'collabora_online_full'
             ]
         ];
@@ -144,6 +174,8 @@ class ViewerController extends ControllerBase {
         $wopiClient = $req->getWopiClientURL();
 
         $coolUrl = $wopiClient . 'WOPISrc=' . urlencode($wopiBase . '/wopi/files/123');
+
+        $accessToken = CoolUtils::tokenForFileId($id);
 
         return [
             '#theme' => 'collabora_online',

@@ -1,0 +1,15 @@
+{
+    "name": "collabora/online",
+    "type": "drupal-module",
+    "description": "Collabora Online connector for Drupal",
+    "license": "MPL-2.0",
+    "authors": [
+        {
+            "name": "Hubert Figuière",
+            "email": "hub@collabora.com"
+        }
+    ],
+    "require": {
+        "drupal/jwt": "^2.0"
+    }
+}

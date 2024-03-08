@@ -45,6 +45,13 @@ class ConfigForm extends ConfigFormBase {
             '#required' => TRUE,
         ];
 
+        $form['key_id'] = [
+            '#type' => 'textfield',
+            '#title' => $this->t('JWT private key ID'),
+            '#default_value' => $config->get('collabora')['key_id'],
+            '#required' => TRUE,
+        ];
+
         $form['disable_cert_check'] = [
             '#type' => 'checkbox',
             '#title' => $this->t('Disable TLS certificate check for COOL.'),
@@ -61,6 +68,7 @@ class ConfigForm extends ConfigFormBase {
         $this->config(static::SETTINGS)
             ->set('collabora.server', $form_state->getValue('server'))
             ->set('collabora.wopi_base', $form_state->getValue('wopi_base'))
+            ->set('collabora.key_id', $form_state->getValue('key_id'))
             ->set('collabora.disable_cert_check', $form_state->getValue('disable_cert_check'))
             ->save();
 

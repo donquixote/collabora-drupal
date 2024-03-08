@@ -4,6 +4,7 @@ package: Custom
 configure: collabora-online.settings
 dependencies:
   - drupal:media
+  - drupal:jwt
 
 type: module
 core_version_requirement: ^10
