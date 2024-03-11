@@ -40,7 +40,7 @@ class ViewerController extends ControllerBase {
      *
      * @return Response
      */
-    public function editor(Media $media) {
+    public function editor(Media $media, $can_write = false) {
         $default_config = \Drupal::config('collabora_online.settings');
         $wopiBase = $default_config->get('collabora')['wopi_base'];
 
@@ -49,7 +49,7 @@ class ViewerController extends ControllerBase {
 
         $id = $media->id();
 
-        $accessToken = CoolUtils::tokenForFileId($id);
+        $accessToken = CoolUtils::tokenForFileId($id, $can_write);
 
         $render_array = [
             'editor' => [
@@ -63,34 +63,6 @@ class ViewerController extends ControllerBase {
         $response->setContent($this->renderer->renderRoot($render_array));
 
         return $response;
-    }
-
-    /**
-     * Returns a simple page.
-     *
-     * @return array
-     *   A simple renderable array.
-     */
-    public function view() {
-        $default_config = \Drupal::config('collabora_online.settings');
-        $wopiBase = $default_config->get('collabora')['wopi_base'];
-
-        $req = new CoolRequest();
-        $wopiClient = $req->getWopiClientURL();
-
-        $coolUrl = $wopiClient . 'WOPISrc=' . urlencode($wopiBase . '/wopi/files/123');
-
-        $accessToken = CoolUtils::tokenForFileId($id);
-
-        return [
-            '#theme' => 'collabora_online',
-            '#wopiSrc' => $coolUrl,
-            '#message1' => '<p>Hello from Collabora</p>' .
-                '<p>We\'ll be loading from ' . $wopiClient . '</p>' .
-                '<p>Error: ' . $req->errorString() . '</p>' .
-                '<p>wopi base is set to ' . $wopiBase . '</p>',
-
-        ];
     }
 }
 

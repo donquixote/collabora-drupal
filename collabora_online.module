@@ -48,34 +48,38 @@ function collabora_online_theme($existing, $type, $theme, $path) {
 function collabora_online_entity_operation(EntityInterface $entity) {
     if (($entity->getEntityTypeId() != "media") ||
         ($entity->getSource()->getPluginId() != "file")) {
-      return [];
-  }
+        return [];
+    }
 
-  $media = $entity;
+    $media = $entity;
 
-  $account = \Drupal::currentUser()->getAccount();
-  if (!$entity->access("view", $account)) {
-      return [];
-  }
+    $account = \Drupal::currentUser()->getAccount();
+    if (!$entity->access("view", $account)) {
+        return [];
+    }
 
-  $file = CoolUtils::getFile($media);
-  $type = CoolUtils::getDocumentType($file);
+    $file = CoolUtils::getFile($media);
+    $type = CoolUtils::getDocumentType($file);
 
-  if ($type == NULL) {
-      return [];
-  }
+    if ($type == NULL) {
+        return [];
+    }
 
-  if (CoolUtils::canEdit($media) && $media->access("update", $account)) {
-      $title = t("Edit in Collabora Online");
-  } else {
-      $title = t("View in Collabora Online");
-  }
+    $entries = [
+        'collabora_online_view' => [
+            'title' => t("View in Collabora Online"),
+            'weight' => 50,
+            'url' => CoolUtils::getEditorUrl($media, false),
+        ]
+    ];
 
-  return [
-    'collabora_online' => [
-      'title' => $title,
-      'weight' => 50,
-      'url' => CoolUtils::getEditorUrl($media),
-    ],
-  ];
+    if (CoolUtils::canEdit($media) && $media->access("update", $account)) {
+        $entries['collabora_online_edit'] = [
+            'title' => t("Edit in Collabora Online"),
+            'weight' => 50,
+            'url' => CoolUtils::getEditorUrl($media, true),
+        ];
+    }
+
+    return $entries;
 }

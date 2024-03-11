@@ -3,10 +3,28 @@ collabora-online.view:
   defaults:
     _controller: '\Drupal\collabora_online\Controller\ViewerController::editor'
     _title: 'Collabora Online'
+    can_write: false
   options:
     parameters:
       media:
         type: entity:media
+      can_write:
+        type: boolean
+  requirements:
+    _permission: 'access content'
+
+collabora-online.edit:
+  path: '/collabora/edit/{media}'
+  defaults:
+    _controller: '\Drupal\collabora_online\Controller\ViewerController::editor'
+    _title: 'Collabora Online'
+    can_write: true
+  options:
+    parameters:
+      media:
+        type: entity:media
+      can_write:
+        type: boolean
   requirements:
     _permission: 'access content'
 

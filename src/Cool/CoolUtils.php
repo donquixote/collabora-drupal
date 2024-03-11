@@ -48,11 +48,12 @@ class CoolUtils {
         return null;
     }
 
-    public static function tokenForFileId($id) {
+    public static function tokenForFileId($id, $can_write = FALSE) {
         $payload = [
             "fid" => $id,
             "uid" => \Drupal::currentUser()->id(),
             "exp" => gettimeofday(true) + 3600 * 24,
+            "wri" => $can_write,
         ];
         $key = static::getKey();
         $jwt = JWT::encode($payload, $key, 'HS256');
@@ -71,7 +72,11 @@ class CoolUtils {
         return "foo";
     }
 
-    public static function getEditorUrl(Media $media) {
-        return Url::fromRoute('collabora-online.view', ['media' => $media->id()]);
+    public static function getEditorUrl(Media $media, $can_write = false) {
+        if ($can_write) {
+            return Url::fromRoute('collabora-online.edit', ['media' => $media->id()]);
+        } else {
+            return Url::fromRoute('collabora-online.view', ['media' => $media->id()]);
+        }
     }
 }

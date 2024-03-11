@@ -45,7 +45,7 @@ class WopiController extends ControllerBase {
                 'avatar' => $avatarUrl,
                 'mail' => $user->getEmail(),
             ],
-            'UserCanWrite' => true
+            'UserCanWrite' => $jwt_payload->wri,
         ];
 
         $jsonPayload = json_encode($payload);
@@ -80,7 +80,7 @@ class WopiController extends ControllerBase {
         $token = $request->query->get('access_token');
 
         $jwt_payload = CoolUtils::verifyTokenForId($token, $id);
-        if ($jwt_payload == null) {
+        if ($jwt_payload == null || !$jwt_payload->wri) {
             return static::permissionDenied();
         }
 
