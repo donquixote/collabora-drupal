@@ -6,7 +6,7 @@ use Drupal\Core\File\FileSystemInterface;
 use Drupal\collabora_online\Cool\CoolUtils;
 use Drupal\file\Entity\File;
 use Drupal\media\Entity\Media;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\user\Entity\User;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,24 +15,6 @@ use Symfony\Component\HttpFoundation\Request;
  * Provides WOPI route responses for the Collabora module.
  */
 class WopiController extends ControllerBase {
-
-    private $fs;
-
-    /**
-     * The controller constructor.
-     */
-    public function __construct(FileSystemInterface $fs) {
-        $this->fs = $fs;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function create(ContainerInterface $container): self {
-        return new self(
-            $container->get('file_system'),
-        );
-    }
 
     static function permissionDenied() {
         return new Response(
@@ -51,13 +33,18 @@ class WopiController extends ControllerBase {
         }
 
         $file = CoolUtils::getFileById($id);
+        $user = User::load($jwt_payload->uid);
+        $avatarUrl = \Drupal::service('file_url_generator')->generateAbsoluteString($user->user_picture->entity->getFileUri());
 
-        // the Size property is the length of the string
-        // returned in wopiGetFile
         $payload = [
             'BaseFileName' => $file->getFilename(),
             'Size' => $file->getSize(),
             'UserId' => $jwt_payload->uid,
+            'UserFriendlyName' => $user->getDisplayName(),
+            'UserExtraInfo' => [
+                'avatar' => $avatarUrl,
+                'mail' => $user->getEmail(),
+            ],
             'UserCanWrite' => true
         ];
 
@@ -92,14 +79,42 @@ class WopiController extends ControllerBase {
     function wopiPutFile(string $id, Request $request) {
         $token = $request->query->get('access_token');
 
-        if (!CoolUtils::verifyTokenForId($token, $id)) {
+        $jwt_payload = CoolUtils::verifyTokenForId($token, $id);
+        if ($jwt_payload == null) {
             return static::permissionDenied();
         }
 
-        $file = CoolUtils::getFileById($id);
+        $fs = \Drupal::service('file_system');
+
+        $media = \Drupal::entityTypeManager()->getStorage('media')->load($id);
+        $user = User::load($jwt_payload->uid);
+
+        $file = CoolUtils::getFile($media);
+        $dir = $fs->dirname($file->getFileUri());
+        $dest = $dir . '/' . $file->getFilename();
+
+        $content = $request->getContent();
+        $owner_id = $file->getOwnerId();
+        $uri = $fs->saveData($content, $dest, FileSystemInterface::EXISTS_RENAME);
+
+        $file = File::create(['uri' => $uri]);
+        $file->setOwnerId($owner_id);
+        if (is_file($dest)) {
+            $file->setFilename($fs->basename($dest));
+        }
+        $file->setPermanent();
+        $file->setSize(strlen($content));
+        $file->save();
+
+        CoolUtils::setMediaSource($media, $file);
+        $media->setRevisionUser($user);
+        $media->setRevisionCreationTime(\Drupal::service('datetime.time')->getRequestTime());
+        // XXX we should have a proper reason.
+        $media->setRevisionLogMessage('Saved by Collabora Online');
+        $media->save();
 
         $response = new Response(
-            'Put File not implemented',
+            'Put File implemented would saved to ' . $dest,
             Response::HTTP_OK,
             ['content-type' => 'text/plain']
         );

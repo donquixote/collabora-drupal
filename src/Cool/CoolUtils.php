@@ -23,6 +23,11 @@ class CoolUtils {
         return CoolUtils::getFile($media);
     }
 
+    public static function setMediaSource(Media $media, File $source) {
+        $name = $media->getSource()->getSourceFieldDefinition($media->bundle->entity)->getName();
+        $media->set($name, $source);
+    }
+
     static function getKey() {
         $default_config = \Drupal::config('collabora_online.settings');
         $key_id = $default_config->get('collabora')['key_id'];
