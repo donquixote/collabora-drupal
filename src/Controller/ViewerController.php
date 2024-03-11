@@ -42,20 +42,20 @@ class ViewerController extends ControllerBase {
      */
     public function editor(Media $media, $can_write = false) {
         $default_config = \Drupal::config('collabora_online.settings');
-        $wopiBase = $default_config->get('collabora')['wopi_base'];
+        $wopi_base = $default_config->get('collabora')['wopi_base'];
 
         $req = new CoolRequest();
-        $wopiClient = $req->getWopiClientURL();
+        $wopi_client = $req->getWopiClientURL();
 
         $id = $media->id();
 
-        $accessToken = CoolUtils::tokenForFileId($id, $can_write);
+        $access_token = CoolUtils::tokenForFileId($id, $can_write);
 
         $render_array = [
             'editor' => [
-                '#wopiClient' => $wopiClient,
-                '#wopiSrc' => urlencode($wopiBase . '/wopi/files/' . $id),
-                '#accessToken' => $accessToken,
+                '#wopiClient' => $wopi_client,
+                '#wopiSrc' => urlencode($wopi_base . '/wopi/files/' . $id),
+                '#accessToken' => $access_token,
                 '#theme' => 'collabora_online_full'
             ]
         ];
