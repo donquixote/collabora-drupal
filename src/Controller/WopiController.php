@@ -18,7 +18,7 @@ class WopiController extends ControllerBase {
 
     static function permissionDenied() {
         return new Response(
-            "Anthentication failed.",
+            "Authentication failed.",
             Response::HTTP_FORBIDDEN,
             ['content-type' => 'text/plain'],
         );
