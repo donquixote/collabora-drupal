@@ -3,7 +3,7 @@
 namespace Drupal\collabora_online\Cool;
 
 function getDiscovery($server) {
-    $discoveryUrl = $server.'/hosting/discovery';
+    $discovery_url = $server.'/hosting/discovery';
 
     $default_config = \Drupal::config('collabora_online.settings');
     $disable_checks = (bool)$default_config->get('collabora')['disable_cert_check'];
@@ -13,7 +13,7 @@ function getDiscovery($server) {
             'verify_peer'       => !$disable_checks,
             'verify_peer_name'  => !$disable_checks,
         ]]);
-    $res = file_get_contents($discoveryUrl, false, $stream_context);
+    $res = file_get_contents($discovery_url, false, $stream_context);
     return $res;
 }
 
@@ -35,7 +35,7 @@ function strStartsWith($s, $ss) {
 
 class CoolRequest {
 
-    private $errorCode;
+    private $error_code;
 
     const ERROR_MSG = [
         0 => 'Success',
@@ -48,15 +48,15 @@ class CoolRequest {
         204 => 'Warning! You have to specify the scheme protocol too (http|https) for the server address.'
     ];
 
-    private $wopiSrc;
+    private $wopi_src;
 
     public function __construct() {
-        $this->errorCode = 0;
-        $this->wopiSrc = '';
+        $this->error_code = 0;
+        $this->wopi_src = '';
     }
 
     public function errorString() {
-        return $this->errorCode . ': ' . static::ERROR_MSG[$this->errorCode];
+        return $this->error_code . ': ' . static::ERROR_MSG[$this->error_code];
     }
 
     /** Return the wopi client URL */
@@ -64,54 +64,51 @@ class CoolRequest {
         $_HOST_SCHEME = isset($_SERVER['HTTPS']) ? 'https' : 'http';
         $default_config = \Drupal::config('collabora_online.settings');
         $server = $default_config->get('collabora')['server'];
-        $wopiClientServer = $default_config->get('collabora')['server'];
-        if (!$wopiClientServer) {
-            $this->errorCode = 201;
+        $wopi_client_server = $default_config->get('collabora')['server'];
+        if (!$wopi_client_server) {
+            $this->error_code = 201;
             return;
         }
-        $wopiClientServer = trim($wopiClientServer);
+        $wopi_client_server = trim($wopi_client_server);
 
-        if (!strStartsWith($wopiClientServer, 'http')) {
-            $this->errorCode = 204;
-            return;
-        }
-
-
-        if (!strStartsWith($wopiClientServer, $_HOST_SCHEME . '://')) {
-            $this->errorCode = 202;
+        if (!strStartsWith($wopi_client_server, 'http')) {
+            $this->error_code = 204;
             return;
         }
 
-        $discovery = getDiscovery($wopiClientServer);
+
+        if (!strStartsWith($wopi_client_server, $_HOST_SCHEME . '://')) {
+            $this->error_code = 202;
+            return;
+        }
+
+        $discovery = getDiscovery($wopi_client_server);
         if (!$discovery) {
-            $this->errorCode = 203;
+            $this->error_code = 203;
             return;
         }
 
         if (\PHP_VERSION_ID < 80000) {
             // This is deprecated and disabled by default in PHP 8.0
-            $loadEntities = libxml_disable_entity_loader(true);
+            $load_entities = libxml_disable_entity_loader(true);
         }
         $discovery_parsed = simplexml_load_string($discovery);
         if (\PHP_VERSION_ID < 80000) {
             // This is deprecated and disabled by default in PHP 8.0
-            libxml_disable_entity_loader($loadEntities);
+            libxml_disable_entity_loader($load_entities);
         }
         if (!$discovery_parsed) {
-            $this->errorCode = 102;
+            $this->error_code = 102;
             return;
         }
 
-        $this->wopiSrc = strval(getWopiSrcUrl($discovery_parsed, 'text/plain')[0]);
-        //        print("wopiSrc ");
-        //        var_export($this->wopiSrc);
-        //        print("\n");
-        if (!$this->wopiSrc) {
-            $this->errorCode = 103;
+        $this->wopi_src = strval(getWopiSrcUrl($discovery_parsed, 'text/plain')[0]);
+        if (!$this->wopi_src) {
+            $this->error_code = 103;
             return;
         }
 
-        return $this->wopiSrc;
+        return $this->wopi_src;
     }
 }
 
