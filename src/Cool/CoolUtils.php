@@ -61,15 +61,33 @@ class CoolUtils {
         return $jwt;
     }
 
-    /** Return if we can edit that media file. */
-    public static function canEdit(Media $media) {
-        // XXX todo
-        return TRUE;
+    /**
+     *  List of read only formats. Currently limited to the one Drupal
+     *  accept.
+     */
+    const READ_ONLY = [
+        'application/x-iwork-keynote-sffkey' => true,
+        'application/x-iwork-pages-sffpages' => true,
+        'application/x-iwork-numbers-sffnumbers' => true,
+        'application/pdf' => true,
+    ];
+
+    /**
+     * Return if we can edit that media file.
+     *
+     * There are few types that Collabora Online only views.
+     */
+    public static function canEdit(File $file) {
+        $mimetype = $file->getMimeType();
+        return !array_key_exists($mimetype, static::READ_ONLY);
     }
 
-    /** Return the mime type for the document. */
+    /** Return the mime type for the document.
+     *
+     *  Drupal will figure it out for us.
+     */
     public static function getDocumentType(File $file) {
-        return "foo";
+        return $file->getMimeType();
     }
 
     public static function getEditorUrl(Media $media, $can_write = false) {
