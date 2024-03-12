@@ -2,7 +2,7 @@ collabora:
   # The address of the COOL server.
   server: https://localhost:9980/
   # The WOPI base
-  wopi_base: https://localhost/collabora/
+  wopi_base: https://localhost/collabora
   # The JWT key id
   key_id: cool
   # Disable cert checks.

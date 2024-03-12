@@ -40,7 +40,7 @@ class ConfigForm extends ConfigFormBase {
 
         $form['wopi_base'] = [
             '#type' => 'textfield',
-            '#title' => $this->t('WOPI host base URL. Likely https://<drupal_server>/collabora/'),
+            '#title' => $this->t('WOPI host base URL. Likely https://&lt;drupal_server&gt;/collabora'),
             '#default_value' => $config->get('collabora')['wopi_base'],
             '#required' => TRUE,
         ];
