@@ -1,4 +1,13 @@
 <?php
+/*
+ * Copyright the Collabora Online contributors.
+ *
+ * SPDX-License-Identifier: MPL-2.0
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 
 namespace Drupal\collabora_online\Cool;
 
@@ -28,6 +37,7 @@ class CoolUtils {
         $media->set($name, $source);
     }
 
+    /** Obtain the signing key from the key storage */
     static function getKey() {
         $default_config = \Drupal::config('collabora_online.settings');
         $key_id = $default_config->get('collabora')['key_id'];
@@ -36,7 +46,12 @@ class CoolUtils {
         return $key;
     }
 
-    /** Verify JWT ***/
+    /** Verify JWT token
+     *
+     *  Verification include:
+     *  - matching $id with fid in the payload
+     *  - verifying the expiration
+     */
     public static function verifyTokenForId($token, $id) {
         $key = static::getKey();
         $payload = JWT::decode($token, new Key($key, 'HS256'));
@@ -48,6 +63,20 @@ class CoolUtils {
         return null;
     }
 
+    /**
+     * Create a JWT token for the Media with id $id, and eventual
+     * write permission.
+     *
+     * The token will carry the following:
+     *
+     * - fid: the Media id in Drupal.
+     * - uid: the User id for the token. Permissions should be checked
+     *   whenever.
+     * - exp: the expiration time of the token.
+     * - wri: if true, then this token has write permissions.
+     *
+     * The signing key is stored in Drupal key management.
+     */
     public static function tokenForFileId($id, $can_write = FALSE) {
         $payload = [
             "fid" => $id,
@@ -90,6 +119,7 @@ class CoolUtils {
         return $file->getMimeType();
     }
 
+    /** Return the editor / viewer Drupal URL from the routes configured. */
     public static function getEditorUrl(Media $media, $can_write = false) {
         if ($can_write) {
             return Url::fromRoute('collabora-online.edit', ['media' => $media->id()]);
