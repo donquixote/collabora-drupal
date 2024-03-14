@@ -74,9 +74,11 @@ class ConfigForm extends ConfigFormBase {
      * {@inheritdoc}
      */
     public function submitForm(array &$form, FormStateInterface $form_state) {
+        $wopi_base = rtrim($form_state->getValue('wopi_base'), '/');
+
         $this->config(static::SETTINGS)
             ->set('collabora.server', $form_state->getValue('server'))
-            ->set('collabora.wopi_base', $form_state->getValue('wopi_base'))
+            ->set('collabora.wopi_base', $wopi_base)
             ->set('collabora.key_id', $form_state->getValue('key_id'))
             ->set('collabora.disable_cert_check', $form_state->getValue('disable_cert_check'))
             ->save();
