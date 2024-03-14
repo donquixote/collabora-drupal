@@ -56,6 +56,11 @@ class ViewerController extends ControllerBase {
 
         $req = new CoolRequest();
         $wopi_client = $req->getWopiClientURL();
+        if ($wopi_client === null) {
+            return [
+                '#markup' => t('The Collabora Online server is not available: ') . $req->errorString(),
+            ];
+        }
 
         $id = $media->id();
 

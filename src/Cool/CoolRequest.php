@@ -11,10 +11,18 @@
 
 namespace Drupal\collabora_online\Cool;
 
+/**
+ * Get the discovery XML content
+ *
+ * Return `false` in case of error.
+ */
 function getDiscovery($server) {
     $discovery_url = $server.'/hosting/discovery';
 
     $default_config = \Drupal::config('collabora_online.settings');
+    if ($default_config === null) {
+        return false;
+    }
     $disable_checks = (bool)$default_config->get('collabora')['disable_cert_check'];
 
     $stream_context = stream_context_create([
@@ -48,12 +56,12 @@ class CoolRequest {
 
     const ERROR_MSG = [
         0 => 'Success',
-        101 => 'GET Request not found',
-        201 => 'Collabora Online server address is not valid',
-        202 => 'Collabora Online server address scheme does not match the current page url scheme',
-        203 => 'No able to retrieve the discovery.xml file from the Collabora Online server with the submitted address.',
-        102 => 'The retrieved discovery.xml file is not a valid XML file',
-        103 => 'The requested mime type is not handled',
+        101 => 'GET Request not found.',
+        201 => 'Collabora Online server address is not valid.',
+        202 => 'Collabora Online server address scheme does not match the current page url scheme.',
+        203 => 'Not able to retrieve the discovery.xml file from the Collabora Online server.',
+        102 => 'The retrieved discovery.xml file is not a valid XML file.',
+        103 => 'The requested mime type is not handled.',
         204 => 'Warning! You have to specify the scheme protocol too (http|https) for the server address.'
     ];
 
@@ -92,7 +100,7 @@ class CoolRequest {
         }
 
         $discovery = getDiscovery($wopi_client_server);
-        if (!$discovery) {
+        if ($discovery === false) {
             $this->error_code = 203;
             return;
         }
