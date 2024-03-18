@@ -64,13 +64,18 @@ class ViewerController extends ControllerBase {
 
         $id = $media->id();
 
-        $access_token = CoolUtils::tokenForFileId($id, $can_write);
+        $ttl = CoolUtils::getAccessTokenTtl();
+        if ($ttl == 0) {
+            $ttl = 86400;
+        }
+        $access_token = CoolUtils::tokenForFileId($id, $ttl, $can_write);
 
         $render_array = [
             'editor' => [
                 '#wopiClient' => $wopi_client,
                 '#wopiSrc' => urlencode($wopi_base . '/wopi/files/' . $id),
                 '#accessToken' => $access_token,
+                '#accessTokenTtl' => $ttl * 1000, // It's in usec. The JWT is in sec.
                 '#theme' => 'collabora_online_full'
             ]
         ];

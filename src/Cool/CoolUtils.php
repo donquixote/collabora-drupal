@@ -52,20 +52,37 @@ class CoolUtils {
      *  - matching $id with fid in the payload
      *  - verifying the expiration
      */
-    public static function verifyTokenForId($token, $id) {
+    public static function verifyTokenForId(
+        #[\SensitiveParameter]
+        string $token,
+        $id
+    ) {
         $key = static::getKey();
-        $payload = JWT::decode($token, new Key($key, 'HS256'));
+        try {
+            $payload = JWT::decode($token, new Key($key, 'HS256'));
 
-        if (($payload->fid == $id) && ($payload->exp >= gettimeofday(true))) {
-            return $payload;
+            if ($payload && ($payload->fid == $id) && ($payload->exp >= gettimeofday(true))) {
+                return $payload;
+            }
+        } catch (\Exception $e) {
+            \Drupal::logger('collabora')->error($e->getMessage());
         }
-
         return null;
     }
 
     /**
-     * Create a JWT token for the Media with id $id, and eventual
-     * write permission.
+     * Return the TTL of the token in seconds, from the EPOCH.
+     */
+    public static function getAccessTokenTtl() {
+        $default_config = \Drupal::config('collabora_online.settings');
+        $ttl = $default_config->get('collabora')['access_token_ttl'];
+
+        return gettimeofday(true) + $ttl;
+    }
+
+    /**
+     * Create a JWT token for the Media with id $id, a $ttl, and an
+     * eventual write permission.
      *
      * The token will carry the following:
      *
@@ -77,11 +94,11 @@ class CoolUtils {
      *
      * The signing key is stored in Drupal key management.
      */
-    public static function tokenForFileId($id, $can_write = FALSE) {
+    public static function tokenForFileId($id, $ttl, $can_write = FALSE) {
         $payload = [
             "fid" => $id,
             "uid" => \Drupal::currentUser()->id(),
-            "exp" => gettimeofday(true) + 3600 * 24,
+            "exp" => $ttl,
             "wri" => $can_write,
         ];
         $key = static::getKey();

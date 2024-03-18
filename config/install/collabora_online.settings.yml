@@ -5,5 +5,7 @@ collabora:
   wopi_base: https://localhost/collabora
   # The JWT key id
   key_id: cool
+  # Access Token TTL
+  access_token_ttl: 86400
   # Disable cert checks.
   disable_cert_check: false

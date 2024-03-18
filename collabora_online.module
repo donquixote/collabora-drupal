@@ -45,6 +45,7 @@ function collabora_online_theme($existing, $type, $theme, $path) {
           'path' => $path . '/templates',
           'variables' => [
               'accessToken' => 'test',
+              'accessTokenTtl' => '86400',
               'wopiSrc' => '/wopi/files/123',
               'wopiClient' => 'https://localhost:9980/',
           ],

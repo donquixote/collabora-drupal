@@ -61,6 +61,13 @@ class ConfigForm extends ConfigFormBase {
             '#required' => TRUE,
         ];
 
+        $form['access_token_ttl'] = [
+            '#type' => 'textfield',
+            '#title' => $this->t('Access Token Expiration (in seconds)'),
+            '#default_value' => $config->get('collabora')['access_token_ttl'],
+            '#required' => TRUE,
+        ];
+
         $form['disable_cert_check'] = [
             '#type' => 'checkbox',
             '#title' => $this->t('Disable TLS certificate check for COOL.'),
@@ -80,6 +87,7 @@ class ConfigForm extends ConfigFormBase {
             ->set('collabora.server', $form_state->getValue('server'))
             ->set('collabora.wopi_base', $wopi_base)
             ->set('collabora.key_id', $form_state->getValue('key_id'))
+            ->set('collabora.access_token_ttl', $form_state->getValue('access_token_ttl'))
             ->set('collabora.disable_cert_check', $form_state->getValue('disable_cert_check'))
             ->save();
 
