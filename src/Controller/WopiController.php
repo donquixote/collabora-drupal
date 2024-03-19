@@ -91,6 +91,9 @@ class WopiController extends ControllerBase {
     function wopiPutFile(string $id, Request $request) {
         $token = $request->query->get('access_token');
         $timestamp = $request->headers->get('x-cool-wopi-timestamp');
+        $modified_by_user = $request->headers->get('x-cool-wopi-ismodifiedbyuser') == 'true';
+        $autosave = $request->headers->get('x-cool-wopi-isautosave') == 'true';
+        $exitsave = $request->headers->get('x-cool-wopi-isexitsave') == 'true';
 
         $jwt_payload = CoolUtils::verifyTokenForId($token, $id);
         if ($jwt_payload == null || !$jwt_payload->wri) {
@@ -106,8 +109,6 @@ class WopiController extends ControllerBase {
         if ($timestamp) {
             $wopi_stamp = date_create_immutable_from_format(\DateTimeInterface::ISO8601, $timestamp);
             $file_stamp = date_create_immutable_from_format('U', $file->getChangedTime());
-
-            \Drupal::logger('collabora')->info('Saving file ' . $id . ' wopi: ' . $wopi_stamp->format('c') . ' file: ' . $file_stamp->format('c'));
 
             if ($wopi_stamp != $file_stamp) {
                 \Drupal::logger('collabora')->error('Conflict saving file ' . $id . ' wopi: ' . $wopi_stamp->format('c') . ' differs from file: ' . $file_stamp->format('c'));
@@ -139,8 +140,23 @@ class WopiController extends ControllerBase {
         CoolUtils::setMediaSource($media, $file);
         $media->setRevisionUser($user);
         $media->setRevisionCreationTime(\Drupal::service('datetime.time')->getRequestTime());
-        // XXX we should have a proper reason.
-        $media->setRevisionLogMessage('Saved by Collabora Online');
+
+        $save_reason = 'Saved by Collabora Online';
+        $reasons = [];
+        if ($modified_by_user) {
+            $reasons[] = 'Modified by user';
+        }
+        if ($autosave) {
+            $reasons[] = 'Autosaved';
+        }
+        if ($exitsave) {
+            $reasons[] = 'Save on Exit';
+        }
+        if (count($reasons) > 0) {
+            $save_reason .= ' (' . implode(', ', $reasons)  . ')';
+        }
+        \Drupal::logger('collabora')->error('Save reason: ' . $save_reason);
+        $media->setRevisionLogMessage($save_reason);
         $media->save();
 
         $response = new Response(
