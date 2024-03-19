@@ -43,12 +43,14 @@ class WopiController extends ControllerBase {
         }
 
         $file = CoolUtils::getFileById($id);
+        $mtime = date_create_immutable_from_format('U', $file->getChangedTime());
         $user = User::load($jwt_payload->uid);
         $avatarUrl = \Drupal::service('file_url_generator')->generateAbsoluteString($user->user_picture->entity->getFileUri());
 
         $payload = [
             'BaseFileName' => $file->getFilename(),
             'Size' => $file->getSize(),
+            'LastModifiedTime' => $mtime->format('c'),
             'UserId' => $jwt_payload->uid,
             'UserFriendlyName' => $user->getDisplayName(),
             'UserExtraInfo' => [
@@ -88,6 +90,7 @@ class WopiController extends ControllerBase {
 
     function wopiPutFile(string $id, Request $request) {
         $token = $request->query->get('access_token');
+        $timestamp = $request->headers->get('x-cool-wopi-timestamp');
 
         $jwt_payload = CoolUtils::verifyTokenForId($token, $id);
         if ($jwt_payload == null || !$jwt_payload->wri) {
@@ -98,8 +101,25 @@ class WopiController extends ControllerBase {
 
         $media = \Drupal::entityTypeManager()->getStorage('media')->load($id);
         $user = User::load($jwt_payload->uid);
-
         $file = CoolUtils::getFile($media);
+
+        if ($timestamp) {
+            $wopi_stamp = date_create_immutable_from_format(\DateTimeInterface::ISO8601, $timestamp);
+            $file_stamp = date_create_immutable_from_format('U', $file->getChangedTime());
+
+            \Drupal::logger('collabora')->info('Saving file ' . $id . ' wopi: ' . $wopi_stamp->format('c') . ' file: ' . $file_stamp->format('c'));
+
+            if ($wopi_stamp != $file_stamp) {
+                \Drupal::logger('collabora')->error('Conflict saving file ' . $id . ' wopi: ' . $wopi_stamp->format('c') . ' differs from file: ' . $file_stamp->format('c'));
+
+                return new Response(
+                    json_encode([ 'COOLStatusCode' => 1010 ]),
+                    Response::HTTP_CONFLICT,
+                    ['content-type' => 'application/json'],
+                );
+            }
+        }
+
         $dir = $fs->dirname($file->getFileUri());
         $dest = $dir . '/' . $file->getFilename();
 
