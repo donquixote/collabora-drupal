@@ -14,6 +14,26 @@ Requirements:
 Copy the content of this directory into
 `modules/custom/collabora_online` like a Drupal module.
 
+Installation
+------------
+
+See the [Drupal guide to install
+modules](https://www.drupal.org/docs/extending-drupal/installing-modules).
+
+In you Drupal setup, in the directory `modules/custom` extract the
+module into a directory `collabora_online`.
+
+You can get it directly with git:
+
+```sh
+git clone https://github.com/CollaboraOnline/collabora-drupal.git collabora_online
+```
+
+Then you can go into Drupal logged as an admin and go to _Extend_. In
+the list you should be able to find _Collabora Online_ and enable it.
+
+From there you can access the module specific configuration.
+
 Configuration
 -------------
 
@@ -23,29 +43,31 @@ Log into Drupal as an admin.
 
 ### JWT key
 
-Go to Configuration > System > Keys
+Go to _Configuration_ > _System_ > _Keys_
 
-- Create a JWT HMAC key, with the HS256 algorithm.
+- Create a _JWT HMAC_ key, with the _HS256_ algorithm.
 - Set it to be provided by the configuration.
 
 ### Collabora Online
 
-Go to Configuration > Media > Collabora Online Settings
+Go to _Configuration_ > _Media_ > _Collabora Online Settings_
 
-- Collabora Online server URL: the URL of the collabora online
+- _Collabora Online server URL_: the URL of the collabora online
   server. Note that you have to take into considerartion containers. If
   you run Drupal in one container and Collabora Online in another, you
   can not use `localhost`.
-- WOPI host base URL: the important part is how the Collabora Online
+- _WOPI host base URL_: the important part is how the Collabora Online
   server can reach the Drupal server.
-- JWT Private Key ID: the id of the key created above.
+- _JWT Private Key ID_: the id of the key created above.
 
 Optional
 
-- Disable TLS certificate check for COOL: If you configure a
+- _Disable TLS certificate check for COOL_: If you configure a
   development server you might have self-signed certificate. Checking
   this is **INSECURE** but allow the drupal server to contact the
   collabora online server is the certificate doesn't check.
+- _Access Token Expiration_: In second the expiration of the token to
+  access the document. Default to 86400 seconds (24 hours).
 
 ### COOL
 
