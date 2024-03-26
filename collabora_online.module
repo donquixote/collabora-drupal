@@ -35,8 +35,10 @@ function collabora_online_theme($existing, $type, $theme, $path) {
           'template' => 'collabora-online',
           'path' => $path . '/templates',
           'variables' => [
+              'accessToken' => 'test',
+              'accessTokenTtl' => '86400',
               'wopiSrc' => 'http://localhost:9980/',
-              'message1' => 'Default',
+              'wopiClient' => 'https://localhost:9980/',
           ],
       ],
       // This is the template for the complete page with embedding.

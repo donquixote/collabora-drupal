@@ -1,7 +1,28 @@
-<!-- Let's output the three variables passed to this template -->
-
-{{ message1 }}
-
 <div>
-<iframe id="collabora-online-viewer" name="collabora-online-viewer" style="width:60%;height:80%;position:absolute;" src="{{ wopiSrc }}"></iframe>
+  <div style="display: none">
+    <form action="" enctype="multipart/form-data" method="post" target="collabora-online-viewer" id="collabora-submit-form">
+      <input name="access_token" value="{{ accessToken }}" type="hidden" />
+      <input name="access_token_ttl" value="{{ accessTokenTtl }}" type="hidden" />
+      <input type="submit" value="" />
+    </form>
+  </div>
+
+  <iframe id="collabora-online-viewer" name="collabora-online-viewer" style="width:95%;height:95%;position:absolute;">
+  </iframe>
+
+  <script type="text/ecmascript">
+    function loadDocument() {
+        let wopiUrl = '{{ wopiClient }}WOPISrc={{ wopiSrc }}';
+        let formElem = document.getElementById("collabora-submit-form");
+
+        if (!formElem) {
+            console.log('error: submit form not found');
+            return;
+        }
+        formElem.action = wopiUrl;
+        formElem.submit();
+    }
+
+    loadDocument();
+  </script>
 </div>
