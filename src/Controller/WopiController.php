@@ -45,7 +45,11 @@ class WopiController extends ControllerBase {
         $file = CoolUtils::getFileById($id);
         $mtime = date_create_immutable_from_format('U', $file->getChangedTime());
         $user = User::load($jwt_payload->uid);
-        $avatarUrl = \Drupal::service('file_url_generator')->generateAbsoluteString($user->user_picture->entity->getFileUri());
+
+        $user_picture = $user->user_picture->entity;
+        if ($user_picture) {
+            $avatarUrl = \Drupal::service('file_url_generator')->generateAbsoluteString($user_picture->getFileUri());
+        }
 
         $payload = [
             'BaseFileName' => $file->getFilename(),
