@@ -16,6 +16,7 @@ use Drupal\file\Entity\File;
 use Drupal\media\Entity\Media;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
+use Drupal\collabora_online\Cool\CoolRequest;
 
 class CoolUtils {
     /** Get the file from the Media entity */
@@ -35,6 +36,21 @@ class CoolUtils {
     public static function setMediaSource(Media $media, File $source) {
         $name = $media->getSource()->getSourceFieldDefinition($media->bundle->entity)->getName();
         $media->set($name, $source);
+    }
+
+    /** Get the media source entity for the file.
+     *  It will get the first in the list if there are more than one.
+     */
+    public static function getMediaSourceForFile(File $file) {
+        $media_entities = \Drupal::entityTypeManager()->getStorage('media')->loadByProperties([
+            'field_media_document' => $file->id(),
+        ]);
+        if (!is_array($media_entities)) {
+            \Drupal::logger('collabora')->error('Media for file ' . $file->id() . ' not found.');
+            return NULL;
+        }
+
+        return array_pop($media_entities);
     }
 
     /** Obtain the signing key from the key storage */
@@ -144,4 +160,34 @@ class CoolUtils {
             return Url::fromRoute('collabora-online.view', ['media' => $media->id()]);
         }
     }
+
+    public static function getViewerRender(Media $media, $can_write) {
+        $default_config = \Drupal::config('collabora_online.settings');
+        $wopi_base = $default_config->get('collabora')['wopi_base'];
+
+        $req = new CoolRequest();
+        $wopi_client = $req->getWopiClientURL();
+        if ($wopi_client === null) {
+            return [
+                'error' => t('The Collabora Online server is not available: ') . $req->errorString(),
+            ];
+        }
+
+        $id = $media->id();
+
+        $ttl = static::getAccessTokenTtl();
+        if ($ttl == 0) {
+            $ttl = 86400;
+        }
+        $access_token = static::tokenForFileId($id, $ttl, $can_write);
+
+        return [
+            '#wopiClient' => $wopi_client,
+            '#wopiSrc' => urlencode($wopi_base . '/wopi/files/' . $id),
+            '#accessToken' => $access_token,
+            '#accessTokenTtl' => $ttl * 1000, // It's in usec. The JWT is in sec.
+        ];
+    }
+
+
 }

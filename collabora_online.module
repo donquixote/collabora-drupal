@@ -37,6 +37,7 @@ function collabora_online_theme($existing, $type, $theme, $path) {
           'variables' => [
               'accessToken' => 'test',
               'accessTokenTtl' => '86400',
+              'iFrameStyle' => 'width:95%;',
               'wopiSrc' => 'http://localhost:9980/',
               'wopiClient' => 'https://localhost:9980/',
           ],
@@ -48,6 +49,7 @@ function collabora_online_theme($existing, $type, $theme, $path) {
           'variables' => [
               'accessToken' => 'test',
               'accessTokenTtl' => '86400',
+              'iFrameStyle' => 'width:95%;height:95%;position:absolute;',
               'wopiSrc' => '/wopi/files/123',
               'wopiClient' => 'https://localhost:9980/',
           ],

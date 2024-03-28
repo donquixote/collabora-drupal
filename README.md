@@ -77,6 +77,30 @@ side.
 CSP for embedding must set properly to embed the Collabora Online
 frame.
 
+### Fields
+
+To be able to attach document to Drupal content nodes, you need to
+create a field.
+
+Login as an admin, and got to the admnistration section.
+
+- Go to _Structure_ > _Content types_
+- Find the appropriate content and click _Manage fields_.
+- Click _+ Create a new field_ (or if you alread have created one you
+  can re-use one)
+- Enter a label, select _Media_, click _Continue_
+- At the bottom for _Media type_, select _Document_. Click _Save
+  Settings_. _Type of item to reference_ should have been set to the
+  default value of _Media_.
+
+You also must set the viewer for this kind of media.
+
+- Go to _Structure_ > _Media Types_
+- Select _Manage Display_ for _Document_
+- In the _Field_ section, select in the _Format_ column, choose
+  _Collabora Online Preview_.
+- Click _Save_.
+
 License
 -------
 
