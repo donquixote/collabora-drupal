@@ -56,8 +56,8 @@ Go to _Configuration_ > _Media_ > _Collabora Online Settings_
   server. Note that you have to take into considerartion containers. If
   you run Drupal in one container and Collabora Online in another, you
   can not use `localhost`.
-- _WOPI host base URL_: the important part is how the Collabora Online
-  server can reach the Drupal server.
+- _WOPI host base URL_: how the Collabora Online server can reach the
+  Drupal server. Usually it is the public URL of this Drupal server.
 - _JWT Private Key ID_: the id of the key created above.
 
 Optional
