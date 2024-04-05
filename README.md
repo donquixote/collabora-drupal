@@ -101,6 +101,29 @@ You also must set the viewer for this kind of media.
   _Collabora Online Preview_.
 - Click _Save_.
 
+### Other configuration
+
+If you need to change the accepted extensions to upload, go to
+_Administration_ > _Structure_ > _Media Type_, for the line
+_Documents_, click _Edit_, then click _Manage Fields_, and for the
+right field, _Edit_:
+
+- You can change the allowed file extensions.
+
+To increase the maximum upload size (it is indicated on that page),
+you need to increase the value in the PHP configuration.
+
+Usually you can add a file `max_file_size.ini` (the name isn't much
+important except its extension should be `.ini`) into
+`/etc/php/conf.d/` (the path may be different) and put the following:
+
+```
+post_max_size = 30M
+upload_max_filesize = 30M
+```
+
+These set the limits to a maximum of 30M. You can change as appropriate.
+
 License
 -------
 
