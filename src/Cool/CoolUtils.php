@@ -183,7 +183,7 @@ class CoolUtils {
 
         return [
             '#wopiClient' => $wopi_client,
-            '#wopiSrc' => urlencode($wopi_base . '/collabora/wopi/files/' . $id),
+            '#wopiSrc' => urlencode($wopi_base . '/cool/wopi/files/' . $id),
             '#accessToken' => $access_token,
             '#accessTokenTtl' => $ttl * 1000, // It's in usec. The JWT is in sec.
         ];

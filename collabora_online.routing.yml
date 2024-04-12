@@ -1,5 +1,5 @@
 collabora-online.view:
-  path: '/collabora/view/{media}'
+  path: '/cool/view/{media}'
   defaults:
     _controller: '\Drupal\collabora_online\Controller\ViewerController::editor'
     _title: 'Collabora Online'
@@ -14,7 +14,7 @@ collabora-online.view:
     _permission: 'access content'
 
 collabora-online.edit:
-  path: '/collabora/edit/{media}'
+  path: '/cool/edit/{media}'
   defaults:
     _controller: '\Drupal\collabora_online\Controller\ViewerController::editor'
     _title: 'Collabora Online'
@@ -29,7 +29,7 @@ collabora-online.edit:
     _permission: 'access content'
 
 collabora-online.settings:
-  path: '/admin/config/collabora/settings'
+  path: '/admin/config/cool/settings'
   defaults:
     _form: 'Drupal\collabora_online\Form\ConfigForm'
     _title: 'Collabora Online configuration'
@@ -37,7 +37,7 @@ collabora-online.settings:
     _permission: 'administer site configuration'
 
 collabora-online.wopi.info:
-  path: '/collabora/wopi/files/{id}'
+  path: '/cool/wopi/files/{id}'
   defaults:
     _controller: '\Drupal\collabora_online\Controller\WopiController::wopi'
     action: 'info'
@@ -52,7 +52,7 @@ collabora-online.wopi.info:
         type: string
 
 collabora-online.wopi.contents:
-  path: '/collabora/wopi/files/{id}/contents'
+  path: '/cool/wopi/files/{id}/contents'
   defaults:
     _controller: '\Drupal\collabora_online\Controller\WopiController::wopi'
     action: 'content'
@@ -67,7 +67,7 @@ collabora-online.wopi.contents:
         type: string
 
 collabora-online.wopi.save:
-  path: '/collabora/wopi/files/{id}/contents'
+  path: '/cool/wopi/files/{id}/contents'
   defaults:
     _controller: '\Drupal\collabora_online\Controller\WopiController::wopi'
     action: 'save'
