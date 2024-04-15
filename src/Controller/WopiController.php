@@ -140,6 +140,7 @@ class WopiController extends ControllerBase {
         $file->setPermanent();
         $file->setSize(strlen($content));
         $file->save();
+        $mtime = date_create_immutable_from_format('U', $file->getChangedTime());
 
         CoolUtils::setMediaSource($media, $file);
         $media->setRevisionUser($user);
@@ -163,10 +164,14 @@ class WopiController extends ControllerBase {
         $media->setRevisionLogMessage($save_reason);
         $media->save();
 
+        $payload =  json_encode([
+            'LastModifiedTime' => $mtime->format('c'),
+        ]);
+
         $response = new Response(
-            'Put File implemented would saved to ' . $dest,
+            $payload,
             Response::HTTP_OK,
-            ['content-type' => 'text/plain']
+            ['content-type' => 'application/json']
         );
         return $response;
     }
