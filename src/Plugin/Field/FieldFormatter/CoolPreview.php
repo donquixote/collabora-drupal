@@ -50,7 +50,7 @@ class CoolPreview extends EntityReferenceFormatterBase {
 
             $render_array = CoolUtils::getViewerRender($media, false);
             if (!$render_array || array_key_exists('error', $render_array)) {
-                \Drupal::logger('collabora')->error('Viewer error: ' . $render_array ? $render_array['error'] : 'NULL');
+                \Drupal::logger('cool')->error('Viewer error: ' . $render_array ? $render_array['error'] : 'NULL');
                 continue;
             }
 

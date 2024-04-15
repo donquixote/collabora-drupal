@@ -53,7 +53,7 @@ class ViewerController extends ControllerBase {
 
         if (!$render_array ||  array_key_exists('error', $render_array)) {
             $error_msg = 'Viewer error: ' . $render_array ? $render_array['error'] : 'NULL';
-            \Drupal::logger('collabora')->error($error_msg);
+            \Drupal::logger('cool')->error($error_msg);
             return new Response(
                 $error_msg,
                 Response::HTTP_BAD_REQUEST,

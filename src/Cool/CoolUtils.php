@@ -46,7 +46,7 @@ class CoolUtils {
             'field_media_document' => $file->id(),
         ]);
         if (!is_array($media_entities)) {
-            \Drupal::logger('collabora')->error('Media for file ' . $file->id() . ' not found.');
+            \Drupal::logger('cool')->error('Media for file ' . $file->id() . ' not found.');
             return NULL;
         }
 
@@ -56,7 +56,7 @@ class CoolUtils {
     /** Obtain the signing key from the key storage */
     static function getKey() {
         $default_config = \Drupal::config('collabora_online.settings');
-        $key_id = $default_config->get('collabora')['key_id'];
+        $key_id = $default_config->get('cool')['key_id'];
 
         $key = \Drupal::service('key.repository')->getKey($key_id)->getKeyValue();
         return $key;
@@ -81,7 +81,7 @@ class CoolUtils {
                 return $payload;
             }
         } catch (\Exception $e) {
-            \Drupal::logger('collabora')->error($e->getMessage());
+            \Drupal::logger('cool')->error($e->getMessage());
         }
         return null;
     }
@@ -91,7 +91,7 @@ class CoolUtils {
      */
     public static function getAccessTokenTtl() {
         $default_config = \Drupal::config('collabora_online.settings');
-        $ttl = $default_config->get('collabora')['access_token_ttl'];
+        $ttl = $default_config->get('cool')['access_token_ttl'];
 
         return gettimeofday(true) + $ttl;
     }
@@ -163,7 +163,7 @@ class CoolUtils {
 
     public static function getViewerRender(Media $media, $can_write) {
         $default_config = \Drupal::config('collabora_online.settings');
-        $wopi_base = $default_config->get('collabora')['wopi_base'];
+        $wopi_base = $default_config->get('cool')['wopi_base'];
 
         $req = new CoolRequest();
         $wopi_client = $req->getWopiClientURL();

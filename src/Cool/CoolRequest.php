@@ -23,7 +23,7 @@ function getDiscovery($server) {
     if ($default_config === null) {
         return false;
     }
-    $disable_checks = (bool)$default_config->get('collabora')['disable_cert_check'];
+    $disable_checks = (bool)$default_config->get('cool')['disable_cert_check'];
 
     $stream_context = stream_context_create([
         'ssl' => [
@@ -80,8 +80,7 @@ class CoolRequest {
     public function getWopiClientURL() {
         $_HOST_SCHEME = isset($_SERVER['HTTPS']) ? 'https' : 'http';
         $default_config = \Drupal::config('collabora_online.settings');
-        $server = $default_config->get('collabora')['server'];
-        $wopi_client_server = $default_config->get('collabora')['server'];
+        $wopi_client_server = $default_config->get('cool')['server'];
         if (!$wopi_client_server) {
             $this->error_code = 201;
             return;

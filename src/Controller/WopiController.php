@@ -115,7 +115,7 @@ class WopiController extends ControllerBase {
             $file_stamp = date_create_immutable_from_format('U', $file->getChangedTime());
 
             if ($wopi_stamp != $file_stamp) {
-                \Drupal::logger('collabora')->error('Conflict saving file ' . $id . ' wopi: ' . $wopi_stamp->format('c') . ' differs from file: ' . $file_stamp->format('c'));
+                \Drupal::logger('cool')->error('Conflict saving file ' . $id . ' wopi: ' . $wopi_stamp->format('c') . ' differs from file: ' . $file_stamp->format('c'));
 
                 return new Response(
                     json_encode([ 'COOLStatusCode' => 1010 ]),
@@ -159,7 +159,7 @@ class WopiController extends ControllerBase {
         if (count($reasons) > 0) {
             $save_reason .= ' (' . implode(', ', $reasons)  . ')';
         }
-        \Drupal::logger('collabora')->error('Save reason: ' . $save_reason);
+        \Drupal::logger('cool')->error('Save reason: ' . $save_reason);
         $media->setRevisionLogMessage($save_reason);
         $media->save();
 
