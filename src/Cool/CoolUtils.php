@@ -131,7 +131,6 @@ class CoolUtils {
         'application/x-iwork-keynote-sffkey' => true,
         'application/x-iwork-pages-sffpages' => true,
         'application/x-iwork-numbers-sffnumbers' => true,
-        'application/pdf' => true,
     ];
 
     /**
