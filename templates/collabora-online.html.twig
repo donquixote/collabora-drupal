@@ -1,4 +1,5 @@
 <div>
+  {{ attach_library('collabora_online/cool') }}
   <div style="display: none">
     <form action="" enctype="multipart/form-data" method="post" target="collabora-online-viewer" id="collabora-submit-form">
       <input name="access_token" value="{{ accessToken }}" type="hidden" />
@@ -11,18 +12,7 @@
   </iframe>
 
   <script type="text/ecmascript">
-    function loadDocument() {
-        let wopiUrl = '{{ wopiClient }}WOPISrc={{ wopiSrc }}';
-        let formElem = document.getElementById("collabora-submit-form");
-
-        if (!formElem) {
-            console.log('error: submit form not found');
-            return;
-        }
-        formElem.action = wopiUrl;
-        formElem.submit();
-    }
-
-    loadDocument();
+    // This is defined in the js/cool.js
+    loadDocument('{{ wopiClient }}', '{{ wopiSrc }}');
   </script>
 </div>

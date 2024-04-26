@@ -1,0 +1,4 @@
+cool:
+  js:
+    js/cool.js: {}
+  header: true
