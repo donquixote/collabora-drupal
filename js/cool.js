@@ -9,14 +9,43 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-function loadDocument(wopiClient, wopiSrc) {
+function loadDocument(wopiClient, wopiSrc, options = null) {
+    let needPostMessage = false;
     let wopiUrl = `${wopiClient}WOPISrc=${wopiSrc}`;
+    if (options && options.closebutton == true) {
+        wopiUrl += '&closebutton=true';
+        needPostMessage = true;
+    }
+
+    if (needPostMessage) {
+        window.addEventListener("message", receiveMessage, false);
+    }
+
     let formElem = document.getElementById("collabora-submit-form");
 
     if (!formElem) {
-        console.log('error: submit form not found');
+        console.log("error: submit form not found");
         return;
     }
     formElem.action = wopiUrl;
     formElem.submit();
+}
+
+function postMessage(msg) {
+    document.getElementById("collabora-online-viewer").contentWindow.postMessage(JSON.stringify(msg), '*');
+}
+
+function receiveMessage(event) {
+    let msg = JSON.parse(event.data);
+    if (!msg) {
+        return;
+    }
+
+    if (msg.MessageId === "UI_Close") {
+        if (msg.Values && msg.Values.EverModified) {
+            let reply = { MessageId: "Action_Close" };
+            postMessage(reply);
+        }
+        history.back();
+    }
 }

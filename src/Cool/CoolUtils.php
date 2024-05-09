@@ -160,7 +160,21 @@ class CoolUtils {
         }
     }
 
-    public static function getViewerRender(Media $media, $can_write) {
+    /**
+     * Get a render array for a cool viewer.
+     *
+     * @param Media $media
+     *   The media entity to view / edit
+     *
+     * @param bool $can_write
+     *   Whether this is a viewer (false) or an edit (true). Permissions will
+     *   also be checked.
+     *
+     * @param array $options
+     *   Options for the renderer. Current values:
+     *     - "closebutton" if "true" will add a close box. (see COOL SDK)
+     */
+    public static function getViewerRender(Media $media, bool $can_write, $options = null) {
         $default_config = \Drupal::config('collabora_online.settings');
         $wopi_base = $default_config->get('cool')['wopi_base'];
 
@@ -180,12 +194,19 @@ class CoolUtils {
         }
         $access_token = static::tokenForFileId($id, $ttl, $can_write);
 
-        return [
+        $render_array = [
             '#wopiClient' => $wopi_client,
             '#wopiSrc' => urlencode($wopi_base . '/cool/wopi/files/' . $id),
             '#accessToken' => $access_token,
             '#accessTokenTtl' => $ttl * 1000, // It's in usec. The JWT is in sec.
         ];
+        if ($options) {
+            if (isset($options['closebutton']) && $options['closebutton'] == 'true') {
+                $render_array['#closebutton'] = 'true';
+            }
+        }
+
+        return $render_array;
     }
 
 

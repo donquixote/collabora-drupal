@@ -49,7 +49,10 @@ class ViewerController extends ControllerBase {
      * @return Response
      */
     public function editor(Media $media, $can_write = false) {
-        $render_array = CoolUtils::getViewerRender($media, $can_write);
+        $options = [
+            'closebutton' => 'true',
+        ];
+        $render_array = CoolUtils::getViewerRender($media, $can_write, $options);
 
         if (!$render_array ||  array_key_exists('error', $render_array)) {
             $error_msg = 'Viewer error: ' . $render_array ? $render_array['error'] : 'NULL';
