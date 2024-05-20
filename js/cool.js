@@ -46,6 +46,11 @@ function receiveMessage(event) {
             let reply = { MessageId: "Action_Close" };
             postMessage(reply);
         }
-        history.back();
+        if (window.parent.location == window.location) {
+            history.back();
+        } else {
+            /* we send back the UI_Close message to the parent frame. */
+            window.parent.postMessage(event.data);
+        }
     }
 }

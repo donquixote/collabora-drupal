@@ -1,4 +1,4 @@
-<div>
+<div class="cool-frame">
   {{ attach_library('collabora_online/cool') }}
   <div style="display: none">
     <form action="" enctype="multipart/form-data" method="post" target="collabora-online-viewer" id="collabora-submit-form">
@@ -8,7 +8,7 @@
     </form>
   </div>
 
-  <iframe id="collabora-online-viewer" name="collabora-online-viewer" style="{{ iFrameStyle }}">
+  <iframe id="collabora-online-viewer" name="collabora-online-viewer" class="cool-frame__iframe" style="{{ iFrameStyle }}">
   </iframe>
 
   <script type="text/ecmascript">

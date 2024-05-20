@@ -1,4 +1,16 @@
-cool:
+cool.frame:
   js:
     js/cool.js: {}
   header: true
+  dependencies:
+    - core/drupal
+
+cool.previewer:
+  css:
+    component:
+      css/cool.css: {}
+  js:
+    js/previewer.js: {}
+  header: true
+  dependencies:
+    - core/drupal

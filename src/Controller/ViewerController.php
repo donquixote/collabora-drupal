@@ -65,6 +65,7 @@ class ViewerController extends ControllerBase {
         }
 
         $render_array['#theme'] = 'collabora_online_full';
+        $render_array['#attached']['library'][] = 'collabora_online/cool.frame';
 
         $response = new Response();
         $response->setContent($this->renderer->renderRoot($render_array));

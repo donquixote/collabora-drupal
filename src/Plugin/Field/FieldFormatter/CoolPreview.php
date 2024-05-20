@@ -48,13 +48,13 @@ class CoolPreview extends EntityReferenceFormatterBase {
                 continue;
             }
 
-            $render_array = CoolUtils::getViewerRender($media, false);
-            if (!$render_array || array_key_exists('error', $render_array)) {
-                \Drupal::logger('cool')->error('Viewer error: ' . $render_array ? $render_array['error'] : 'NULL');
-                continue;
-            }
+            $url = CoolUtils::getEditorUrl($media, false);
 
-            $render_array['#theme'] = 'collabora_online';
+            $render_array = [
+                '#editorUrl' => $url,
+            ];
+            $render_array['#theme'] = 'collabora_online_preview';
+            $render_array['#attached']['library'][] = 'collabora_online/cool.previewer';
             // Render each element as markup.
             $element[$delta] = $render_array;
         }
