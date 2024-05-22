@@ -1,4 +1,7 @@
 cool.frame:
+  css:
+    component:
+      css/cool.css: {}
   js:
     js/cool.js: {}
   header: true
