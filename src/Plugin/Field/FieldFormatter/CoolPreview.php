@@ -52,6 +52,7 @@ class CoolPreview extends EntityReferenceFormatterBase {
 
             $render_array = [
                 '#editorUrl' => $url,
+                '#fileName' => $media->getName(),
             ];
             $render_array['#theme'] = 'collabora_online_preview';
             $render_array['#attached']['library'][] = 'collabora_online/cool.previewer';

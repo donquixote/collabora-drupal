@@ -50,6 +50,7 @@ function collabora_online_theme($existing, $type, $theme, $path) {
           'path' => $path . '/templates',
           'variables' => [
               'editorUrl' => 'about:blank',
+              'fileName' => '',
           ],
       ],
       // This is the template for the complete page with embedding.
