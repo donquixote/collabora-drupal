@@ -35,6 +35,7 @@
     height: calc(100% - 250px);
     /* seems to be a reasonable value to be above of it all */
     z-index: 501;
+    box-sizing: border-box;
 }
 
 .cool-editor__body {
