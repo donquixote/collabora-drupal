@@ -11,16 +11,33 @@ Requirements:
 - JWT and Media are set as dependencies for the module and are
   necessary.
 
-Copy the content of this directory into
-`modules/custom/collabora_online` like a Drupal module.
-
 Installation
 ------------
 
 See the [Drupal guide to install
 modules](https://www.drupal.org/docs/extending-drupal/installing-modules).
 
-In you Drupal setup, in the directory `modules/custom` extract the
+To install on a project, user PHP composer:
+
+```shell
+composer require drupal/collabora_online
+```
+
+If you get an error saying `but it does not match your
+minimum-stability`, you may need to adjust the `minimum-stability`
+field in the `composer.json` of your project.
+
+Then you can go into Drupal logged as an admin and go to _Extend_. In
+the list you should be able to find _Collabora Online_ and enable it.
+
+From there you can access the module specific configuration.
+
+### Development installation
+
+If you intend to develop or contribute to the module, you can install
+directly from git.
+
+In your Drupal setup, in the directory `modules/contrib` extract the
 module into a directory `collabora_online`.
 
 You can get it directly with git:
@@ -28,11 +45,6 @@ You can get it directly with git:
 ```sh
 git clone https://github.com/CollaboraOnline/collabora-drupal.git collabora_online
 ```
-
-Then you can go into Drupal logged as an admin and go to _Extend_. In
-the list you should be able to find _Collabora Online_ and enable it.
-
-From there you can access the module specific configuration.
 
 Configuration
 -------------
