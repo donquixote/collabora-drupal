@@ -45,6 +45,8 @@ class WopiController extends ControllerBase {
         $file = CoolUtils::getFileById($id);
         $mtime = date_create_immutable_from_format('U', $file->getChangedTime());
         $user = User::load($jwt_payload->uid);
+        $is_admin = in_array('administrator', $user->getRoles());
+        $is_anonymous = in_array('anonymous', $user->getRoles());
 
         $user_picture = $user->user_picture->entity;
         if ($user_picture) {
@@ -62,6 +64,8 @@ class WopiController extends ControllerBase {
                 'mail' => $user->getEmail(),
             ],
             'UserCanWrite' => $jwt_payload->wri,
+            'IsAdminUser' => $is_admin,
+            'IsAnonymousUser' => $is_anonymous,
         ];
 
         $jsonPayload = json_encode($payload);
