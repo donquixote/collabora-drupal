@@ -44,15 +44,25 @@ class ViewerController extends ControllerBase {
     }
 
     /**
-     * Returns a raw page for the iframe embed..
+     * Returns a raw page for the iframe embed.
+     *
+     * Set edit to true for an editor.
      *
      * @return Response
      */
-    public function editor(Media $media, $can_write = false) {
+    public function editor(Media $media, $edit = false) {
         $options = [
             'closebutton' => 'true',
         ];
-        $render_array = CoolUtils::getViewerRender($media, $can_write, $options);
+
+        if ($edit) {
+            /* Make sure that the user is authenticated if edit is true */
+            $roles = \Drupal::currentUser()->getRoles();
+            $is_authenticated = in_array('authenticated', $roles);
+            $edit = $edit && $is_authenticated;
+        }
+
+        $render_array = CoolUtils::getViewerRender($media, $edit, $options);
 
         if (!$render_array ||  array_key_exists('error', $render_array)) {
             $error_msg = 'Viewer error: ' . $render_array ? $render_array['error'] : 'NULL';
