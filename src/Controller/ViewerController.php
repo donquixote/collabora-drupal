@@ -25,14 +25,12 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class ViewerController extends ControllerBase {
 
-    private $renderer;
-
     /**
      * The controller constructor.
      */
-    public function __construct(RendererInterface $renderer) {
-        $this->renderer = $renderer;
-    }
+    public function __construct(
+        private readonly RendererInterface $renderer,
+    ) {}
 
     /**
      * {@inheritdoc}
