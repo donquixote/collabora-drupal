@@ -27,21 +27,14 @@ use Symfony\Component\HttpFoundation\Response;
 class ViewerController extends ControllerBase {
 
     /**
-     * The renderer service.
-     *
-     * @var \Drupal\Core\Render\RendererInterface
-     */
-    private $renderer;
-
-    /**
      * The controller constructor.
      *
      * @param \Drupal\Core\Render\RendererInterface $renderer
      *   The renderer service.
      */
-    public function __construct(RendererInterface $renderer) {
-        $this->renderer = $renderer;
-    }
+    public function __construct(
+        private readonly RendererInterface $renderer,
+    ) {}
 
     /**
      * {@inheritdoc}
