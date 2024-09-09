@@ -18,7 +18,6 @@ use Drupal\collabora_online\Exception\CoolRequestException;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\media\Entity\Media;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -35,15 +34,6 @@ class ViewerController extends ControllerBase {
     public function __construct(
         protected readonly RendererInterface $renderer,
     ) {}
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function create(ContainerInterface $container): self {
-        return new self(
-            $container->get('renderer'),
-        );
-    }
 
     /**
      * Returns a raw page for the iframe embed.
