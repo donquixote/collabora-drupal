@@ -63,7 +63,7 @@ class WopiController extends ControllerBase {
             ],
             'UserCanWrite' => $can_write,
             'IsAdminUser' => $permissions['is_admin'],
-            'IsAnonymousUser' => $permissions['is_anonymous']
+            'IsAnonymousUser' => $user->isAnonymous(),
         ];
 
         $user_picture = $user->user_picture?->entity;
