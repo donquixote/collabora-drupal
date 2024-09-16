@@ -65,7 +65,7 @@ class WopiController extends ControllerBase {
             return static::permissionDenied();
         }
 
-        $user_picture = $user->user_picture->entity;
+        $user_picture = $user->user_picture?->entity;
         if ($user_picture) {
             $avatarUrl = \Drupal::service('file_url_generator')->generateAbsoluteString($user_picture->getFileUri());
         }
@@ -77,7 +77,7 @@ class WopiController extends ControllerBase {
             'UserId' => $jwt_payload->uid,
             'UserFriendlyName' => $user->getDisplayName(),
             'UserExtraInfo' => [
-                'avatar' => $avatarUrl,
+                'avatar' => $avatarUrl ?? NULL,
                 'mail' => $user->getEmail(),
             ],
             'UserCanWrite' => $can_write,

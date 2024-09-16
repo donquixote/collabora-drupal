@@ -15,7 +15,6 @@ use Drupal\collabora_online\Cool\CoolUtils;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\media\Entity\Media;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -23,23 +22,12 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class ViewerController extends ControllerBase {
 
-    private $renderer;
-
     /**
      * The controller constructor.
      */
-    public function __construct(RendererInterface $renderer) {
-        $this->renderer = $renderer;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function create(ContainerInterface $container): self {
-        return new self(
-            $container->get('renderer'),
-        );
-    }
+    public function __construct(
+        private readonly RendererInterface $renderer,
+    ) {}
 
     /**
      * Returns a raw page for the iframe embed.
@@ -56,7 +44,7 @@ class ViewerController extends ControllerBase {
         $render_array = CoolUtils::getViewerRender($media, $edit, $options);
 
         if (!$render_array ||  array_key_exists('error', $render_array)) {
-            $error_msg = 'Viewer error: ' . $render_array ? $render_array['error'] : 'NULL';
+            $error_msg = 'Viewer error: ' . ($render_array ? $render_array['error'] : 'NULL');
             \Drupal::logger('cool')->error($error_msg);
             return new Response(
                 $error_msg,
