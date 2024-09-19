@@ -29,7 +29,6 @@ class AccessTest extends BrowserTestBase {
      */
     protected static $modules = [
         'node',
-        'media',
         'collabora_online',
     ];
 

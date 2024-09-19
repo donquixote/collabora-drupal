@@ -4,13 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\collabora_online\Functional;
 
-use Drupal\file\Entity\File;
-use Drupal\media\Entity\Media;
-use Drupal\media\MediaInterface;
 use Drupal\Tests\BrowserTestBase;
 use Drupal\Tests\media\Traits\MediaTypeCreationTrait;
-use Drupal\Tests\TestFileCreationTrait;
-use Drupal\user\Entity\Role;
 use Drupal\user\PermissionHandlerInterface;
 
 /**
@@ -24,7 +19,6 @@ class PermissionTest extends BrowserTestBase {
      * {@inheritdoc}
      */
     protected static $modules = [
-        'media',
         'collabora_online',
     ];
 
