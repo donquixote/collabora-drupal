@@ -31,7 +31,7 @@ jobs:
         run: |
           set -x
 
-          ddev config --project-type=drupal --docroot=web --php-version={{ matrix.php }} --project-name=collabora-drupal
+          ddev config --project-type=drupal --docroot=web --php-version=${{ matrix.php }} --project-name=collabora-drupal
 
           ddev get ddev/ddev-drupal-contrib
           ddev get ddev/ddev-selenium-standalone-chrome
