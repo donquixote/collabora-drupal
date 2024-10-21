@@ -18,24 +18,29 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ matrix.php }}
-          # @todo Review which extensions are needed.
-          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, gd
-          coverage: none
+      - name: Setup DDEV
+        uses: ddev/github-action-setup-ddev@v1
 
-      - name: Expand composer.json as with ddev poser.
+      - name: Prepare DDEV project
+        # These instructions are based on:
+        # - https://github.com/ddev/ddev-drupal-contrib
+        # - https://github.com/ddev/ddev-selenium-standalone-chrome
+        # - Additional commands to prepare composer.json before install.
         run: |
           set -x
-          export DRUPAL_CORE=${{ matrix.drupal-constraint }}
-          curl -OL https://git.drupalcode.org/project/gitlab_templates/-/raw/default-ref/scripts/expand_composer_json.php
-          php expand_composer_json.php collabora_online
-          rm -f expand_composer_json.php
 
-      - name: Further prepare composer.json.
+          ddev config --project-type=drupal --docroot=web --php-version={{ matrix.php }} --project-name=collabora-drupal
+
+          ddev get ddev/ddev-drupal-contrib
+          ddev get ddev/ddev-selenium-standalone-chrome
+
+      - run: ddev start
+
+      - name: Prepare composer.json
         run: |
-          set -x
+          # Require additional Composer packages.
+          ddev composer require --no-update --dev drush/drush
+
           # Avoid composer/installers v1 with '--prefer-lowest'.
           composer require --no-update --dev composer/installers:^2
 
@@ -45,15 +50,38 @@ jobs:
           # Set 'allow-plugins'.
           composer config --no-plugins allow-plugins.php-http/discovery false
 
-      - run: composer update --no-install ${{ matrix.composer-flags }}
+          # Report on composer.json changes.
+          git diff composer.json
 
-      - run: composer install --no-interaction
+          # Let ddev-drupal-contrib require additional packages.
+          ddev expand-composer-json
 
-      - name: Run symlink_project.php
+          # Report on composer.json changes.
+          git diff composer.json
+
+      - name: Run composer install and symlink-project
         run: |
-          set -x
-          curl -OL https://git.drupalcode.org/project/gitlab_templates/-/raw/default-ref/scripts/symlink_project.php
-          php symlink_project.php collabora_online
-          rm -f symlink_project.php
+          # Apply composer flags like '--prefer-lowest'.
+          ddev composer update --no-install ${{ matrix.composer-flags }}
 
-      - run: vendor/bin/phpunit
+          # Install dependencies.
+          ddev composer install --no-interaction
+
+          # Symlink the module files to web/modules/custom/collabora_drupal/*.
+          ddev symlink-project
+
+      - name: Update Drupal and PHP version from project files.
+        run: |
+          # Report on PHP and Drupal versions before.
+          ddev php --version
+          ddev composer info | grep "drupal/core "
+
+          # Update from project files.
+          ddev config --update
+          ddev restart
+
+          # Report on PHP and Drupal versions after.
+          ddev php --version
+          ddev composer info | grep "drupal/core "
+
+      - run: ddev phpunit
