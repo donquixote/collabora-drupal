@@ -23,7 +23,7 @@
     <!-- Do not limit the amount of memory tests take to run. -->
     <ini name="memory_limit" value="-1"/>
 
-    <!-- <env name="SIMPLETEST_BASE_URL" value="https://collabora-online.ddev.site/"/> -->
+    <env name="SIMPLETEST_BASE_URL" value="http://localhost:8080/"/>
     <!-- <env name="SIMPLETEST_DB" value="mysql://db:db@db/db"/> -->
     <env name="SIMPLETEST_DB" value="sqlite://localhost/sites/default/files/testdb.sql"/>
 
