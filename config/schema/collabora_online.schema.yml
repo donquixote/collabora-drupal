@@ -21,3 +21,6 @@ collabora_online.settings:
         disable_cert_check:
           type: boolean
           label: 'Disable cert checks.'
+        allowfullscreen:
+          type: boolean
+          label: 'Allow full-screen.'
