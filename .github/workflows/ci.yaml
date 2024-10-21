@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  - push
+
+jobs:
+  tests:
+    name: Run tests
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: true
+      matrix:
+        php: [8.2]
+        composer-flags: ['--prefer-lowest', '']
+        drupal-constraint: ['^10.3.5']
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          # @todo Review which extensions are needed.
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, gd
+          coverage: none
+
+      - name: Expand composer.json as with ddev poser.
+        run: |
+          set -x
+          export DRUPAL_CORE=${{ matrix.drupal-constraint }}
+          curl -OL https://git.drupalcode.org/project/gitlab_templates/-/raw/default-ref/scripts/expand_composer_json.php
+          php expand_composer_json.php collabora_online
+          rm -f expand_composer_json.php
+
+      - run: composer update --no-install ${{ matrix.composer-flags }}
+
+      - run: composer config --no-plugins allow-plugins.php-http/discovery false
+
+      - run: composer install --no-interaction
+
+      - name: Run symlink_project.php
+        run: |
+          set -x
+          curl -OL https://git.drupalcode.org/project/gitlab_templates/-/raw/default-ref/scripts/symlink_project.php
+          php symlink_project.php collabora_online
+          rm -f symlink_project.php
+
+      - run: vendor/bin/phpunit
