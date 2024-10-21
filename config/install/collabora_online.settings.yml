@@ -11,9 +11,3 @@ cool:
   disable_cert_check: false
   # Allow fullscreen - Enabled by default for functionality.
   allowfullscreen: true
-  # The user role for collaborators.
-  viewer_role: anonymous
-  # The user role for collaborators.
-  collaborator_role: authenticated
-  # The user role for adminstrators.
-  administrator_role: administrator
