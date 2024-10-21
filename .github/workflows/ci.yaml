@@ -33,9 +33,14 @@ jobs:
           php expand_composer_json.php collabora_online
           rm -f expand_composer_json.php
 
-      - run: composer update --no-install ${{ matrix.composer-flags }}
+      - name: Further prepare composer.json to avoid bad versions.
+        run: |
+          # Avoid composer/installers v1 with '--prefer-lowest'.
+          composer require --no-update --dev composer/installers:^2
+          # Avoid open-telemetry/sdk beta version with '--prefer-lowest'.
+          composer require --no-update --dev open-telemetry/sdk:@stable
 
-      - run: composer config --no-plugins allow-plugins.php-http/discovery false
+      - run: composer update --no-install ${{ matrix.composer-flags }}
 
       - run: composer install --no-interaction
 
