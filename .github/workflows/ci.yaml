@@ -20,6 +20,8 @@ jobs:
 
       - name: Setup DDEV
         uses: ddev/github-action-setup-ddev@v1
+        with:
+          autostart: false
 
       - name: Prepare DDEV project
         # These instructions are based on:
