@@ -77,7 +77,7 @@ class ConfigForm extends ConfigFormBase {
         $form['allowfullscreen'] = [
             '#type' => 'checkbox',
             '#title' => $this->t('Allow COOL to use fullscreen mode.'),
-            '#default_value' => $config->get('cool')['allowfullscreen'],
+            '#default_value' => $config->get('cool')['allowfullscreen'] ?? FALSE,
         ];
 
         $form['viewer_role'] = [

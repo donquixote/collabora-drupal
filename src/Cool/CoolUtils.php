@@ -203,7 +203,7 @@ class CoolUtils {
     public static function getViewerRender(Media $media, bool $can_write, $options = null) {
         $default_config = \Drupal::config('collabora_online.settings');
         $wopi_base = $default_config->get('cool')['wopi_base'];
-        $allowfullscreen = $default_config->get('cool')['allowfullscreen'];
+        $allowfullscreen = $default_config->get('cool')['allowfullscreen'] ?? FALSE;
 
         $req = new CoolRequest();
         $wopi_client = $req->getWopiClientURL();
