@@ -64,6 +64,7 @@ function collabora_online_theme($existing, $type, $theme, $path) {
               'wopiSrc' => '/wopi/files/123',
               'wopiClient' => 'https://localhost:9980/',
           ],
+          'file' => 'collabora_online.theme.inc',
       ],
   ];
 
