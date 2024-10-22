@@ -92,5 +92,3 @@ class ViewerController extends ControllerBase {
         return $response;
     }
 }
-
-?>
