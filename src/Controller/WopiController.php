@@ -53,11 +53,6 @@ class WopiController extends ControllerBase {
             return static::permissionDenied();
         }
 
-        $user_picture = $user->user_picture?->entity;
-        if ($user_picture) {
-            $avatarUrl = \Drupal::service('file_url_generator')->generateAbsoluteString($user_picture->getFileUri());
-        }
-
         $payload = [
             'BaseFileName' => $file->getFilename(),
             'Size' => $file->getSize(),
@@ -65,13 +60,19 @@ class WopiController extends ControllerBase {
             'UserId' => $jwt_payload->uid,
             'UserFriendlyName' => $user->getDisplayName(),
             'UserExtraInfo' => [
-                'avatar' => $avatarUrl ?? NULL,
                 'mail' => $user->getEmail(),
             ],
             'UserCanWrite' => $can_write,
             'IsAdminUser' => $permissions['is_admin'],
             'IsAnonymousUser' => $permissions['is_anonymous']
         ];
+
+        $user_picture = $user->user_picture?->entity;
+        if ($user_picture) {
+            /** @var \Drupal\Core\File\FileUrlGeneratorInterface $file_url_generator */
+            $file_url_generator = \Drupal::service('file_url_generator');
+            $payload['UserExtraInfo']['avatar'] = $file_url_generator->generateAbsoluteString($user_picture->getFileUri());
+        }
 
         $jsonPayload = json_encode($payload);
 
