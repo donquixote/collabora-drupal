@@ -228,5 +228,3 @@ class WopiController extends ControllerBase {
         return $response;
     }
 }
-
-?>

@@ -127,5 +127,3 @@ class CoolRequest {
         return $this->wopi_src;
     }
 }
-
-?>
