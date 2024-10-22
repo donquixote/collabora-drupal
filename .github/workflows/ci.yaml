@@ -40,6 +40,8 @@ jobs:
 
       - name: Prepare composer.json
         run: |
+          set -x
+
           # Require additional Composer packages.
           ddev composer require --no-update --dev drush/drush
 
