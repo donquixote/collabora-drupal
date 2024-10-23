@@ -45,6 +45,11 @@
         "installer-paths": {
             "web/core": ["type:drupal-core"],
             "web/modules/contrib/{$name}": ["type:drupal-module"]
+        },
+        "patches": {
+            "drupal/jwt": {
+                "JwtTranscoder::$algorithmType must not be accessed before initialization (https://www.drupal.org/project/jwt/issues/3409096)": "patches/jwt-3409096.diff"
+            }
         }
     },
     "config": {
