@@ -119,6 +119,25 @@ You also must set the viewer for this kind of media.
   _Collabora Online Preview_.
 - Click _Save_.
 
+### User permissions
+
+The module introduces permissions, which can be managed at `/admin/people/permissions`.
+
+The 'Administer the Collabora instance' permission grants administrator access within the Collabora Online instance, when Collabora is used within Drupal.
+Most of the time this permission is not needed, if the Collabora instance is configured from outside of Drupal.
+
+For each media type, the module introduces two permissions:
+- (media type): Edit any media file in Collabora
+  Users with this permission are allowed to edit documents attached to a media entity of the given type, using the Collabora Online editor. 
+- (media type): Preview media file in Collabora
+  Users with this permission are allowed to preview documents attached to a media entity of the given type, using the Collabora Online editor in preview/readonly mode.
+
+In the current version, preview and edit access with the Collabora Online editor are checked independently of the publishing status of the respective media, and independently of the regular view or edit access on that media entity.
+
+For a consistent experience, it is recommended that a role with the edit permission should also be granted the preview permission, and that a user with any of the Collabora media permissions should also be granted permissions to view the respective media entity in Drupal.
+
+Developers can use entity access hooks to alter which users may edit or preview media files in Collabora. This would allow to grant access based on e.g. membership in a group.
+
 ### Other configuration
 
 If you need to change the accepted extensions to upload, go to
