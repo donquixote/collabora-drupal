@@ -15,13 +15,13 @@
     },
     "require-dev": {
         "composer/installers": "^1 || ^2",
-        "drupal/core-composer-scaffold": "^10 | ^11@dev",
         "cweagans/composer-patches": "~1.0",
-        "drupal/core-recommended": "^10.3.6 | ^11.0.5",
+        "drupal/core-composer-scaffold": "^10 | ^11@dev",
         "drupal/core-dev": "^10 | ^11",
+        "drupal/core-recommended": "^10.3.6 | ^11.0.5",
         "drush/drush": "^12.4",
-        "openeuropa/task-runner-drupal-project-symlink": "^1.0.0-beta6",
         "openeuropa/task-runner": "^2@dev",
+        "openeuropa/task-runner-drupal-project-symlink": "^1.0.0-beta6",
         "php-parallel-lint/php-parallel-lint": "^1.2"
     },
     "scripts": {
