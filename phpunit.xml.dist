@@ -1,51 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.5/phpunit.xsd"
-         backupStaticAttributes="false"
-         convertErrorsToExceptions="true"
-         convertNoticesToExceptions="true"
-         convertWarningsToExceptions="true"
-         processIsolation="false"
-         stopOnFailure="false"
-         bootstrap="web/core/tests/bootstrap.php"
-         failOnRisky="true"
-         failOnWarning="true"
-         verbose="true"
-         colors="true"
-         backupGlobals="false"
+<phpunit
+  bootstrap="${drupal.root}/core/tests/bootstrap.php"
+  backupGlobals="true"
+  colors="true"
+  cacheResult="false"
 >
   <php>
-    <!-- See https://gist.github.com/davidjguru/2d59eed50818f74710ae3b0f87fb947d -->
-    <!-- See https://www.previousnext.com.au/blog/running-and-debugging-phpunit-tests-phpstorm-ddev-and-xdebug -->
-
-    <!-- Set error reporting to E_ALL. -->
     <ini name="error_reporting" value="32767"/>
-    <!-- Do not limit the amount of memory tests take to run. -->
     <ini name="memory_limit" value="-1"/>
 
-    <env name="SIMPLETEST_BASE_URL" value="https://collabora-drupal.ddev.site/"/>
-    <env name="SIMPLETEST_DB" value="sqlite://localhost/sites/default/files/testdb.sql"/>
+    <env name="SIMPLETEST_IGNORE_DIRECTORIES" value="vendor,node_modules,${drupal.root}"/>
+    <env name="SIMPLETEST_BASE_URL" value="${drupal.base_url}"/>
+    <env name="SIMPLETEST_DB" value="mysql://${drupal.database.user}:${drupal.database.password}@${drupal.database.host}:${drupal.database.port}/${drupal.database.name}"/>
 
-    <env name="BROWSERTEST_OUTPUT_DIRECTORY" value="/var/www/html/web/sites/default/simpletest/browser_output/"/>
+    <!-- <env name="SIMPLETEST_DB" value="mysql://${drupal.database.user}:${drupal.database.password}@${drupal.database.host}:${drupal.database.port}/${drupal.database.name}"/> -->
+    <!-- <env name="SIMPLETEST_DB" value="mysql://root:@mysql:3306/drupal"/> -->
 
-    <!-- To have browsertest output use an alternative base URL. For example if
-     SIMPLETEST_BASE_URL is an internal DDEV URL, you can set this to the
-     external DDev URL so you can follow the links directly.
-    -->
-    <!-- To disable deprecation testing completely uncomment the next line. -->
-    <!-- <env name="SYMFONY_DEPRECATIONS_HELPER" value="disabled"/> -->
-    <!-- Example for changing the driver class for mink tests MINK_DRIVER_CLASS value: 'Drupal\FunctionalJavascriptTests\DrupalSelenium2Driver' -->
-    <env name="MINK_DRIVER_CLASS" value=''/>
-    <!-- Example for changing the driver args to mink tests MINK_DRIVER_ARGS value: '["http://127.0.0.1:8510"]' -->
-    <env name="MINK_DRIVER_ARGS" value=''/>
-    <!-- Example for changing the driver args to phantomjs tests MINK_DRIVER_ARGS_PHANTOMJS value: '["http://127.0.0.1:8510"]' -->
-    <env name="MINK_DRIVER_ARGS_PHANTOMJS" value=''/>
-    <!-- Example for changing the driver args to webdriver tests MINK_DRIVER_ARGS_WEBDRIVER value: '["chrome", { "chromeOptions": { "w3c": false } }, "http://localhost:4444/wd/hub"]' For using the Firefox browser, replace "chrome" with "firefox" -->
-    <env name="MINK_DRIVER_ARGS_WEBDRIVER" value=''/>
+    <!-- <env name="MINK_DRIVER_ARGS_WEBDRIVER" value='["chrome", {"browserName":"chrome","goog:chromeOptions":{"w3c": false, "args":["--no-sandbox", "--start-maximized", "--disable-gpu", "--window-size=1600,900", "--disable-dev-shm-usage", "--disable-setuid-sandbox", "--disable-web-security", "--DNS-prefetch-disable", "--disable-translate", "--ignore-certificate-errors", "--test-type", "--disable-extensions", "--incognito", "--disable-infobars"]}}, "http://selenium:4444/wd/hub"]'/> -->
+    <env name="MINK_DRIVER_ARGS_WEBDRIVER" value='["${selenium.browser}", {"browserName":"chrome","chromeOptions":{"w3c": false, "args":["--no-sandbox", "--start-maximized", "--disable-gpu", "--window-size=1280,800", "--disable-dev-shm-usage", "--disable-setuid-sandbox", "--disable-web-security", "--DNS-prefetch-disable", "--disable-translate", "--ignore-certificate-errors", "--test-type", "--disable-extensions", "--incognito", "--disable-infobars"]}}, "${selenium.host}:${selenium.port}/wd/hub"]'/>
   </php>
   <testsuites>
-    <testsuite name="default">
-      <directory>./tests/src</directory>
+    <testsuite name="Functional">
+      <directory>./tests/src/Functional/</directory>
     </testsuite>
   </testsuites>
 </phpunit>
