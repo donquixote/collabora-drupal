@@ -121,20 +121,22 @@ You also must set the viewer for this kind of media.
 
 ### User permissions
 
-There are three levels of permissions. _Administrator_,
-_Collaborator_, and _Viewer_, in order of most privileges to the
-least. Each lesser privilege is included in the higher level.
-_Administrator_ includes _Collaborator_, and _Collaborator_ includes
-_Viewer_.
+The module introduces permissions, which can be managed at `/admin/people/permissions`.
 
-By default, the user role `administrator` is mapped to the Collabora
-Online administrator. This allow accessing the console.
+The 'Administer the Collabora instance' permission grants administrator access within the Collabora Online instance, when Collabora is used within Drupal.
+Most of the time this permission is not needed, if the Collabora instance is configured from outside of Drupal.
 
-The user role `authenticated` is the default permission for
-collaboration, i.e. edit a document with Collabora Online.
+For each media type, the module introduces two permissions:
+- (media type): Edit any media file in Collabora
+  Users with this permission are allowed to edit documents attached to a media entity of the given type, using the Collabora Online editor. 
+- (media type): Preview media file in Collabora
+  Users with this permission are allowed to preview documents attached to a media entity of the given type, using the Collabora Online editor in preview/readonly mode.
 
-The user role `anonymous` by default disallows editing and is the
-minimal permission for viewing documents in Collabora Online.
+In the current version, preview and edit access with the Collabora Online editor are checked independently of the publishing status of the respective media, and independently of the regular view or edit access on that media entity.
+
+For a consistent experience, it is recommended that a role with the edit permission should also be granted the preview permission, and that a user with any of the Collabora media permissions should also be granted permissions to view the respective media entity in Drupal.
+
+Developers can use entity access hooks to alter which users may edit or preview media files in Collabora. This would allow to grant access based on e.g. membership in a group.
 
 ### Other configuration
 
