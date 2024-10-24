@@ -33,7 +33,6 @@ function collabora_online_theme($existing, $type, $theme, $path) {
       'collabora_online' => [
           'render element' => 'children',
           'template' => 'collabora-online',
-          'path' => $path . '/templates',
           'variables' => [
               'accessToken' => 'test',
               'accessTokenTtl' => '86400',
@@ -48,7 +47,6 @@ function collabora_online_theme($existing, $type, $theme, $path) {
       'collabora_online_preview' => [
           'render element' => 'children',
           'template' => 'collabora-online-preview',
-          'path' => $path . '/templates',
           'variables' => [
               'editorUrl' => 'about:blank',
               'fileName' => '',
@@ -57,7 +55,6 @@ function collabora_online_theme($existing, $type, $theme, $path) {
       // This is the template for the complete page with embedding.
       'collabora_online_full' => [
           'template' => 'collabora-online-full',
-          'path' => $path . '/templates',
           'variables' => [
               'accessToken' => 'test',
               'accessTokenTtl' => '86400',
@@ -67,6 +64,7 @@ function collabora_online_theme($existing, $type, $theme, $path) {
               'wopiSrc' => '/wopi/files/123',
               'wopiClient' => 'https://localhost:9980/',
           ],
+          'file' => 'collabora_online.theme.inc',
       ],
   ];
 
