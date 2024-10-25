@@ -92,7 +92,6 @@ class CoolRequest {
             return;
         }
 
-
         if (!strStartsWith($wopi_client_server, $_HOST_SCHEME . '://')) {
             $this->error_code = 202;
             return;
@@ -104,15 +103,7 @@ class CoolRequest {
             return;
         }
 
-        if (\PHP_VERSION_ID < 80000) {
-            // This is deprecated and disabled by default in PHP 8.0
-            $load_entities = libxml_disable_entity_loader(true);
-        }
         $discovery_parsed = simplexml_load_string($discovery);
-        if (\PHP_VERSION_ID < 80000) {
-            // This is deprecated and disabled by default in PHP 8.0
-            libxml_disable_entity_loader($load_entities);
-        }
         if (!$discovery_parsed) {
             $this->error_code = 102;
             return;
