@@ -27,6 +27,9 @@ drupal:
     - "./vendor/bin/drush -y config-set system.performance js.preprocess 0"
     - "./vendor/bin/drush -y config-set system.logging error_level verbose"
 
+    # Install some modules that are convenient during development.
+    - "./vendor/bin/drush -y en devel admin_toolbar admin_toolbar_tools"
+
     # Install and configure Collabora Online module.
     - "./vendor/bin/drush -y en collabora_online"
     - "./vendor/bin/drush -y config-set collabora_online.settings cool.server http://collabora.test:9980/"
