@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  - push
+
+jobs:
+  tests:
+    name: Run tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install docker-compose
+        run: |
+          set -x
+          sudo apt-get update
+          sudo apt-get install -y docker-compose
+
+      - name: Start docker-compose
+        run: |
+          docker-compose up -d
+
+      - name: Tune the container
+        run: |
+          set -x
+
+          # Report before.
+          docker-compose exec -T web php --version
+          docker-compose exec -T web php --info | grep xdebug.mode
+
+          # Disable xdebug.
+          docker-compose exec -T web phpdismod xdebug
+          # Restart the web server.
+          docker-compose exec -T web /etc/init.d/php8.2-fpm restart
+
+          # Report after.
+          docker-compose exec -T web php --version
+          docker-compose exec -T web php --info | grep xdebug.mode || true
+
+      - name: Composer install
+        run: |
+          set -x
+          docker-compose exec -T web composer install --no-interaction
+
+      - name: PhpUnit
+        run: |
+          docker-compose exec -T web ./vendor/bin/phpunit -vvv --debug
