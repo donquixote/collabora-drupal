@@ -69,9 +69,15 @@ jobs:
           # Apply composer flags like '--prefer-lowest'.
           docker-compose exec -T web composer update --no-install --no-scripts ${{ matrix.composer-flags }}
 
-      - name: Composer install
+      - name: Composer install without scripts
         run: |
           set -x
+          docker-compose exec -T web composer install --no-interaction --no-scripts
+
+      - name: Composer install with scripts
+        run: |
+          set -x
+          # Run with scripts for Drupal setup, so that we get isolated reports.
           docker-compose exec -T web composer install --no-interaction
 
       - name: PhpUnit
