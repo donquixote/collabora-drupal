@@ -19,8 +19,6 @@ services:
       PHP_IDE_CONFIG: "serverName=Docker"
       # Enable step debugging for all PHP request. See ./README.md#step-debugging for more information.
       # XDEBUG_SESSION: 1
-    env_file:
-      - .env
     networks:
       default:
         aliases:
