@@ -91,4 +91,4 @@ jobs:
 
       - name: PhpUnit
         run: |
-          docker-compose exec -T web ./vendor/bin/phpunit -vvv --debug
+          docker-compose exec -T web ./vendor/bin/phpunit --debug
