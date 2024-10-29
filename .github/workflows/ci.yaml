@@ -8,8 +8,21 @@ jobs:
     name: Run tests
     runs-on: ubuntu-latest
 
+    strategy:
+      fail-fast: true
+      matrix:
+        php: [8.1, 8.2, 8.3]
+
     steps:
       - uses: actions/checkout@v4
+
+      - name: Prepare docker-compose
+        run: |
+          set -x
+          # Set the php version in docker-compose.yml.
+          sed -i -e 's/httpd-php-dev:8.[0-9]/httpd-php-dev:${{ matrix.php }}/g' docker-compose.yml
+          # Report what was changed.
+          git diff
 
       - name: Install docker-compose
         run: |
@@ -32,7 +45,7 @@ jobs:
           # Disable xdebug.
           docker-compose exec -T web phpdismod xdebug
           # Restart the web server.
-          docker-compose exec -T web /etc/init.d/php8.2-fpm restart
+          docker-compose exec -T web /etc/init.d/php${{ matrix.php }}-fpm restart
 
           # Report after.
           docker-compose exec -T web php --version
