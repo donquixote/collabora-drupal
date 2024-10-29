@@ -51,6 +51,9 @@ drupal:
 
     - "./vendor/bin/drush -y config-set jwt.config key_id collabora"
 
+    # Configure media module.
+    - "./vendor/bin/drush -y config-set media.settings standalone_url 1"
+
 selenium:
   host: 'http://selenium'
   port: '4444'
