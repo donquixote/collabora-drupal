@@ -51,8 +51,16 @@ drupal:
 
     - "./vendor/bin/drush -y config-set jwt.config key_id collabora"
 
+selenium:
+  host: 'http://selenium'
+  port: '4444'
+  browser: chrome
+
 commands:
   drupal:site-setup:
     - { task: "run", command: "drupal:symlink-project" }
     - { task: "run", command: "drupal:drush-setup" }
     - { task: "run", command: "drupal:settings-setup" }
+    - { task: "run", command: "setup:phpunit" }
+  setup:phpunit:
+    - { task: "process", source: "phpunit.xml.dist", destination: "phpunit.xml" }
