@@ -51,9 +51,15 @@ jobs:
           docker-compose exec -T web php --version
           docker-compose exec -T web php --info | grep xdebug.mode || true
 
-      - name: Composer install
+      - name: Composer install without scripts
         run: |
           set -x
+          docker-compose exec -T web composer install --no-interaction --no-scripts
+
+      - name: Composer install with scripts
+        run: |
+          set -x
+          # Run with scripts for Drupal setup, so that we get isolated reports.
           docker-compose exec -T web composer install --no-interaction
 
       - name: Drupal site install
