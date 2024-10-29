@@ -3,3 +3,4 @@
 /web/
 /.editorconfig
 /.gitattributes
+/phpunit.xml
