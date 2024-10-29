@@ -80,6 +80,10 @@ jobs:
           # Run with scripts for Drupal setup, so that we get isolated reports.
           docker-compose exec -T web composer install --no-interaction
 
+      - name: Drupal site install
+        run: |
+          docker-compose exec -T web ./vendor/bin/run drupal:site-install
+
       - name: PhpUnit
         run: |
           docker-compose exec -T web ./vendor/bin/phpunit -vvv --debug
