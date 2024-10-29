@@ -15,6 +15,7 @@
     },
     "require-dev": {
         "composer/installers": "^2",
+        "cweagans/composer-patches": "~1.0",
         "drupal/core-composer-scaffold": "^10.3.6",
         "drupal/core-dev": "^10.3.6",
         "drupal/core-recommended": "^10.3.6",
@@ -42,12 +43,18 @@
         "installer-paths": {
             "web/core": ["type:drupal-core"],
             "web/modules/contrib/{$name}": ["type:drupal-module"]
+        },
+        "patches": {
+            "drupal/jwt": {
+                "JwtTranscoder::$algorithmType must not be accessed before initialization (https://www.drupal.org/project/jwt/issues/3409096)": "patches/jwt-3409096.diff"
+            }
         }
     },
     "config": {
         "sort-packages": true,
         "allow-plugins": {
             "composer/installers": true,
+            "cweagans/composer-patches": true,
             "drupal/core-composer-scaffold": true,
             "php-http/discovery": false,
             "phpstan/extension-installer": true,
