@@ -49,6 +49,11 @@ drupal:
     # Configure media module.
     - "./vendor/bin/drush -y config-set media.settings standalone_url 1"
 
+    # Create a media type.
+    # This needs the 'config' module enabled for the '--partial' option.
+    - "./vendor/bin/drush -y en config"
+    - "./vendor/bin/drush -y config-import --partial --source=../demo-config"
+
 selenium:
   host: 'http://selenium'
   port: '4444'
