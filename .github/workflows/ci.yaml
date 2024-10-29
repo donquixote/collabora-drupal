@@ -18,7 +18,7 @@ jobs:
             drupal-constraint: '^11.0.5'
           - php: 8.2
             drupal-constraint: '^11.0.5'
-        composer-flags: ['']
+        composer-flags: ['', '--prefer-lowest']
 
     steps:
       - uses: actions/checkout@v4
