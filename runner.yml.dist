@@ -49,10 +49,17 @@ drupal:
     # Configure media module.
     - "./vendor/bin/drush -y config-set media.settings standalone_url 1"
 
-    # Create a media type.
-    # This needs the 'config' module enabled for the '--partial' option.
-    - "./vendor/bin/drush -y en config"
-    - "./vendor/bin/drush -y config-import --partial --source=../demo-config"
+    # Create a symlink to make the test module temporarily available.
+    # An alternative would be to set 'extension_discovery_scan_tests' in
+    # settings.php, but this would make _all_ test modules available for
+    # install, instead of just this one.
+    - "ln -s ../../../tests/modules/collabora_online_test web/modules/custom/"
+    # Enable the test module to import its configuration.
+    - "./vendor/bin/drush -y en collabora_online_test"
+    # Uninstall the test module, it is not needed anymore.
+    - "./vendor/bin/drush -y pmu collabora_online_test"
+    # Clean up the symlink.
+    - "rm web/modules/custom/collabora_online_test"
 
 selenium:
   host: 'http://selenium'
