@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\collabora_online\ExistingSiteJavascript;
 
+use Behat\Mink\Element\Element;
+use Behat\Mink\Element\NodeElement;
 use Drupal\file\Entity\File;
 use Drupal\media\Entity\Media;
 use Drupal\media\MediaInterface;
@@ -33,19 +35,28 @@ class CollaboraIntegrationTest extends ExistingSiteSelenium2DriverTestBase {
         $this->drupalGet('/cool/view/' . $media->id());
         $assert_session = $this->assertSession();
         $this->getSession()->switchToIFrame('collabora-online-viewer');
-        $assert_session->waitForElement('css', 'canvas#document-canvas', 2000);
-        $assert_session->elementExists('css', 'canvas#document-canvas');
-        // Wait another second to let all UI elements load.
-        sleep(1);
+        // Wait until different parts of the editor are loaded and have the
+        // expected text or values.
+        $this->waitForRequiredElement('css', 'canvas#document-canvas', 2000);
         // Make sure the correct document was opened.
+        // Check the document name at the top of the editor.
         $this->assertSame(
             'shopping-list.txt',
-            $assert_session->elementExists('css', 'input#document-name-input')->getValue(),
+            // Even when the element exists, it might not have the correct value
+            // yet.
+            $this->waitForRequiredElement('css', 'input#document-name-input')->waitFor(
+                1000,
+                fn (Element $element) => $element->getValue(),
+            ),
         );
         // The document text is in a canvas element, so instead we compare the
         // word count and character count.
         $this->assertSame(
             '2 words, 18 characters',
+            $this->waitForRequiredElement('css', 'div#StateWordCount')->waitFor(
+                1000,
+                fn (Element $element) => $element->getText(),
+            ),
             $assert_session->elementExists('css', 'div#StateWordCount')->getText(),
         );
     }
@@ -84,6 +95,24 @@ class CollaboraIntegrationTest extends ExistingSiteSelenium2DriverTestBase {
         $media->save();
         $this->markEntityForCleanup($media);
         return $media;
+    }
+
+    /**
+     * Waits for an element to appear, and asserts its existence.
+     *
+     * @param string $selector
+     *   Selector type, e.g. 'css'.
+     * @param string $locator
+     *   Selector string.
+     * @param string $timeout
+     *   (Optional) Timeout in milliseconds, defaults to 10000.
+     *
+     * @return \Behat\Mink\Element\NodeElement
+     *   The element found for the selector.
+     */
+    protected function waitForRequiredElement($selector, $locator, $timeout = 10000): NodeElement {
+        $this->assertSession()->waitForElement($selector, $locator, $timeout);
+        return $this->assertSession()->elementExists($selector, $locator);
     }
 
 }
