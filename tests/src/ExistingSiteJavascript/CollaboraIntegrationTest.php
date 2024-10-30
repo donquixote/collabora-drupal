@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\collabora_online\ExistingSiteJavascript;
 
-use Behat\Mink\Element\Element;
-use Behat\Mink\Element\NodeElement;
 use Drupal\file\Entity\File;
 use Drupal\media\Entity\Media;
 use Drupal\media\MediaInterface;
@@ -33,32 +31,49 @@ class CollaboraIntegrationTest extends ExistingSiteSelenium2DriverTestBase {
         $this->drupalLogin($user);
         $media = $this->createDocumentMedia('Shopping list', 'shopping-list', 'Chocolate, pickles');
         $this->drupalGet('/cool/view/' . $media->id());
-        $assert_session = $this->assertSession();
         $this->getSession()->switchToIFrame('collabora-online-viewer');
-        // Wait until different parts of the editor are loaded and have the
-        // expected text or values.
-        $this->waitForRequiredElement('css', 'canvas#document-canvas', 2000);
+
+        $this->waitUntilNoMessage(function (): string|null {
+            $canvas = $this->getCurrentPage()->find('css', 'canvas#document-canvas');
+            if (!$canvas) {
+                return 'Canvas element not found.';
+            }
+            return NULL;
+        });
+
         // Make sure the correct document was opened.
         // Check the document name at the top of the editor.
-        $this->assertSame(
-            'shopping-list.txt',
-            // Even when the element exists, it might not have the correct value
-            // yet.
-            $this->waitForRequiredElement('css', 'input#document-name-input')->waitFor(
-                1000,
-                fn (Element $element) => $element->getValue(),
-            ),
-        );
+        // Wait until the document name element appears and has non-empty text.
+        $this->waitUntilNoMessage(function(): string|null {
+            // Get a fresh element reference in each iteration, to avoid a
+            // StaleElementReference exception.
+            $element = $this->getCurrentPage()->find('css', 'input#document-name-input');
+            if (!$element) {
+                return 'Document name element not found.';
+            }
+            $text = $element->getValue();
+            if (!$text) {
+                return 'Document name is empty: ' . var_export($text, TRUE);
+            }
+            $this->assertSame('shopping-list.txt', $text);
+            return NULL;
+        });
+
         // The document text is in a canvas element, so instead we compare the
         // word count and character count.
-        $this->assertSame(
-            '2 words, 18 characters',
-            $this->waitForRequiredElement('css', 'div#StateWordCount')->waitFor(
-                1000,
-                fn (Element $element) => $element->getText(),
-            ),
-            $assert_session->elementExists('css', 'div#StateWordCount')->getText(),
-        );
+        // Wait until the word counter element appears and has a value.
+        $this->waitUntilNoMessage(function (): string|null {
+            $element = $this->getCurrentPage()->find('css', 'div#StateWordCount');
+            if (!$element) {
+                return 'Word count element not found.';
+            }
+            $count_string = $element->getText();
+            if (!$count_string) {
+                return 'Word count string is empty.';
+            }
+            $this->assertSame('2 words, 18 characters', $count_string);
+            return NULL;
+        });
     }
 
     /**
@@ -98,21 +113,27 @@ class CollaboraIntegrationTest extends ExistingSiteSelenium2DriverTestBase {
     }
 
     /**
-     * Waits for an element to appear, and asserts its existence.
+     * Waits until a callback returns NULL.
      *
-     * @param string $selector
-     *   Selector type, e.g. 'css'.
-     * @param string $locator
-     *   Selector string.
-     * @param string $timeout
-     *   (Optional) Timeout in milliseconds, defaults to 10000.
-     *
-     * @return \Behat\Mink\Element\NodeElement
-     *   The element found for the selector.
+     * @param callable(): (string|null) $callback
+     *   Callback that is called in each iteration.
+     *   It should return NULL to wait no longer, or a string message to wait
+     *   and start another iteration.
+     * @param int|float $max_seconds
+     *   Maximum seconds of wait time.
      */
-    protected function waitForRequiredElement($selector, $locator, $timeout = 10000): NodeElement {
-        $this->assertSession()->waitForElement($selector, $locator, $timeout);
-        return $this->assertSession()->elementExists($selector, $locator);
+    protected function waitUntilNoMessage(callable $callback, int|float $max_seconds = 10): void {
+        $start = microtime(TRUE);
+        $end = $start + $max_seconds;
+        do {
+            $message = $callback();
+            if ($message === NULL) {
+                return;
+            }
+            usleep(10000);
+        } while (microtime(TRUE) < $end);
+
+        $this->fail('Timeout: ' . $message);
     }
 
 }
