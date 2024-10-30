@@ -7,6 +7,7 @@ namespace Drupal\Tests\collabora_online\ExistingSiteJavascript;
 use Drupal\file\Entity\File;
 use Drupal\media\Entity\Media;
 use Drupal\media\MediaInterface;
+use WebDriver\Exception\StaleElementReference;
 use weitzman\DrupalTestTraits\ExistingSiteSelenium2DriverTestBase;
 
 /**
@@ -62,18 +63,22 @@ class CollaboraIntegrationTest extends ExistingSiteSelenium2DriverTestBase {
         // The document text is in a canvas element, so instead we compare the
         // word count and character count.
         // Wait until the word counter element appears and has a value.
-        $this->waitUntilNoMessage(function (): string|null {
-            $element = $this->getCurrentPage()->find('css', 'div#StateWordCount');
-            if (!$element) {
-                return 'Word count element not found.';
-            }
-            $count_string = $element->getText();
-            if (!$count_string) {
-                return 'Word count string is empty.';
-            }
-            $this->assertSame('2 words, 18 characters', $count_string);
-            return NULL;
-        });
+        $this->waitUntilNoMessage(
+            fn (): string|null => $this->retryIfStaleElement(
+                function (): string|null {
+                    $element = $this->getCurrentPage()->find('css', 'div#StateWordCount');
+                    if (!$element) {
+                        return 'Word count element not found.';
+                    }
+                    $count_string = $element->getText();
+                    if (!$count_string) {
+                        return 'Word count string is empty.';
+                    }
+                    $this->assertSame('2 words, 18 characters', $count_string);
+                    return NULL;
+                },
+            ),
+        );
     }
 
     /**
@@ -110,6 +115,32 @@ class CollaboraIntegrationTest extends ExistingSiteSelenium2DriverTestBase {
         $media->save();
         $this->markEntityForCleanup($media);
         return $media;
+    }
+
+    /**
+     * Calls a callback until it does not throw a StaleElementReference.
+     *
+     * @template T
+     *
+     * @param callable(): T $callback
+     *   Callback to call and retry.
+     * @param int $max_calls
+     *   Maximum number of times the callback should be called.
+     *
+     * @return T
+     *   Return value from the last call to the callback.
+     */
+    protected function retryIfStaleElement(callable $callback, int $max_calls = 10): mixed {
+        for ($i = 1; $i < $max_calls; ++$i) {
+            try {
+                return $callback();
+            }
+            catch (StaleElementReference) {
+                // Next iteration.
+            }
+        }
+        // Call it one more time, without try/catch.
+        return $callback();
     }
 
     /**
