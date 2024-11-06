@@ -37,7 +37,7 @@ drupal:
     - "./vendor/bin/drush -y config-set collabora_online.settings cool.access_token_ttl 86400"
     - "./vendor/bin/drush -y config-set collabora_online.settings cool.disable_cert_check 1"
     # Sub-modules.
-    - "./vendor/bin/drush -y en collabora_online_group"
+    #- "./vendor/bin/drush -y en collabora_online_group"
 
     # Create the JWT key.
     - |
