@@ -8,6 +8,7 @@
   <php>
     <ini name="error_reporting" value="32767"/>
     <ini name="memory_limit" value="-1"/>
+    <env name="SYMFONY_DEPRECATIONS_HELPER" value="disabled"/>
 
     <env name="SIMPLETEST_IGNORE_DIRECTORIES" value="vendor,node_modules,${drupal.root}"/>
     <env name="SIMPLETEST_BASE_URL" value="${drupal.base_url}"/>
@@ -21,6 +22,7 @@
   <testsuites>
     <testsuite name="Collabora Drupal">
       <directory>./tests/src/</directory>
+      <directory>./modules/**/tests/src/</directory>
     </testsuite>
   </testsuites>
 </phpunit>
