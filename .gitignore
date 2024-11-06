@@ -1,1 +1,6 @@
 /vendor/
+/composer.lock
+/web/
+/.editorconfig
+/.gitattributes
+/phpunit.xml

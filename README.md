@@ -4,15 +4,21 @@ Collabora Online connector for Drupal
 This module integrate Collabora Online to Drupal. You can use it to
 view and edit documents from within Drupal.
 
-Requirements:
+
+Installation
+------------
+
+_This section describes how to install the module in an existing Drupal website project.
+For a local demo or test installation, [see below](#development--demo-installation)._
+
+### Requirements
 
 - Collabora Online server installed and running.
 - Drupal 10 (tested on 10.1), maybe compatible with 9.
 - JWT and Media are set as dependencies for the module and are
   necessary.
 
-Installation
-------------
+### Installation steps
 
 See the [Drupal guide to install
 modules](https://www.drupal.org/docs/extending-drupal/installing-modules).
@@ -32,24 +38,85 @@ the list you should be able to find _Collabora Online_ and enable it.
 
 From there you can access the module specific configuration.
 
-### Development installation
+Please check the "Configuration" section below!
 
-If you intend to develop or contribute to the module, you can install
-directly from git.
 
-In your Drupal setup, in the directory `modules/contrib` extract the
-module into a directory `collabora_online`.
+Development / demo installation
+-------------------------------
 
-You can get it directly with git:
+A local demo and testing instance can be installed using docker-compose.
+
+### Requirements
+
+- [Docker](https://www.docker.com/get-docker)
+- [Docker Compose](https://docs.docker.com/compose/)
+
+### Installation steps
+
+First, git clone the repository into a new directory, outside of any other Drupal project.
 
 ```sh
 git clone https://github.com/CollaboraOnline/collabora-drupal.git collabora_online
 ```
 
+Then run the following steps.
+
+```sh
+docker-compose up -d
+
+docker-compose exec web composer install
+docker-compose exec web ./vendor/bin/run drupal:site-install
+```
+
+Optionally, generate an admin login link.
+```
+docker-compose exec web ./vendor/bin/drush uli
+```
+
+The last command will output a link to the local website, with login for the admin account.
+
+Otherwise, the local website will be available at http://web.test:8080/. The administrator login is 'admin'/'admin'.
+
+### Configuration.
+
+The demo instance is already fully configured.
+
+See "Configuration" for optional customization.
+
+### Using the demo instance
+
+Minimal steps to see the editor in action:
+- Log in as 'admin'/'admin'.
+  - An menu with administrative links should appear at the top.
+- Open "Content" > "Media" > "Add media" > "Document".
+- Upload a simple *.docx or *.odt file, fill the required fields, and save.
+- Back in the list of "Media entities" (`/admin/content/media`), click the media title.
+- In the media page (e.g. `/media/1`), click the "View" button.
+  - A panel with a Collabora editor in read-only mode should appear.
+- Go back to "Content" > "Media" (`/admin/content/media`).
+- Click the dropdown icon in the "Operations" column.
+- Click "Edit in Collabora Online".
+  - A Collabora editor should appear in a new page.
+- Edit the document, then click the "Save" icon in the top left.
+
+Advanced usage:
+- Configure roles and permissions as in "User permissions" section below.
+- Create a non-admin user with sufficient roles, login, 
+
+### Running the tests
+
+To run the phpunit tests:
+
+```bash
+docker-compose exec web ./vendor/bin/phpunit
+```
+
+
 Configuration
 -------------
 
-There are few step necessary in Drupal to configure the integration.
+_The configuration steps below are necessary to use the module in an existing Drupal website.
+In the local development/demo installation, the manual configuration is optional._
 
 Log into Drupal as an admin.
 

@@ -1,0 +1,76 @@
+drupal:
+  root: web
+  base_url: 'http://web.test:8080'
+  site:
+    profile: minimal
+    name: Collabora Drupal
+  database:
+    host: "mysql"
+    port: "3306"
+    name: "drupal"
+    user: "root"
+    password: ""
+  account:
+    name: admin
+    password: admin
+  settings:
+    settings:
+      # Allow the test module to be installed.
+      extension_discovery_scan_tests: true
+  post_install:
+    - "./vendor/bin/drush -y theme:enable olivero"
+    - "./vendor/bin/drush -y theme:enable claro"
+    - "./vendor/bin/drush -y config-set system.theme default olivero"
+    - "./vendor/bin/drush -y config-set system.theme admin claro"
+    - "./vendor/bin/drush -y en toolbar field_ui"
+
+    # Switch relevant settings to development mode.
+    - "./vendor/bin/drush -y config-set system.performance css.preprocess 0"
+    - "./vendor/bin/drush -y config-set system.performance js.preprocess 0"
+    - "./vendor/bin/drush -y config-set system.logging error_level verbose"
+
+    # Install and configure Collabora Online module.
+    - "./vendor/bin/drush -y en collabora_online"
+    - "./vendor/bin/drush -y config-set collabora_online.settings cool.server http://collabora.test:9980/"
+    - "./vendor/bin/drush -y config-set collabora_online.settings cool.wopi_base http://web.test:8080"
+    - "./vendor/bin/drush -y config-set collabora_online.settings cool.key_id collabora"
+    - "./vendor/bin/drush -y config-set collabora_online.settings cool.access_token_ttl 86400"
+    - "./vendor/bin/drush -y config-set collabora_online.settings cool.disable_cert_check 1"
+
+    # Create the JWT key.
+    - |
+      ./vendor/bin/drush key-save \
+        collabora \
+        'wwHYDJCstKi7pBfwtiV4y5iEDtnGaS+ALk2OR7DO5EZxSYkcnak5b0v1ZvdlpFXKP+RGijZvh7r+geV4SHJ4kw==' \
+        --label=Collabora \
+        --key-type=jwt_hs \
+        --key-provider=config \
+        --key-input=text_field \
+        --key-type-settings='{"algorithm": "HS256" }'
+
+    - "./vendor/bin/drush -y config-set jwt.config key_id collabora"
+
+    # Configure media module.
+    - "./vendor/bin/drush -y config-set media.settings standalone_url 1"
+
+    # Enable the test module to import its configuration.
+    # This is needed both for manual testing and evaluation, and for the
+    # ExistingSite tests.
+    - "./vendor/bin/drush -y en collabora_online_test"
+    # In the current version, the test module provides nothing beyond
+    # configuration, and can be uninstalled after it has done its job.
+    - "./vendor/bin/drush -y pmu collabora_online_test"
+
+selenium:
+  host: 'http://selenium'
+  port: '4444'
+  browser: chrome
+
+commands:
+  drupal:site-setup:
+    - { task: "run", command: "drupal:symlink-project" }
+    - { task: "run", command: "drupal:drush-setup" }
+    - { task: "run", command: "drupal:settings-setup" }
+    - { task: "run", command: "setup:phpunit" }
+  setup:phpunit:
+    - { task: "process", source: "phpunit.xml.dist", destination: "phpunit.xml" }
