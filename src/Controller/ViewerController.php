@@ -62,7 +62,7 @@ class ViewerController extends ControllerBase {
      * @return \Symfony\Component\HttpFoundation\Response
      *   Response suitable for iframe, without the usual page decorations.
      */
-    public function editor(Media $media, $edit = false) {
+    public function editor(Media $media, $edit = FALSE) {
         $options = [
             'closebutton' => 'true',
         ];

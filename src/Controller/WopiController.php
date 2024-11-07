@@ -55,7 +55,7 @@ class WopiController extends ControllerBase {
         $token = $request->query->get('access_token');
 
         $jwt_payload = CoolUtils::verifyTokenForId($token, $id);
-        if ($jwt_payload == null) {
+        if ($jwt_payload == NULL) {
             return static::permissionDenied();
         }
 
@@ -123,7 +123,7 @@ class WopiController extends ControllerBase {
         $token = $request->query->get('access_token');
 
         $jwt_payload = CoolUtils::verifyTokenForId($token, $id);
-        if ($jwt_payload == null) {
+        if ($jwt_payload == NULL) {
             return static::permissionDenied();
         }
 
@@ -162,7 +162,7 @@ class WopiController extends ControllerBase {
         $exitsave = $request->headers->get('x-cool-wopi-isexitsave') == 'true';
 
         $jwt_payload = CoolUtils::verifyTokenForId($token, $id);
-        if ($jwt_payload == null || !$jwt_payload->wri) {
+        if ($jwt_payload == NULL || !$jwt_payload->wri) {
             return static::permissionDenied();
         }
 
