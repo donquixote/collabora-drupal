@@ -29,6 +29,7 @@ class CoolUtils {
 
     /** Get the file based on the entity id */
     public static function getFileById($id) {
+        /** @var \Drupal\media\MediaInterface|null $media */
         $media = \Drupal::entityTypeManager()->getStorage('media')->load($id);
         return CoolUtils::getFile($media);
     }

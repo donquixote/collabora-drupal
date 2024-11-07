@@ -43,6 +43,7 @@ class CoolPreview extends EntityReferenceFormatterBase {
      * {@inheritdoc}
      */
     public function viewElements(FieldItemListInterface $items, $langcode) {
+        /** @var \Drupal\Core\Field\EntityReferenceFieldItemListInterface $items */
         $elements = [];
         $media = $items->getEntity();
         if (!$media instanceof MediaInterface) {
