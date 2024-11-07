@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright the Collabora Online contributors.
  *
@@ -117,4 +118,5 @@ class CoolRequest {
 
         return $this->wopi_src;
     }
+
 }

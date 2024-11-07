@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright the Collabora Online contributors.
  *
@@ -100,4 +101,5 @@ class ConfigForm extends ConfigFormBase {
 
         parent::submitForm($form, $form_state);
   }
+
 }
