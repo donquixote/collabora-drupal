@@ -56,7 +56,7 @@ class ViewerController extends ControllerBase {
 
         $render_array = CoolUtils::getViewerRender($media, $edit, $options);
 
-        if (!$render_array ||  array_key_exists('error', $render_array)) {
+        if (!$render_array || array_key_exists('error', $render_array)) {
             $error_msg = 'Viewer error: ' . ($render_array ? $render_array['error'] : 'NULL');
             \Drupal::logger('cool')->error($error_msg);
             return new Response(
