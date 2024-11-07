@@ -18,13 +18,13 @@ namespace Drupal\collabora_online\Cool;
  * Return `false` in case of error.
  */
 function getDiscovery($server) {
-    $discovery_url = $server.'/hosting/discovery';
+    $discovery_url = $server . '/hosting/discovery';
 
     $default_config = \Drupal::config('collabora_online.settings');
     if ($default_config === null) {
         return false;
     }
-    $disable_checks = (bool)$default_config->get('cool')['disable_cert_check'];
+    $disable_checks = (bool) $default_config->get('cool')['disable_cert_check'];
 
     $stream_context = stream_context_create([
         'ssl' => [
