@@ -67,7 +67,8 @@ class CoolUtils {
             if ($payload && ($payload->fid == $id) && ($payload->exp >= gettimeofday(true))) {
                 return $payload;
             }
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             \Drupal::logger('cool')->error($e->getMessage());
         }
         return null;
@@ -142,7 +143,8 @@ class CoolUtils {
     public static function getEditorUrl(Media $media, $can_write = false) {
         if ($can_write) {
             return Url::fromRoute('collabora-online.edit', ['media' => $media->id()]);
-        } else {
+        }
+        else {
             return Url::fromRoute('collabora-online.view', ['media' => $media->id()]);
         }
     }
