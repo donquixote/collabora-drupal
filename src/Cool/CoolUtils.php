@@ -58,7 +58,7 @@ class CoolUtils {
     public static function verifyTokenForId(
         #[\SensitiveParameter]
         string $token,
-        $id
+        $id,
     ) {
         $key = static::getKey();
         try {
