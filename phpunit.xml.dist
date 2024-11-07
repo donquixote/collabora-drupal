@@ -21,6 +21,7 @@
   <testsuites>
     <testsuite name="Collabora Drupal">
       <directory>./tests/src/</directory>
+      <directory>./modules/**/tests/src/</directory>
     </testsuite>
   </testsuites>
 </phpunit>
