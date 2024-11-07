@@ -73,7 +73,7 @@ class CoolUtils {
      * @return string
      *   The key value.
      */
-    static function getKey() {
+    public static function getKey() {
         $default_config = \Drupal::config('collabora_online.settings');
         $key_id = $default_config->get('cool')['key_id'];
 

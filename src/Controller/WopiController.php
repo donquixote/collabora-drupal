@@ -32,7 +32,7 @@ class WopiController extends ControllerBase {
      * @return \Symfony\Component\HttpFoundation\Response
      *   Response object.
      */
-    static function permissionDenied(): Response {
+    public static function permissionDenied(): Response {
         return new Response(
             'Authentication failed.',
             Response::HTTP_FORBIDDEN,
@@ -51,7 +51,7 @@ class WopiController extends ControllerBase {
      * @return \Symfony\Component\HttpFoundation\Response
      *   The response with file contents.
      */
-    function wopiCheckFileInfo(string $id, Request $request) {
+    public function wopiCheckFileInfo(string $id, Request $request) {
         $token = $request->query->get('access_token');
 
         $jwt_payload = CoolUtils::verifyTokenForId($token, $id);
@@ -119,7 +119,7 @@ class WopiController extends ControllerBase {
      * @return \Symfony\Component\HttpFoundation\Response
      *   The response with file contents.
      */
-    function wopiGetFile(string $id, Request $request) {
+    public function wopiGetFile(string $id, Request $request) {
         $token = $request->query->get('access_token');
 
         $jwt_payload = CoolUtils::verifyTokenForId($token, $id);
@@ -154,7 +154,7 @@ class WopiController extends ControllerBase {
      * @return \Symfony\Component\HttpFoundation\Response
      *   The response.
      */
-    function wopiPutFile(string $id, Request $request) {
+    public function wopiPutFile(string $id, Request $request) {
         $token = $request->query->get('access_token');
         $timestamp = $request->headers->get('x-cool-wopi-timestamp');
         $modified_by_user = $request->headers->get('x-cool-wopi-ismodifiedbyuser') == 'true';
