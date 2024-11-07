@@ -12,9 +12,13 @@
 namespace Drupal\collabora_online\Cool;
 
 /**
- * Get the discovery XML content
+ * Gets the contents of discovery.xml from the Collabora server.
  *
- * Return `false` in case of error.
+ * @param string $server
+ *   Url of the Collabora Online server.
+ *
+ * @return string|false
+ *   The full contents of discovery.xml, or FALSE on failure.
  */
 function getDiscovery($server) {
     $discovery_url = $server.'/hosting/discovery';
@@ -34,6 +38,19 @@ function getDiscovery($server) {
     return $res;
 }
 
+/**
+ * Extracts a WOPI url from the parsed discovery.xml.
+ *
+ * @param \SimpleXMLElement|null|false $discovery_parsed
+ *   Parsed contents from discovery.xml from the Collabora server.
+ *   Currently, NULL or FALSE are supported too, but lead to NULL return value.
+ * @param string $mimetype
+ *   MIME type for which to fetch the WOPI url. E.g. 'text/plain'.
+ *
+ * @return mixed|null
+ *   WOPI url as configured for this MIME type in discovery.xml, or NULL if none
+ *   was found for the given MIME type.
+ */
 function getWopiSrcUrl($discovery_parsed, $mimetype) {
     if ($discovery_parsed === null || $discovery_parsed == false) {
         return null;
@@ -45,13 +62,34 @@ function getWopiSrcUrl($discovery_parsed, $mimetype) {
     return null;
 }
 
+/**
+ * Checks if a string starts with another string.
+ *
+ * @param string $s
+ *   Haystack.
+ * @param string $ss
+ *   Needle.
+ *
+ * @return bool
+ *   TRUE if $ss is a prefix of $s.
+ *
+ * @see str_starts_with()
+ */
 function strStartsWith($s, $ss) {
     $res = strrpos($s, $ss);
     return !is_bool($res) && $res == 0;
 }
 
+/**
+ * Helper class to fetch a WOPI client url.
+ */
 class CoolRequest {
 
+    /**
+     * Error code from last attempt to fetch the client WOPI url.
+     *
+     * @var int
+     */
     private $error_code;
 
     const ERROR_MSG = [
@@ -65,18 +103,37 @@ class CoolRequest {
         204 => 'Warning! You have to specify the scheme protocol too (http|https) for the server address.'
     ];
 
+    /**
+     * The WOPI url that was last fetched, or '' as initial value.
+     *
+     * @var int
+     */
     private $wopi_src;
 
+    /**
+     * Constructor.
+     */
     public function __construct() {
         $this->error_code = 0;
         $this->wopi_src = '';
     }
 
+    /**
+     * Gets an error string from the last attempt to fetch the WOPI url.
+     *
+     * @return string
+     *   Error string containing int error code and a message.
+     */
     public function errorString() {
         return $this->error_code . ': ' . static::ERROR_MSG[$this->error_code];
     }
 
-    /** Return the wopi client URL */
+    /**
+     * Gets the URL for the WOPI client.
+     *
+     * @return string|null
+     *   The WOPI client url, or NULL on failure.
+     */
     public function getWopiClientURL() {
         $_HOST_SCHEME = isset($_SERVER['HTTPS']) ? 'https' : 'http';
         $default_config = \Drupal::config('collabora_online.settings');

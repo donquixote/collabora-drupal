@@ -39,6 +39,17 @@ class WopiController extends ControllerBase {
         );
     }
 
+    /**
+     * Handles the WOPI 'info' request for a media entity.
+     *
+     * @param string $id
+     *   Media id from url.
+     * @param \Symfony\Component\HttpFoundation\Request $request
+     *   Request object with query parameters.
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     *   The response with file contents.
+     */
     function wopiCheckFileInfo(string $id, Request $request) {
         $token = $request->query->get('access_token');
 
@@ -96,6 +107,17 @@ class WopiController extends ControllerBase {
         return $response;
     }
 
+    /**
+     * Handles the wopi "content" request for a media entity.
+     *
+     * @param string $id
+     *   Media id from url.
+     * @param \Symfony\Component\HttpFoundation\Request $request
+     *   Request object with query parameters.
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     *   The response with file contents.
+     */
     function wopiGetFile(string $id, Request $request) {
         $token = $request->query->get('access_token');
 
@@ -120,6 +142,17 @@ class WopiController extends ControllerBase {
         return $response;
     }
 
+    /**
+     * Handles the wopi "save" request for a media entity..
+     *
+     * @param string $id
+     *   Media id from url.
+     * @param \Symfony\Component\HttpFoundation\Request $request
+     *   Request object with headers, query parameters and payload.
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     *   The response.
+     */
     function wopiPutFile(string $id, Request $request) {
         $token = $request->query->get('access_token');
         $timestamp = $request->headers->get('x-cool-wopi-timestamp');
@@ -213,11 +246,15 @@ class WopiController extends ControllerBase {
     /**
      * The WOPI entry point.
      *
-     * action: 'info', 'content' or 'save'.
-     * id: the ID of the media.
-     * request: The request as originating.
+     * @param string $action
+     *   One of 'info', 'content' or 'save', depending with path is visited.
+     * @param string $id
+     *   Media id from url.
+     * @param \Symfony\Component\HttpFoundation\Request $request
+     *   Request object for headers and query parameters.
      *
-     * @return Response
+     * @return \Symfony\Component\HttpFoundation\Response
+     *   Response to be consumed by Collabora Online.
      */
     public function wopi(string $action, string $id, Request $request) {
         $returnCode = Response::HTTP_BAD_REQUEST;

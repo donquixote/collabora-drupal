@@ -23,10 +23,18 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class ViewerController extends ControllerBase {
 
+    /**
+     * The renderer service.
+     *
+     * @var \Drupal\Core\Render\RendererInterface
+     */
     private $renderer;
 
     /**
      * The controller constructor.
+     *
+     * @param \Drupal\Core\Render\RendererInterface $renderer
+     *   The renderer service.
      */
     public function __construct(RendererInterface $renderer) {
         $this->renderer = $renderer;
@@ -44,9 +52,14 @@ class ViewerController extends ControllerBase {
     /**
      * Returns a raw page for the iframe embed.
      *
-     * Set edit to true for an editor.
+     * @param \Drupal\media\Entity\Media $media
+     *   Media entity.
+     * @param bool $edit
+     *   TRUE to open Collabora Online in edit mode.
+     *   FALSE to open Collabora Online in readonly mode.
      *
-     * @return Response
+     * @return \Symfony\Component\HttpFoundation\Response
+     *   Response suitable for iframe, without the usual page decorations.
      */
     public function editor(Media $media, $edit = false) {
         $options = [
