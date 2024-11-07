@@ -12,6 +12,7 @@
 use Drupal\collabora_online\Cool\CoolUtils;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
+use Drupal\Core\Access\AccessResultReasonInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\media\MediaInterface;
@@ -123,26 +124,55 @@ function collabora_online_entity_operation(EntityInterface $entity) {
  * Checks access for the new media operations provided by this module.
  */
 function collabora_online_media_access(MediaInterface $media, string $operation, AccountInterface $account): AccessResultInterface {
-    $type = $media->bundle();
+    // Use switch () to align with other entity access hooks.
     switch ($operation) {
         case 'preview in collabora':
-            return AccessResult::allowedIfHasPermission($account, "preview $type in collabora");
-
         case 'edit in collabora':
-            if ($account->hasPermission("edit any $type in collabora")) {
-                return AccessResult::allowed()->cachePerPermissions();
-            }
-            if ($account->hasPermission("edit own $type in collabora")) {
-                // Use '==' because Drupal sometimes loads integers as strings.
-                $is_owner = ($account->id() && $account->id() == $media->getOwnerId());
-                return AccessResult::allowedIf($is_owner)
-                    ->cachePerPermissions()
-                    ->cachePerUser()
-                    ->addCacheableDependency($media);
-            }
-            return AccessResult::neutral()->cachePerPermissions();
+            break;
 
         default:
             return AccessResult::neutral();
     }
+
+    // Both edit and preview require regular media view access.
+    $media_view_access = $media->access('view', $account, TRUE);
+    if (!$media_view_access->isAllowed()) {
+        $reason = "Media 'view' access denied.";
+        if ($media_view_access instanceof AccessResultReasonInterface) {
+            $media_view_reason = $media_view_access->getReason();
+            if ($media_view_reason !== NULL) {
+                $reason = "Media 'view' access denied: $media_view_reason";
+            }
+        }
+        return AccessResult::forbidden($reason)
+            ->addCacheableDependency($media_view_access);
+    }
+
+    $type = $media->bundle();
+    switch ($operation) {
+        case 'preview in collabora':
+            $collabora_access = AccessResult::allowedIfHasPermission($account, "preview $type in collabora");
+            break;
+
+        default:
+            if ($account->hasPermission("edit any $type in collabora")) {
+                $collabora_access = AccessResult::allowed()
+                    ->cachePerPermissions();
+            }
+            elseif ($account->hasPermission("edit own $type in collabora")) {
+                // Use '==' because Drupal sometimes loads integers as strings.
+                $is_owner = ($account->id() && $account->id() == $media->getOwnerId());
+                $collabora_access = AccessResult::allowedIf($is_owner)
+                    ->cachePerPermissions()
+                    ->cachePerUser()
+                    ->addCacheableDependency($media);
+            }
+            else {
+                $collabora_access = AccessResult::neutral()
+                    ->cachePerPermissions();
+            }
+            break;
+    }
+
+    return $collabora_access->addCacheableDependency($media_view_access);
 }

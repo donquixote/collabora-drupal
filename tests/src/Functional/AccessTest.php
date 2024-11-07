@@ -27,6 +27,14 @@ use Drupal\user\RoleInterface;
 
 /**
  * Tests access to collabora routes.
+ *
+ * There is a kernel test with a similar purpose.
+ * The kernel test is (obviously) a lot faster, while this functional test might
+ * be more realistic.
+ * For now, both of these tests are kept, but most new development will happen
+ * in the kernel test.
+ *
+ * @see \Drupal\Tests\collabora_online\Kernel\CollaboraMediaAccessTest
  */
 class AccessTest extends BrowserTestBase {
 
@@ -134,7 +142,13 @@ class AccessTest extends BrowserTestBase {
             'diary keeper' => $this->createUser([
                 // There is no 'preview own *' permission in this module.
                 'preview diary in collabora',
-                'edit own diary in collabora'
+                'edit own diary in collabora',
+                'view own unpublished media',
+            ]),
+            // Create a user without 'view own unpublished media'.
+            'public diary keeper' => $this->createUser([
+                'preview diary in collabora',
+                'edit own diary in collabora',
             ]),
         ];
 
@@ -145,7 +159,17 @@ class AccessTest extends BrowserTestBase {
             'own diary' => $this->createMediaEntity('diary', [
                 'uid' => $accounts['diary keeper']->id(),
             ]),
-            'other diary' => $this->createMediaEntity('diary'),
+            'other diary' => $this->createMediaEntity('diary', [
+                'uid' => $accounts['public diary keeper']->id(),
+            ]),
+            'own secret diary' => $this->createMediaEntity('diary', [
+                'status' => 0,
+                'uid' => $accounts['diary keeper']->id(),
+            ]),
+            'other secret diary' => $this->createMediaEntity('diary', [
+                'status' => 0,
+                'uid' => $accounts['public diary keeper']->id(),
+            ]),
         ];
 
         $paths = [];
@@ -162,10 +186,14 @@ class AccessTest extends BrowserTestBase {
                 '/cool/edit/<wiki>' => ['anonymous'],
                 '/cool/view/<announcement>' => ['anonymous'],
                 '/cool/edit/<announcement>' => [],
-                '/cool/view/<own diary>' => ['diary keeper'],
+                '/cool/view/<own diary>' => ['diary keeper', 'public diary keeper'],
                 '/cool/edit/<own diary>' => ['diary keeper'],
-                '/cool/view/<other diary>' => ['diary keeper'],
-                '/cool/edit/<other diary>' => [],
+                '/cool/view/<other diary>' => ['diary keeper', 'public diary keeper'],
+                '/cool/edit/<other diary>' => ['public diary keeper'],
+                '/cool/view/<own secret diary>' => ['diary keeper'],
+                '/cool/edit/<own secret diary>' => ['diary keeper'],
+                '/cool/view/<other secret diary>' => [],
+                '/cool/edit/<other secret diary>' => [],
             ],
             $accounts,
             $paths,

@@ -197,24 +197,32 @@ Collabora is used within Drupal.  Most of the time this permission is
 not needed, if the Collabora instance is configured from outside of
 Drupal.
 
-For each media type, the module introduces two permissions:
-- (media type): Edit any media file in Collabora Users with this
-  permission are allowed to edit documents attached to a media entity
-  of the given type, using the Collabora Online editor.
-- (media type): Preview media file in Collabora Users with this
-  permission are allowed to preview documents attached to a media
-  entity of the given type, using the Collabora Online editor in
-  preview/readonly mode.
+For each media type, the module introduces three permissions:
+- "(media type): Edit any media file in Collabora"  
+  Users with this permission are allowed to edit documents attached
+  to a media entity of the given type, using the Collabora Online
+  editor, if they also have regular view access for that media entity.
+- "(media type): Edit own media file in Collabora"  
+  Users with this permission are allowed to edit documents attached
+  to a media entity of the given type, using the Collabora Online
+  editor, if they also have regular view access for that media entity,
+  and if they are the owner/author of that media entity.
+- "(media type): Preview media file in Collabora"  
+  Users with this permission are allowed to preview documents attached 
+  to a media entity of the given type, using the Collabora Online 
+  editor in preview/readonly mode, if they also have regular view 
+  access for that media entity.
 
-In the current version, preview and edit access with the Collabora
-Online editor are checked independently of the publishing status of
-the respective media, and independently of the regular view or edit
-access on that media entity.
+For unpublished media entities, this means that a user needs either the 
+'administer media' permission or the 'view own unpublished media'
+permission, to open the respective document in Collabora Online.
+
+In the current version of this module, the 'administer media' permission
+from Drupal core grants access to all media operations, including the use 
+of the Collabora Online editor for preview and edit.
 
 For a consistent experience, it is recommended that a role with the
-edit permission should also be granted the preview permission, and
-that a user with any of the Collabora media permissions should also be
-granted permissions to view the respective media entity in Drupal.
+edit permission should also be granted the preview permission.
 
 Developers can use entity access hooks to alter which users may edit
 or preview media files in Collabora. This would allow to grant access
