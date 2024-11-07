@@ -102,7 +102,7 @@ function collabora_online_entity_operation(EntityInterface $entity) {
         'collabora_online_view' => [
             'title' => t("View in Collabora Online"),
             'weight' => 50,
-            'url' => CoolUtils::getEditorUrl($media, false),
+            'url' => CoolUtils::getEditorUrl($media, FALSE),
         ],
     ];
 
@@ -110,7 +110,7 @@ function collabora_online_entity_operation(EntityInterface $entity) {
         $entries['collabora_online_edit'] = [
             'title' => t("Edit in Collabora Online"),
             'weight' => 50,
-            'url' => CoolUtils::getEditorUrl($media, true),
+            'url' => CoolUtils::getEditorUrl($media, TRUE),
         ];
     }
 

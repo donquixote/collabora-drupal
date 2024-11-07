@@ -64,14 +64,14 @@ class CoolUtils {
         try {
             $payload = JWT::decode($token, new Key($key, 'HS256'));
 
-            if ($payload && ($payload->fid == $id) && ($payload->exp >= gettimeofday(true))) {
+            if ($payload && ($payload->fid == $id) && ($payload->exp >= gettimeofday(TRUE))) {
                 return $payload;
             }
         }
         catch (\Exception $e) {
             \Drupal::logger('cool')->error($e->getMessage());
         }
-        return null;
+        return NULL;
     }
 
     /**
@@ -81,7 +81,7 @@ class CoolUtils {
         $default_config = \Drupal::config('collabora_online.settings');
         $ttl = $default_config->get('cool')['access_token_ttl'];
 
-        return gettimeofday(true) + $ttl;
+        return gettimeofday(TRUE) + $ttl;
     }
 
     /**
@@ -116,9 +116,9 @@ class CoolUtils {
      *  accept.
      */
     const READ_ONLY = [
-        'application/x-iwork-keynote-sffkey' => true,
-        'application/x-iwork-pages-sffpages' => true,
-        'application/x-iwork-numbers-sffnumbers' => true,
+        'application/x-iwork-keynote-sffkey' => TRUE,
+        'application/x-iwork-pages-sffpages' => TRUE,
+        'application/x-iwork-numbers-sffnumbers' => TRUE,
     ];
 
     /**
@@ -140,7 +140,7 @@ class CoolUtils {
     }
 
     /** Return the editor / viewer Drupal URL from the routes configured. */
-    public static function getEditorUrl(Media $media, $can_write = false) {
+    public static function getEditorUrl(Media $media, $can_write = FALSE) {
         if ($can_write) {
             return Url::fromRoute('collabora-online.edit', ['media' => $media->id()]);
         }
@@ -163,14 +163,14 @@ class CoolUtils {
      *   Options for the renderer. Current values:
      *     - "closebutton" if "true" will add a close box. (see COOL SDK)
      */
-    public static function getViewerRender(Media $media, bool $can_write, $options = null) {
+    public static function getViewerRender(Media $media, bool $can_write, $options = NULL) {
         $default_config = \Drupal::config('collabora_online.settings');
         $wopi_base = $default_config->get('cool')['wopi_base'];
         $allowfullscreen = $default_config->get('cool')['allowfullscreen'] ?? FALSE;
 
         $req = new CoolRequest();
         $wopi_client = $req->getWopiClientURL();
-        if ($wopi_client === null) {
+        if ($wopi_client === NULL) {
             return [
                 'error' => t('The Collabora Online server is not available: ') . $req->errorString(),
             ];

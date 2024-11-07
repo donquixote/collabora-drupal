@@ -21,8 +21,8 @@ function getDiscovery($server) {
     $discovery_url = $server . '/hosting/discovery';
 
     $default_config = \Drupal::config('collabora_online.settings');
-    if ($default_config === null) {
-        return false;
+    if ($default_config === NULL) {
+        return FALSE;
     }
     $disable_checks = (bool) $default_config->get('cool')['disable_cert_check'];
 
@@ -36,14 +36,14 @@ function getDiscovery($server) {
 }
 
 function getWopiSrcUrl($discovery_parsed, $mimetype) {
-    if ($discovery_parsed === null || $discovery_parsed == false) {
-        return null;
+    if ($discovery_parsed === NULL || $discovery_parsed == FALSE) {
+        return NULL;
     }
     $result = $discovery_parsed->xpath(sprintf('/wopi-discovery/net-zone/app[@name=\'%s\']/action', $mimetype));
     if ($result && count($result) > 0) {
         return $result[0]['urlsrc'];
     }
-    return null;
+    return NULL;
 }
 
 function strStartsWith($s, $ss) {
@@ -99,7 +99,7 @@ class CoolRequest {
         }
 
         $discovery = getDiscovery($wopi_client_server);
-        if ($discovery === false) {
+        if ($discovery === FALSE) {
             $this->error_code = 203;
             return NULL;
         }
