@@ -135,7 +135,7 @@ class AccessTest extends BrowserTestBase {
             'diary keeper' => $this->createUser([
                 // There is no 'preview own *' permission in this module.
                 'preview diary in collabora',
-                'edit own diary in collabora'
+                'edit own diary in collabora',
             ]),
         ];
 

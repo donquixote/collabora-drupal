@@ -103,7 +103,7 @@ function collabora_online_entity_operation(EntityInterface $entity) {
             'title' => t("View in Collabora Online"),
             'weight' => 50,
             'url' => CoolUtils::getEditorUrl($media, false),
-        ]
+        ],
     ];
 
     if (CoolUtils::canEdit($file) && $media->access('edit in collabora')) {

@@ -34,7 +34,7 @@ class ConfigForm extends ConfigFormBase {
      */
     public function getEditableConfigNames() {
         return [
-            static::SETTINGS
+            static::SETTINGS,
         ];
     }
 
