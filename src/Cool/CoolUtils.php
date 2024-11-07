@@ -267,7 +267,8 @@ class CoolUtils {
             '#wopiClient' => $wopi_client,
             '#wopiSrc' => urlencode($wopi_base . '/cool/wopi/files/' . $id),
             '#accessToken' => $access_token,
-            '#accessTokenTtl' => $ttl * 1000, // It's in usec. The JWT is in sec.
+            // It's in usec. The JWT is in sec.
+            '#accessTokenTtl' => $ttl * 1000,
             '#allowfullscreen' => $allowfullscreen ? 'allowfullscreen' : '',
         ];
         if ($options) {
