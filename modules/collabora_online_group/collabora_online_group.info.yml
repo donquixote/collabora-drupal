@@ -1,6 +1,6 @@
 name: Collabora Online Group
 description: Integrates Collabora Online with Group module
-package: Collabora online
+package: Collabora Online
 dependencies:
   - collabora_online:collabora_online
   - groupmedia:groupmedia
