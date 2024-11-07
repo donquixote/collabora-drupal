@@ -63,7 +63,7 @@ class CoolRequest {
         203 => 'Not able to retrieve the discovery.xml file from the Collabora Online server.',
         102 => 'The retrieved discovery.xml file is not a valid XML file.',
         103 => 'The requested mime type is not handled.',
-        204 => 'Warning! You have to specify the scheme protocol too (http|https) for the server address.'
+        204 => 'Warning! You have to specify the scheme protocol too (http|https) for the server address.',
     ];
 
     private $wopi_src;
