@@ -28,6 +28,14 @@ use Drupal\user\RoleInterface;
 
 /**
  * Tests access to collabora routes.
+ *
+ * There is a kernel test with a similar purpose.
+ * The kernel test is (obviously) a lot faster, while this functional test might
+ * be more realistic.
+ * For now, both of these tests are kept, but most new development will happen
+ * in the kernel test.
+ *
+ * @see \Drupal\Tests\collabora_online\Kernel\CollaboraMediaAccessTest
  */
 class AccessTest extends BrowserTestBase {
 
