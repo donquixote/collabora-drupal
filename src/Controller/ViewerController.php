@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright the Collabora Online contributors.
  *
@@ -73,4 +74,5 @@ class ViewerController extends ControllerBase {
 
         return $response;
     }
+
 }

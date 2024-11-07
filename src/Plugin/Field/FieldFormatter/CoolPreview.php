@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright the Collabora Online contributors.
  *
@@ -74,4 +75,5 @@ class CoolPreview extends EntityReferenceFormatterBase {
         }
         return $elements;
     }
+
 }
