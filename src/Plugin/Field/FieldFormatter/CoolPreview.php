@@ -62,7 +62,7 @@ class CoolPreview extends EntityReferenceFormatterBase {
         }
 
         foreach ($this->getEntitiesToView($items, $langcode) as $delta => $file) {
-            $url = CoolUtils::getEditorUrl($media, false);
+            $url = CoolUtils::getEditorUrl($media, FALSE);
 
             $render_array = [
                 '#editorUrl' => $url,

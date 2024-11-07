@@ -49,7 +49,7 @@ class ViewerController extends ControllerBase {
      *
      * @return Response
      */
-    public function editor(Media $media, $edit = false) {
+    public function editor(Media $media, $edit = FALSE) {
         $options = [
             'closebutton' => 'true',
         ];
