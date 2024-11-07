@@ -83,36 +83,36 @@ class CoolRequest {
         $wopi_client_server = $default_config->get('cool')['server'];
         if (!$wopi_client_server) {
             $this->error_code = 201;
-            return;
+            return NULL;
         }
         $wopi_client_server = trim($wopi_client_server);
 
         if (!strStartsWith($wopi_client_server, 'http')) {
             $this->error_code = 204;
-            return;
+            return NULL;
         }
 
         if (!strStartsWith($wopi_client_server, $_HOST_SCHEME . '://')) {
             $this->error_code = 202;
-            return;
+            return NULL;
         }
 
         $discovery = getDiscovery($wopi_client_server);
         if ($discovery === false) {
             $this->error_code = 203;
-            return;
+            return NULL;
         }
 
         $discovery_parsed = simplexml_load_string($discovery);
         if (!$discovery_parsed) {
             $this->error_code = 102;
-            return;
+            return NULL;
         }
 
         $this->wopi_src = strval(getWopiSrcUrl($discovery_parsed, 'text/plain')[0]);
         if (!$this->wopi_src) {
             $this->error_code = 103;
-            return;
+            return NULL;
         }
 
         return $this->wopi_src;
