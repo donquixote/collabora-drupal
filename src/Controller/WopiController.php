@@ -184,7 +184,7 @@ class WopiController extends ControllerBase {
                 \Drupal::logger('cool')->error('Conflict saving file ' . $id . ' wopi: ' . $wopi_stamp->format('c') . ' differs from file: ' . $file_stamp->format('c'));
 
                 return new Response(
-                    json_encode([ 'COOLStatusCode' => 1010 ]),
+                    json_encode(['COOLStatusCode' => 1010]),
                     Response::HTTP_CONFLICT,
                     ['content-type' => 'application/json'],
                 );
@@ -224,13 +224,13 @@ class WopiController extends ControllerBase {
             $reasons[] = 'Save on Exit';
         }
         if (count($reasons) > 0) {
-            $save_reason .= ' (' . implode(', ', $reasons)  . ')';
+            $save_reason .= ' (' . implode(', ', $reasons) . ')';
         }
         \Drupal::logger('cool')->error('Save reason: ' . $save_reason);
         $media->setRevisionLogMessage($save_reason);
         $media->save();
 
-        $payload =  json_encode([
+        $payload = json_encode([
             'LastModifiedTime' => $mtime->format('c'),
         ]);
 
