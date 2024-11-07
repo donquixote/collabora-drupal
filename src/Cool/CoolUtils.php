@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright the Collabora Online contributors.
  *
@@ -275,6 +276,5 @@ class CoolUtils {
 
         return $render_array;
     }
-
 
 }

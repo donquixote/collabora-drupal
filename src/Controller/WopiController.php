@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright the Collabora Online contributors.
  *
@@ -261,8 +262,10 @@ class WopiController extends ControllerBase {
         switch ($action) {
             case 'info':
                 return $this->wopiCheckFileInfo($id, $request);
+
             case 'content':
                 return $this->wopiGetFile($id, $request);
+
             case 'save':
                 return $this->wopiPutFile($id, $request);
         }
@@ -274,4 +277,5 @@ class WopiController extends ControllerBase {
         );
         return $response;
     }
+
 }
