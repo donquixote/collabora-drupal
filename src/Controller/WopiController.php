@@ -259,15 +259,12 @@ class WopiController extends ControllerBase {
     public function wopi(string $action, string $id, Request $request) {
         $returnCode = Response::HTTP_BAD_REQUEST;
         switch ($action) {
-        case 'info':
-            return $this->wopiCheckFileInfo($id, $request);
-            break;
-        case 'content':
-            return $this->wopiGetFile($id, $request);
-            break;
-        case 'save':
-            return $this->wopiPutFile($id, $request);
-            break;
+            case 'info':
+                return $this->wopiCheckFileInfo($id, $request);
+            case 'content':
+                return $this->wopiGetFile($id, $request);
+            case 'save':
+                return $this->wopiPutFile($id, $request);
         }
 
         $response = new Response(
