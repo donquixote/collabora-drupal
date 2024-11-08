@@ -7,7 +7,6 @@ namespace Drupal\Tests\collabora_online\ExistingSiteJavascript;
 use Drupal\file\Entity\File;
 use Drupal\media\Entity\Media;
 use Drupal\media\MediaInterface;
-use WebDriver\Exception\StaleElementReference;
 use weitzman\DrupalTestTraits\ExistingSiteSelenium2DriverTestBase;
 
 /**
