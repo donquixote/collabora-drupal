@@ -30,8 +30,9 @@ function getDiscovery($server) {
         'ssl' => [
             'verify_peer'       => !$disable_checks,
             'verify_peer_name'  => !$disable_checks,
-        ]]);
-    $res = file_get_contents($discovery_url, false, $stream_context);
+        ],
+    ]);
+    $res = file_get_contents($discovery_url, FALSE, $stream_context);
     return $res;
 }
 
