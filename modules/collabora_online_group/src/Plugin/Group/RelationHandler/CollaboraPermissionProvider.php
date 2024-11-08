@@ -65,9 +65,7 @@ class CollaboraPermissionProvider extends GroupMediaPermissionProvider {
       }
     }
 
-    // Since we are overriding decorated service method, we call the original
-    // method too.
-    return $this->groupMediaPermissionProvider->getPermission($operation, $target, $scope);
+    return $this->parent->getPermission($operation, $target, $scope);
   }
 
   /**
