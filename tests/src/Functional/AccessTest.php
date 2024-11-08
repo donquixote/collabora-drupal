@@ -187,7 +187,7 @@ class AccessTest extends BrowserTestBase {
      *   An array of paths, or NULL to just use the array keys from $expected.
      *   This parameter is useful if the paths all look very similar.
      */
-    protected function assertPathsAccessByUsers(array $expected, array $accounts, array $paths = NULL): void {
+    protected function assertPathsAccessByUsers(array $expected, array $accounts, ?array $paths = NULL): void {
         if ($paths === NULL) {
             $paths = array_keys($expected);
             $paths = array_combine($paths, $paths);
