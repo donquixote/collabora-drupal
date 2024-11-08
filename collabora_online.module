@@ -46,7 +46,7 @@ function collabora_online_theme($existing, $type, $theme, $path) {
               'wopiClient' => 'https://localhost:9980/',
           ],
       ],
-      // This is the template for the field preview
+      // This is the template for the field preview.
       'collabora_online_preview' => [
           'render element' => 'children',
           'template' => 'collabora-online-preview',
