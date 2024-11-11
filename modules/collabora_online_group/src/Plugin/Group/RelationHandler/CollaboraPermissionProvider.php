@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Drupal\collabora_online_group\Plugin\Group\RelationHandler;
 
 use Drupal\groupmedia\Plugin\Group\RelationHandler\GroupMediaPermissionProvider;
-use Drupal\group\Plugin\Group\RelationHandler\PermissionProviderInterface;
 
 /**
  * Provides Collabora permissions for group.
