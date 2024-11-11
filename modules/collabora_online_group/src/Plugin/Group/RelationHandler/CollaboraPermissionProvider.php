@@ -13,21 +13,6 @@ use Drupal\group\Plugin\Group\RelationHandler\PermissionProviderInterface;
 class CollaboraPermissionProvider extends GroupMediaPermissionProvider {
 
   /**
-   *  Constructs a new CollaboraPermissionProvider.
-   *
-   * @param \Drupal\group\Plugin\Group\RelationHandler\PermissionProviderInterface $groupMediaPermissionProvider
-   *   The original access control handler.
-   * @param \Drupal\group\Plugin\Group\RelationHandler\PermissionProviderInterface $parent
-   *   The parent access control handler.
-   */
-  public function __construct(
-    protected PermissionProviderInterface $groupMediaPermissionProvider,
-    PermissionProviderInterface $parent
-  ) {
-    parent::__construct($parent);
-  }
-
-  /**
    * {@inheritdoc}
    */
   public function buildPermissions(): array {
