@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\collabora_online_group\Kernel;
 
+use Drupal\Tests\collabora_online_group\Traits\GroupRelationTrait;
 use Drupal\Tests\group\Kernel\GroupKernelTestBase;
 use Drupal\Tests\media\Traits\MediaTypeCreationTrait;
 
@@ -13,6 +14,7 @@ use Drupal\Tests\media\Traits\MediaTypeCreationTrait;
 class PermissionTest extends GroupKernelTestBase {
 
     use MediaTypeCreationTrait;
+    use GroupRelationTrait;
 
     /**
      * {@inheritdoc}
@@ -36,27 +38,30 @@ class PermissionTest extends GroupKernelTestBase {
         $media_type_2 = $this->createMediaType('file', ['id' => 'media_2']);
 
         // Enable relation plugins in groups.
-        $this->entityTypeManager()->getStorage('group_relationship_type')
-            ->createFromPlugin($group_type_1, 'group_media:' . $media_type_1->id(), [
+        $this->createPluginRelation(
+            $group_type_1,
+            'group_media:' . $media_type_1->id(),
+            [
                 'group_cardinality' => 0,
                 'entity_cardinality' => 1,
                 'use_creation_wizard' => FALSE,
-            ])
-            ->save();
-        $this->entityTypeManager()->getStorage('group_relationship_type')
-            ->createFromPlugin($group_type_2, 'group_media:' . $media_type_1->id(), [
+        ]);
+        $this->createPluginRelation(
+            $group_type_2,
+            'group_media:' . $media_type_1->id(),
+            [
                 'group_cardinality' => 0,
                 'entity_cardinality' => 1,
                 'use_creation_wizard' => FALSE,
-            ])
-            ->save();
-        $this->entityTypeManager()->getStorage('group_relationship_type')
-            ->createFromPlugin($group_type_2, 'group_media:' . $media_type_2->id(), [
+        ]);
+        $this->createPluginRelation(
+            $group_type_2,
+            'group_media:' . $media_type_2->id(),
+            [
                 'group_cardinality' => 0,
                 'entity_cardinality' => 1,
                 'use_creation_wizard' => FALSE,
-            ])
-            ->save();
+        ]);
 
         // Check that permissions are generated for the groups.
         // Save current permissions count.

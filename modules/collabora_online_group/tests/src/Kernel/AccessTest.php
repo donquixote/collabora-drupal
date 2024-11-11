@@ -6,6 +6,7 @@ namespace Drupal\Tests\collabora_online_group\Kernel;
 
 use Drupal\group\PermissionScopeInterface;
 use Drupal\Tests\collabora_online\Traits\MediaCreationTrait;
+use Drupal\Tests\collabora_online_group\Traits\GroupRelationTrait;
 use Drupal\Tests\group\Kernel\GroupKernelTestBase;
 use Drupal\Tests\media\Traits\MediaTypeCreationTrait;
 use Drupal\Tests\user\Traits\UserCreationTrait;
@@ -19,6 +20,7 @@ class AccessTest extends GroupKernelTestBase {
     use MediaTypeCreationTrait;
     use UserCreationTrait;
     use MediaCreationTrait;
+    use GroupRelationTrait;
 
     /**
      * {@inheritdoc}
@@ -61,13 +63,11 @@ class AccessTest extends GroupKernelTestBase {
             'permissions' => $group_permissions
         ]);
         $this->createMediaType('file', ['id' => 'document']);
-        $this->entityTypeManager()->getStorage('group_relationship_type')
-            ->createFromPlugin($group_type, 'group_media:document', [
-                'group_cardinality' => 0,
-                'entity_cardinality' => 1,
-                'use_creation_wizard' => FALSE,
-            ])
-            ->save();
+        $this->createPluginRelation($group_type, 'group_media:document', [
+            'group_cardinality' => 0,
+            'entity_cardinality' => 1,
+            'use_creation_wizard' => FALSE,
+        ]);
 
         // Add group, media and relation between both.
         $group = $this->createGroup(['type' => $group_type->id()]);
