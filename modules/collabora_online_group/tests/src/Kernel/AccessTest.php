@@ -4,22 +4,21 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\collabora_online_group\Kernel;
 
-use Drupal\file\Entity\File;
 use Drupal\group\PermissionScopeInterface;
-use Drupal\media\Entity\Media;
-use Drupal\media\MediaInterface;
+use Drupal\Tests\collabora_online\Traits\MediaCreationTrait;
 use Drupal\Tests\group\Kernel\GroupKernelTestBase;
 use Drupal\Tests\media\Traits\MediaTypeCreationTrait;
 use Drupal\Tests\user\Traits\UserCreationTrait;
 use Drupal\user\RoleInterface;
 
 /**
- * Tests group permissions.
+ * Tests Collabora group access.
  */
 class AccessTest extends GroupKernelTestBase {
 
     use MediaTypeCreationTrait;
     use UserCreationTrait;
+    use MediaCreationTrait;
 
     /**
      * {@inheritdoc}
@@ -30,6 +29,7 @@ class AccessTest extends GroupKernelTestBase {
         'image',
         'group',
         'groupmedia',
+        'collabora_online',
         'collabora_online_group',
         'user'
     ];
@@ -47,10 +47,11 @@ class AccessTest extends GroupKernelTestBase {
   }
 
     /**
-     * Tests that group permissions are properly created.
+     * Tests that access to Collabora group permissions is handled.
+     *
      * @dataProvider dataProvider
      */
-    public function testCollaboraAccess(array $permissions, array $group_permissions, string $operation, bool $result): void {
+    public function testCollaboraAccess(bool $expected_result, array $permissions, array $group_permissions, string $operation, string $scope = ''): void {
         // Create group type, media type and enable plugin.
         $group_type = $this->createGroupType();
         $this->createGroupRole([
@@ -68,7 +69,7 @@ class AccessTest extends GroupKernelTestBase {
             ])
             ->save();
 
-        // Add group, media and relation between both..
+        // Add group, media and relation between both.
         $group = $this->createGroup(['type' => $group_type->id()]);
         $media = $this->createMediaEntity('document');
         $group->addRelationship($media, 'group_media:document');
@@ -77,58 +78,39 @@ class AccessTest extends GroupKernelTestBase {
         $user = $this->createUser($permissions);
         $group->addMember($user);
 
+        if ($scope === 'own') {
+            $media->setOwnerId($user->id())->save();
+        }
+
         // Check access.
-        $this->assertEquals($result, $media->access($operation, $user));
+        $this->assertEquals($expected_result, $media->access($operation, $user));
    }
 
     /**
-     * Data provider for File defaults by type widget.
+     * Data provider.
      *
      * @return \Generator
      *   The test data.
      */
     protected function dataProvider(): \Generator {
-    // User with no permissions at all.
-    yield [
-        [],
-        [],
-        'preview in collabora',
-        FALSE
-    ];
-    yield [
-        [],
-        [
-            'preview group_media:document in collabora'
-        ],
-        'preview in collabora',
-        TRUE
-    ];
+        // Preview: user with no permissions at all.
+        yield [FALSE, [], [], 'preview in collabora'];
+        // Preview: user with global permissions doesn't have access.
+        yield [FALSE, ['preview document in collabora'], [], 'preview in collabora'];
+        // Preview: user with group permissions have access.
+        yield [TRUE, [], ['preview group_media:document in collabora'], 'preview in collabora'];
+        // Edit any: user with no permissions at all.
+        yield [FALSE, [], [], 'edit in collabora'];
+        // Edit any: user with global permissions doesn't have access.
+        yield [FALSE, ['edit any document in collabora'], [], 'edit in collabora'];
+        // Edit any: User with group permissions have access.
+        yield [TRUE, [], ['edit any group_media:document in collabora'], 'edit in collabora'];
+        // Edit own: user with no permissions at all.
+        yield [FALSE, [], [], 'edit in collabora', 'own'];
+        // Edit own: user with global permissions doesn't have access.
+        yield [FALSE, ['edit own document in collabora'], [], 'edit in collabora', 'own' ];
+        // Edit own: user with group permissions have access.
+        yield [TRUE, [], ['edit own group_media:document in collabora'], 'edit in collabora', 'own'];
    }
-
-   /**
-     * Creates a media entity with attached file.
-     *
-     * @param string $type
-     *   Media type.
-     * @param array $values
-     *   Values for the media entity.
-     *
-     * @return \Drupal\media\MediaInterface
-     *   New media entity.
-     */
-    protected function createMediaEntity(string $type, array $values = []): MediaInterface {
-        file_put_contents('public://test.txt', 'Hello test');
-        $file = File::create([
-            'uri' => 'public://test.txt',
-        ]);
-        $file->save();
-        $values += [
-            'bundle' => $type,
-            'field_media_file' => $file->id(),
-        ];
-        $media = Media::create($values);
-        $media->save();
-        return $media;
-    }
 
 }

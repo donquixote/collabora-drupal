@@ -20,6 +20,7 @@ use Drupal\file\Entity\File;
 use Drupal\media\Entity\Media;
 use Drupal\media\MediaInterface;
 use Drupal\Tests\BrowserTestBase;
+use Drupal\Tests\collabora_online\Traits\MediaCreationTrait;
 use Drupal\Tests\media\Traits\MediaTypeCreationTrait;
 use Drupal\Tests\TestFileCreationTrait;
 use Drupal\user\Entity\Role;
@@ -32,6 +33,7 @@ class AccessTest extends BrowserTestBase {
 
     use MediaTypeCreationTrait;
     use TestFileCreationTrait;
+    use MediaCreationTrait;
 
     /**
      * {@inheritdoc}
@@ -206,32 +208,6 @@ class AccessTest extends BrowserTestBase {
             Yaml::encode($actual),
             'Users with access to given paths'
         );
-    }
-
-    /**
-     * Creates a media entity with attached file.
-     *
-     * @param string $type
-     *   Media type.
-     * @param array $values
-     *   Values for the media entity.
-     *
-     * @return \Drupal\media\MediaInterface
-     *   New media entity.
-     */
-    protected function createMediaEntity(string $type, array $values = []): MediaInterface {
-        file_put_contents('public://test.txt', 'Hello test');
-        $file = File::create([
-            'uri' => 'public://test.txt',
-        ]);
-        $file->save();
-        $values += [
-            'bundle' => $type,
-            'field_media_file' => $file->id(),
-        ];
-        $media = Media::create($values);
-        $media->save();
-        return $media;
     }
 
 }
