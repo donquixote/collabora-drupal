@@ -51,12 +51,6 @@ class CoolRequest {
      */
     public function getWopiClientURL(): string {
         $discovery = $this->getDiscovery();
-        if ($discovery === FALSE) {
-            throw new CoolRequestException(
-                'Not able to retrieve the discovery.xml file from the Collabora Online server.',
-                203,
-            );
-        }
 
         $discovery_parsed = simplexml_load_string($discovery);
         if (!$discovery_parsed) {
@@ -116,15 +110,21 @@ class CoolRequest {
     /**
      * Gets the contents of discovery.xml from the Collabora server.
      *
-     * @return string|false
-     *   The full contents of discovery.xml, or FALSE on failure.
+     * @return string
+     *   The full contents of discovery.xml.
+     *
+     * @throws \Drupal\collabora_online\Exception\CoolRequestException
+     *   The client url cannot be retrieved.
      */
-    protected function getDiscovery(): string|false {
+    protected function getDiscovery(): string {
         $discovery_url = $this->getWopiClientServerBaseUrl() . '/hosting/discovery';
 
         $default_config = $this->configFactory->get('collabora_online.settings');
         if ($default_config === NULL) {
-            return FALSE;
+            throw new CoolRequestException(
+                'Not able to retrieve the discovery.xml file from the Collabora Online server.',
+                203,
+            );
         }
         $disable_checks = (bool) $default_config->get('cool')['disable_cert_check'];
 
@@ -147,6 +147,10 @@ class CoolRequest {
 
         if ($res === FALSE) {
             $this->logger->error('Cannot fetch from @url.', ['@url' => $discovery_url]);
+            throw new CoolRequestException(
+                'Not able to retrieve the discovery.xml file from the Collabora Online server.',
+                203,
+            );
         }
         return $res;
     }
