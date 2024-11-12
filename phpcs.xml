@@ -9,6 +9,8 @@
   <file>.</file>
 
   <rule ref="vendor/drupal/coder/coder_sniffer/Drupal/ruleset.xml">
+    <!-- Allow @param after @template. -->
+    <exclude name="Drupal.Commenting.DocComment.ParamNotFirst"/>
     <!-- Accept 4 spaces of indentation for now. -->
     <exclude name="Drupal.WhiteSpace.ScopeIndent"/>
     <exclude name="Drupal.Arrays.Array.ArrayIndentation"/>
