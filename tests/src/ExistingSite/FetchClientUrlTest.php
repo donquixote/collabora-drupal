@@ -17,7 +17,8 @@ class FetchClientUrlTest extends ExistingSiteBase {
      * Tests fetching the client url.
      */
     public function testFetchClientUrl(): void {
-        $cool_request = new CoolRequest();
+        /** @var \Drupal\collabora_online\Cool\CoolRequest $cool_request */
+        $cool_request = \Drupal::service(CoolRequest::class);
         $client_url = $cool_request->getWopiClientURL();
         // The protocol, domain and port are known when this test runs in the
         // docker-compose setup.
@@ -35,7 +36,8 @@ class FetchClientUrlTest extends ExistingSiteBase {
                     'server' => 'httx://example.com',
                 ],
             ]);
-        $cool_request = new CoolRequest();
+        /** @var \Drupal\collabora_online\Cool\CoolRequest $cool_request */
+        $cool_request = \Drupal::service(CoolRequest::class);
 
         $this->expectException(CoolRequestException::class);
         $this->expectExceptionMessage('Warning! You have to specify the scheme protocol too (http|https) for the server address.');

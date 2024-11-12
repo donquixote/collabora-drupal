@@ -248,7 +248,8 @@ class CoolUtils {
         $wopi_base = $default_config->get('cool')['wopi_base'];
         $allowfullscreen = $default_config->get('cool')['allowfullscreen'] ?? FALSE;
 
-        $req = new CoolRequest();
+        /** @var \Drupal\collabora_online\Cool\CoolRequest $req */
+        $req = \Drupal::service(CoolRequest::class);
         try {
             $wopi_client = $req->getWopiClientURL();
         }

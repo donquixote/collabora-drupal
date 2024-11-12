@@ -85,7 +85,7 @@ function strStartsWith($s, $ss) {
 }
 
 /**
- * Helper class to fetch a WOPI client url.
+ * Service to fetch a WOPI client url.
  */
 class CoolRequest {
 
