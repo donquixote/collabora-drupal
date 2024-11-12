@@ -50,31 +50,7 @@ class CoolRequest {
      *   The client url cannot be retrieved.
      */
     public function getWopiClientURL(): string {
-        $default_config = $this->configFactory->get('collabora_online.settings');
-        $wopi_client_server = $default_config->get('cool')['server'];
-        if (!$wopi_client_server) {
-            throw new CoolRequestException(
-                'Collabora Online server address is not valid.',
-                201,
-            );
-        }
-        $wopi_client_server = trim($wopi_client_server);
-
-        if (!str_starts_with($wopi_client_server, 'http')) {
-            throw new CoolRequestException(
-                'Warning! You have to specify the scheme protocol too (http|https) for the server address.',
-                204,
-            );
-        }
-
-        $current_request_scheme = $this->requestStack->getCurrentRequest()->getScheme();
-        if (!str_starts_with($wopi_client_server, $current_request_scheme . '://')) {
-            throw new CoolRequestException(
-                'Collabora Online server address scheme does not match the current page url scheme.',
-                202,
-            );
-        }
-
+        $wopi_client_server = $this->getWopiClientServerBaseUrl();
         $discovery = $this->getDiscovery($wopi_client_server);
         if ($discovery === FALSE) {
             throw new CoolRequestException(
@@ -100,6 +76,42 @@ class CoolRequest {
         }
 
         return $wopi_src;
+    }
+
+    /**
+     * Loads the WOPI server url from configuration.
+     *
+     * @throws \Drupal\collabora_online\Exception\CoolRequestException
+     *   The WOPI server url is misconfigured, or the protocol does not match
+     *   that of the current Drupal request.
+     */
+    protected function getWopiClientServerBaseUrl(): string {
+        $default_config = $this->configFactory->get('collabora_online.settings');
+        $wopi_client_server = $default_config->get('cool')['server'];
+        if (!$wopi_client_server) {
+            throw new CoolRequestException(
+                'Collabora Online server address is not valid.',
+                201,
+            );
+        }
+        $wopi_client_server = trim($wopi_client_server);
+
+        if (!str_starts_with($wopi_client_server, 'http')) {
+            throw new CoolRequestException(
+                'Warning! You have to specify the scheme protocol too (http|https) for the server address.',
+                204,
+            );
+        }
+
+        $current_request_scheme = $this->requestStack->getCurrentRequest()->getScheme();
+        if (!str_starts_with($wopi_client_server, $current_request_scheme . '://')) {
+            throw new CoolRequestException(
+                'Collabora Online server address scheme does not match the current page url scheme.',
+                202,
+            );
+        }
+
+        return $wopi_client_server;
     }
 
     /**
