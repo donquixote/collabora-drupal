@@ -61,7 +61,7 @@ class CoolRequest {
         }
 
         $wopi_src = $this->getWopiSrcUrl($discovery_parsed, 'text/plain');
-        if (!$wopi_src) {
+        if ($wopi_src === NULL) {
             throw new CoolRequestException(
                 'The requested mime type is not handled.',
                 103,
@@ -171,7 +171,7 @@ class CoolRequest {
      */
     protected function getWopiSrcUrl(\SimpleXMLElement $discovery_parsed, string $mimetype): string|null {
         $result = $discovery_parsed->xpath(sprintf('/wopi-discovery/net-zone/app[@name=\'%s\']/action', $mimetype));
-        if ($result && count($result) > 0) {
+        if (!empty($result[0]['urlsrc'][0])) {
             return (string) $result[0]['urlsrc'][0];
         }
         return NULL;
