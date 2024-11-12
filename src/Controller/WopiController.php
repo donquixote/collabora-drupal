@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright the Collabora Online contributors.
  *
@@ -31,7 +32,7 @@ class WopiController extends ControllerBase {
      * @return \Symfony\Component\HttpFoundation\Response
      *   Response object.
      */
-    static function permissionDenied(): Response {
+    public static function permissionDenied(): Response {
         return new Response(
             'Authentication failed.',
             Response::HTTP_FORBIDDEN,
@@ -39,11 +40,22 @@ class WopiController extends ControllerBase {
         );
     }
 
-    function wopiCheckFileInfo(string $id, Request $request) {
+    /**
+     * Handles the WOPI 'info' request for a media entity.
+     *
+     * @param string $id
+     *   Media id from url.
+     * @param \Symfony\Component\HttpFoundation\Request $request
+     *   Request object with query parameters.
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     *   The response with file contents.
+     */
+    public function wopiCheckFileInfo(string $id, Request $request) {
         $token = $request->query->get('access_token');
 
         $jwt_payload = CoolUtils::verifyTokenForId($token, $id);
-        if ($jwt_payload == null) {
+        if ($jwt_payload == NULL) {
             return static::permissionDenied();
         }
 
@@ -96,11 +108,22 @@ class WopiController extends ControllerBase {
         return $response;
     }
 
-    function wopiGetFile(string $id, Request $request) {
+    /**
+     * Handles the wopi "content" request for a media entity.
+     *
+     * @param string $id
+     *   Media id from url.
+     * @param \Symfony\Component\HttpFoundation\Request $request
+     *   Request object with query parameters.
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     *   The response with file contents.
+     */
+    public function wopiGetFile(string $id, Request $request) {
         $token = $request->query->get('access_token');
 
         $jwt_payload = CoolUtils::verifyTokenForId($token, $id);
-        if ($jwt_payload == null) {
+        if ($jwt_payload == NULL) {
             return static::permissionDenied();
         }
 
@@ -120,7 +143,18 @@ class WopiController extends ControllerBase {
         return $response;
     }
 
-    function wopiPutFile(string $id, Request $request) {
+    /**
+     * Handles the wopi "save" request for a media entity..
+     *
+     * @param string $id
+     *   Media id from url.
+     * @param \Symfony\Component\HttpFoundation\Request $request
+     *   Request object with headers, query parameters and payload.
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     *   The response.
+     */
+    public function wopiPutFile(string $id, Request $request) {
         $token = $request->query->get('access_token');
         $timestamp = $request->headers->get('x-cool-wopi-timestamp');
         $modified_by_user = $request->headers->get('x-cool-wopi-ismodifiedbyuser') == 'true';
@@ -128,7 +162,7 @@ class WopiController extends ControllerBase {
         $exitsave = $request->headers->get('x-cool-wopi-isexitsave') == 'true';
 
         $jwt_payload = CoolUtils::verifyTokenForId($token, $id);
-        if ($jwt_payload == null || !$jwt_payload->wri) {
+        if ($jwt_payload == NULL || !$jwt_payload->wri) {
             return static::permissionDenied();
         }
 
@@ -150,7 +184,7 @@ class WopiController extends ControllerBase {
                 \Drupal::logger('cool')->error('Conflict saving file ' . $id . ' wopi: ' . $wopi_stamp->format('c') . ' differs from file: ' . $file_stamp->format('c'));
 
                 return new Response(
-                    json_encode([ 'COOLStatusCode' => 1010 ]),
+                    json_encode(['COOLStatusCode' => 1010]),
                     Response::HTTP_CONFLICT,
                     ['content-type' => 'application/json'],
                 );
@@ -190,13 +224,13 @@ class WopiController extends ControllerBase {
             $reasons[] = 'Save on Exit';
         }
         if (count($reasons) > 0) {
-            $save_reason .= ' (' . implode(', ', $reasons)  . ')';
+            $save_reason .= ' (' . implode(', ', $reasons) . ')';
         }
         \Drupal::logger('cool')->error('Save reason: ' . $save_reason);
         $media->setRevisionLogMessage($save_reason);
         $media->save();
 
-        $payload =  json_encode([
+        $payload = json_encode([
             'LastModifiedTime' => $mtime->format('c'),
         ]);
 
@@ -213,24 +247,27 @@ class WopiController extends ControllerBase {
     /**
      * The WOPI entry point.
      *
-     * action: 'info', 'content' or 'save'.
-     * id: the ID of the media.
-     * request: The request as originating.
+     * @param string $action
+     *   One of 'info', 'content' or 'save', depending with path is visited.
+     * @param string $id
+     *   Media id from url.
+     * @param \Symfony\Component\HttpFoundation\Request $request
+     *   Request object for headers and query parameters.
      *
-     * @return Response
+     * @return \Symfony\Component\HttpFoundation\Response
+     *   Response to be consumed by Collabora Online.
      */
     public function wopi(string $action, string $id, Request $request) {
         $returnCode = Response::HTTP_BAD_REQUEST;
         switch ($action) {
-        case 'info':
-            return $this->wopiCheckFileInfo($id, $request);
-            break;
-        case 'content':
-            return $this->wopiGetFile($id, $request);
-            break;
-        case 'save':
-            return $this->wopiPutFile($id, $request);
-            break;
+            case 'info':
+                return $this->wopiCheckFileInfo($id, $request);
+
+            case 'content':
+                return $this->wopiGetFile($id, $request);
+
+            case 'save':
+                return $this->wopiPutFile($id, $request);
         }
 
         $response = new Response(
@@ -240,4 +277,5 @@ class WopiController extends ControllerBase {
         );
         return $response;
     }
+
 }

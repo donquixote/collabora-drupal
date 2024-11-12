@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright the Collabora Online contributors.
  *
@@ -43,6 +44,7 @@ class CoolPreview extends EntityReferenceFormatterBase {
      * {@inheritdoc}
      */
     public function viewElements(FieldItemListInterface $items, $langcode) {
+        /** @var \Drupal\Core\Field\EntityReferenceFieldItemListInterface $items */
         $elements = [];
         $media = $items->getEntity();
         if (!$media instanceof MediaInterface) {
@@ -60,7 +62,7 @@ class CoolPreview extends EntityReferenceFormatterBase {
         }
 
         foreach ($this->getEntitiesToView($items, $langcode) as $delta => $file) {
-            $url = CoolUtils::getEditorUrl($media, false);
+            $url = CoolUtils::getEditorUrl($media, FALSE);
 
             $render_array = [
                 '#editorUrl' => $url,
@@ -73,4 +75,5 @@ class CoolPreview extends EntityReferenceFormatterBase {
         }
         return $elements;
     }
+
 }

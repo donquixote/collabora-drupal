@@ -7,7 +7,6 @@ namespace Drupal\Tests\collabora_online\ExistingSiteJavascript;
 use Drupal\file\Entity\File;
 use Drupal\media\Entity\Media;
 use Drupal\media\MediaInterface;
-use WebDriver\Exception\StaleElementReference;
 use weitzman\DrupalTestTraits\ExistingSiteSelenium2DriverTestBase;
 
 /**
@@ -40,14 +39,14 @@ class CollaboraIntegrationTest extends ExistingSiteSelenium2DriverTestBase {
 
         $document_field = $assert_session->waitForElement('css', 'input#document-name-input');
         $this->assertNotNull($document_field, 'The document name input was not found after 10 seconds.');
-        $this->getCurrentPage()->waitFor(10, function() use ($document_field) {
+        $this->getCurrentPage()->waitFor(10, function () use ($document_field) {
           return $document_field->getValue() === 'shopping-list.txt';
         });
         $this->assertEquals('shopping-list.txt', $document_field->getValue(), 'The document name input did not contain the correct value after 10 seconds.');
 
         $word_count_element = $assert_session->waitForElement('css', 'div#StateWordCount');
         $this->assertNotNull($word_count_element, 'The word count element was not found after 10 seconds.');
-        $this->getCurrentPage()->waitFor(10, function() use ($word_count_element) {
+        $this->getCurrentPage()->waitFor(10, function () use ($word_count_element) {
           return $word_count_element->getText() === '2 words, 18 characters';
         });
         $this->assertEquals('2 words, 18 characters', $word_count_element->getText(), 'The word count element did not contain the correct text after 10 seconds.');

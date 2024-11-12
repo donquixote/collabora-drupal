@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright the Collabora Online contributors.
  *
@@ -14,6 +15,9 @@ namespace Drupal\collabora_online\Form;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 
+/**
+ * Form to configure module settings for Collabora.
+ */
 class ConfigForm extends ConfigFormBase {
 
     const SETTINGS = 'collabora_online.settings';
@@ -30,7 +34,7 @@ class ConfigForm extends ConfigFormBase {
      */
     public function getEditableConfigNames() {
         return [
-            static::SETTINGS
+            static::SETTINGS,
         ];
     }
 
@@ -99,5 +103,6 @@ class ConfigForm extends ConfigFormBase {
             ->save();
 
         parent::submitForm($form, $form_state);
-  }
+    }
+
 }
