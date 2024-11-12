@@ -15,6 +15,9 @@ namespace Drupal\collabora_online\Cool;
 use Drupal\collabora_online\Exception\CoolRequestException;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Logger\LoggerChannelInterface;
+use GuzzleHttp\ClientInterface;
+use GuzzleHttp\RequestOptions;
+use Psr\Http\Client\ClientExceptionInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -32,12 +35,15 @@ class CoolRequest {
      *   Config factory.
      * @param \Symfony\Component\HttpFoundation\RequestStack $requestStack
      *   Request stack.
+     * @param \GuzzleHttp\ClientInterface $client
+     *   Http client.
      */
     public function __construct(
         #[Autowire(service: 'logger.channel.collabora_online')]
         protected readonly LoggerChannelInterface $logger,
         protected readonly ConfigFactoryInterface $configFactory,
         protected readonly RequestStack $requestStack,
+        protected readonly ClientInterface $client,
     ) {}
 
     /**
@@ -122,28 +128,18 @@ class CoolRequest {
         }
         $disable_checks = (bool) $default_config->get('cool')['disable_cert_check'];
 
-        // Previously, file_get_contents() was used to fetch the discovery xml
-        // data.
-        // Depending on the environment, it can happen that file_get_contents()
-        // will hang at the end of a stream, expecting more data.
-        // With curl, this does not happen.
-        // @todo Refactor this and use e.g. Guzzle http client.
-        $curl = curl_init($discovery_url);
-        curl_setopt_array($curl, [
-            CURLOPT_RETURNTRANSFER => TRUE,
-            // Previously, when this request was done with file_get_contents()
-            // and stream_context_create(), the 'verify_peer' and
-            // 'verify_peer_name' options were set.
-            // @todo Find an equivalent to 'verify_peer_name' for curl.
-            CURLOPT_SSL_VERIFYPEER => !$disable_checks,
-        ]);
-        $res = curl_exec($curl);
-
-        if ($res === FALSE) {
+        try {
+            $response = $this->client->get($discovery_url, [
+                RequestOptions::VERIFY => !$disable_checks,
+            ]);
+            $res = $response->getBody()->getContents();
+        }
+        catch (ClientExceptionInterface $e) {
             $this->logger->error('Cannot fetch from @url.', ['@url' => $discovery_url]);
             throw new CoolRequestException(
                 'Not able to retrieve the discovery.xml file from the Collabora Online server.',
                 203,
+                $e,
             );
         }
         return $res;
