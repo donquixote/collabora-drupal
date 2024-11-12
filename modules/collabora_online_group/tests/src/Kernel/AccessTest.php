@@ -51,6 +51,17 @@ class AccessTest extends GroupKernelTestBase {
     /**
      * Tests that access to Collabora group permissions is handled.
      *
+     * @param bool $expected_result
+     *   The access result.
+     * @param array $permissions
+     *   The global permissions granted to the user.
+     * @param array $group_permissions
+     *   The group permissions granted to the user.
+     * @param string $operation
+     *   The operation to perform on the entity.
+     * @param string $scope
+     *   Sets the user as author of the entity.
+     *
      * @dataProvider dataProvider
      */
     public function testCollaboraAccess(bool $expected_result, array $permissions, array $group_permissions, string $operation, string $scope = ''): void {
