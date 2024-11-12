@@ -14,6 +14,8 @@ namespace Drupal\collabora_online\Cool;
 
 use Drupal\collabora_online\Exception\CoolRequestException;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Logger\LoggerChannelInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
@@ -24,12 +26,16 @@ class CoolRequest {
     /**
      * Constructor.
      *
+     * @param \Drupal\Core\Logger\LoggerChannelInterface $logger
+     *   Logger channel.
      * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
      *   Config factory.
      * @param \Symfony\Component\HttpFoundation\RequestStack $requestStack
      *   Request stack.
      */
     public function __construct(
+        #[Autowire(service: 'logger.channel.collabora_online')]
+        protected readonly LoggerChannelInterface $logger,
         protected readonly ConfigFactoryInterface $configFactory,
         protected readonly RequestStack $requestStack,
     ) {}
@@ -132,7 +138,7 @@ class CoolRequest {
         $res = curl_exec($curl);
 
         if ($res === FALSE) {
-            \Drupal::logger('cool')->error('Cannot fetch from @url.', ['@url' => $discovery_url]);
+            $this->logger->error('Cannot fetch from @url.', ['@url' => $discovery_url]);
         }
         return $res;
     }
