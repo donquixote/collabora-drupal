@@ -64,56 +64,57 @@ class PermissionTest extends GroupKernelTestBase {
         ]);
 
         // Check that permissions are generated for the groups.
-        // Save current permissions count.
+        // Save current permissions.
         /** @var \Drupal\group\Access\GroupPermissionHandlerInterface $permission_handler */
         $permission_handler = \Drupal::service('group.permissions');
-        $count_group_1 = count($permission_handler->getPermissionsByGroupType($group_type_1));
-        $count_group_2 = count($permission_handler->getPermissionsByGroupType($group_type_2));
-        $count_group_3 = count($permission_handler->getPermissionsByGroupType($group_type_3));
+        $permissions_before_1 = $permission_handler->getPermissionsByGroupType($group_type_1);
+        $permissions_before_2 = $permission_handler->getPermissionsByGroupType($group_type_2);
+        $permissions_before_3 = $permission_handler->getPermissionsByGroupType($group_type_3);
 
-        // Check collabora permissions after enabling the module.
+        // Get permissions difference after enabling the module.
         $this->enableModules(['collabora_online_group']);
         $permission_handler = \Drupal::service('group.permissions');
+        $permissions_after_1 = $permission_handler->getPermissionsByGroupType($group_type_1);
+        $new_permissions_1 = array_diff_key($permissions_after_1, $permissions_before_1);
+        ksort($new_permissions_1);
+        $permissions_after_2 = $permission_handler->getPermissionsByGroupType($group_type_2);
+        $new_permissions_2 = array_diff_key($permissions_after_2, $permissions_before_2);
+        ksort($new_permissions_2);
+        $permissions_after_3 = $permission_handler->getPermissionsByGroupType($group_type_3);
+        $new_permissions_3 = array_diff_key($permissions_after_3, $permissions_before_3);
+        ksort($new_permissions_3);
+
         // The 'group_1' has only 'media_type_1' permissions.
-        $permissions_group_1 = $permission_handler->getPermissionsByGroupType($group_type_1);
-        $this->assertCollaboraPermissions('group_media:media_1', $permissions_group_1);
-        $this->assertCollaboraPermissions('group_media:media_2', $permissions_group_1, FALSE);
-        $this->assertCount($count_group_1 + 3, $permissions_group_1);
+        $this->assertSame(
+            [
+                'edit any group_media:media_1 in collabora' => 'Entity: Edit any <em class="placeholder">media item</em> in collabora',
+                'edit own group_media:media_1 in collabora' => 'Entity: Edit own <em class="placeholder">media item</em> in collabora',
+                'preview group_media:media_1 in collabora' => 'Entity: Preview <em class="placeholder">media item</em> in collabora',
+            ],
+            array_map(
+                fn ($permission) => (string) $permission['title'],
+                $new_permissions_1,
+        ));
         // The 'group_2' has 'media_type_1' and 'media_type_2' permissions.
-        $permissions_group_2 = $permission_handler->getPermissionsByGroupType($group_type_2);
-        $this->assertCollaboraPermissions('group_media:media_1', $permissions_group_2);
-        $this->assertCollaboraPermissions('group_media:media_2', $permissions_group_2);
-        $this->assertCount($count_group_2 + 6, $permissions_group_2);
+        $this->assertSame(
+            [
+                'edit any group_media:media_1 in collabora' => 'Entity: Edit any <em class="placeholder">media item</em> in collabora',
+                'edit any group_media:media_2 in collabora' => 'Entity: Edit any <em class="placeholder">media item</em> in collabora',
+                'edit own group_media:media_1 in collabora' => 'Entity: Edit own <em class="placeholder">media item</em> in collabora',
+                'edit own group_media:media_2 in collabora' => 'Entity: Edit own <em class="placeholder">media item</em> in collabora',
+                'preview group_media:media_1 in collabora' => 'Entity: Preview <em class="placeholder">media item</em> in collabora',
+                'preview group_media:media_2 in collabora' => 'Entity: Preview <em class="placeholder">media item</em> in collabora',
+            ],
+            array_map(
+                fn ($permission) => (string) $permission['title'],
+                $new_permissions_2,
+        ));
         // The 'group_3' doesn't have any new permissions.
-        $permissions_group_3 = $permission_handler->getPermissionsByGroupType($group_type_3);
-        $this->assertCollaboraPermissions('group_media:media_1', $permissions_group_3, FALSE);
-        $this->assertCollaboraPermissions('group_media:media_2', $permissions_group_3, FALSE);
-        $this->assertCount($count_group_3, $permissions_group_3);
-    }
-
-    /**
-     * Asserts whether collaboration permissions are present in a given array.
-     *
-     * @param string $id
-     *   The entity ID.
-     * @param array $permissions
-     *   The permission to check.
-     * @param bool $enabled
-     *   If the permissions are enabled.
-     */
-    protected function assertCollaboraPermissions(string $id, array $permissions, bool $enabled = TRUE): void {
-        $expected_permissions = [
-            "preview $id in collabora" => "Entity: Preview media item in collabora",
-            "edit any $id in collabora" => "Entity: Edit any media item in collabora",
-            "edit own $id in collabora" => "Entity: Edit own media item in collabora",
-        ];
-
-        foreach($expected_permissions as $name => $description) {
-            if ($enabled === FALSE) {
-                $this->assertArrayNotHasKey($name, $permissions);
-                continue;
-            }
-            $this->assertEquals($description, $permissions[$name]['title']);
-        }
+        $this->assertSame(
+            [],
+            array_map(
+                fn ($permission) => (string) $permission['title'],
+                $new_permissions_3,
+        ));
     }
 }
