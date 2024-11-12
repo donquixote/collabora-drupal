@@ -77,7 +77,10 @@ class CollaboraMediaPermissions implements ContainerInjectionInterface {
 
         return [
             "preview $type_id in collabora" => [
-                'title' => $this->t('%type_name: Preview media file in Collabora', $type_params),
+                'title' => $this->t('%type_name: Preview published media file in Collabora', $type_params),
+            ],
+            "preview own unpublished $type_id in collabora" => [
+                'title' => $this->t('%type_name: Preview own unpublished media file in Collabora', $type_params),
             ],
             "edit own $type_id in collabora" => [
                 'title' => $this->t('%type_name: Edit own media file in Collabora', $type_params),
