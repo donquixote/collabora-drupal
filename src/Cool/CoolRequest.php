@@ -50,8 +50,7 @@ class CoolRequest {
      *   The client url cannot be retrieved.
      */
     public function getWopiClientURL(): string {
-        $wopi_client_server = $this->getWopiClientServerBaseUrl();
-        $discovery = $this->getDiscovery($wopi_client_server);
+        $discovery = $this->getDiscovery();
         if ($discovery === FALSE) {
             throw new CoolRequestException(
                 'Not able to retrieve the discovery.xml file from the Collabora Online server.',
@@ -117,14 +116,11 @@ class CoolRequest {
     /**
      * Gets the contents of discovery.xml from the Collabora server.
      *
-     * @param string $server
-     *   Url of the Collabora Online server.
-     *
      * @return string|false
      *   The full contents of discovery.xml, or FALSE on failure.
      */
-    protected function getDiscovery(string $server): string|false {
-        $discovery_url = $server . '/hosting/discovery';
+    protected function getDiscovery(): string|false {
+        $discovery_url = $this->getWopiClientServerBaseUrl() . '/hosting/discovery';
 
         $default_config = $this->configFactory->get('collabora_online.settings');
         if ($default_config === NULL) {
