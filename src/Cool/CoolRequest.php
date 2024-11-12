@@ -70,7 +70,7 @@ class CoolRequest {
             );
         }
 
-        $wopi_src = strval($this->getWopiSrcUrl($discovery_parsed, 'text/plain')[0]);
+        $wopi_src = (string) $this->getWopiSrcUrl($discovery_parsed, 'text/plain')[0];
         if (!$wopi_src) {
             throw new CoolRequestException(
                 'The requested mime type is not handled.',
