@@ -198,6 +198,77 @@ class CollaboraMediaAccessTest extends KernelTestBase {
     }
 
     /**
+     * Tests a scenario where the anonymous user has more permissions.
+     */
+    public function testAnonymousOwnAccess(): void {
+        user_role_grant_permissions(RoleInterface::ANONYMOUS_ID, [
+            'edit own document in collabora',
+        ]);
+
+        /** @var \Drupal\Core\Session\AccountInterface[] $accounts */
+        $accounts = [
+            'anonymous' => new AnonymousUserSession(),
+            'Emilia' => $this->createUser(),
+        ];
+
+        /** @var \Drupal\media\MediaInterface[] $media_entities */
+        $media_entities = [
+            // Set uid = 0 to verify that anonymous is not seen as the owner.
+            "published document" => $this->createMediaEntity('document', [
+                'uid' => 0,
+            ]),
+            "unpublished document" => $this->createMediaEntity('document', [
+                'uid' => 0,
+                'status' => 0,
+            ]),
+            "Emilia's published document" => $this->createMediaEntity('document', [
+                'uid' => $accounts['Emilia']->id(),
+            ]),
+            "Emilia's unpublished document" => $this->createMediaEntity('document', [
+                'uid' => $accounts['Emilia']->id(),
+                'status' => 0,
+            ]),
+        ];
+
+        $this->assertEntityAccess(
+            [
+                'anonymous' => [],
+                'Emilia' => [],
+            ],
+            $accounts,
+            $media_entities,
+            [
+                'preview in collabora',
+                'edit in collabora',
+            ],
+        );
+
+        user_role_grant_permissions(RoleInterface::ANONYMOUS_ID, [
+            'preview document in collabora',
+            'edit any document in collabora',
+        ]);
+        drupal_flush_all_caches();
+
+        $this->assertEntityAccess(
+            [
+                'anonymous' => [
+                    "published document" => ['preview in collabora', 'edit in collabora'],
+                    "unpublished document" => ['preview in collabora', 'edit in collabora'],
+                    "Emilia's published document" => ['preview in collabora', 'edit in collabora'],
+                    "Emilia's unpublished document" => ['preview in collabora', 'edit in collabora'],
+                ],
+                'Emilia' => [],
+            ],
+            $accounts,
+            $media_entities,
+            [
+                'preview in collabora',
+                'edit in collabora',
+            ],
+        );
+    }
+
+    /**
      * Asserts which users can access which entity operations.
      *
      * @param array<string, array<string, list<string>>> $expected
