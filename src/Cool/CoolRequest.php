@@ -67,23 +67,6 @@ function getWopiSrcUrl($discovery_parsed, $mimetype) {
 }
 
 /**
- * Checks if a string starts with another string.
- *
- * @param string $haystack
- *   Haystack.
- * @param string $needle
- *   Needle.
- *
- * @return bool
- *   TRUE if $ss is a prefix of $s.
- *
- * @see str_starts_with()
- */
-function strStartsWith($haystack, $needle) {
-    return strpos($haystack, $needle) === 0;
-}
-
-/**
  * Service to fetch a WOPI client url.
  */
 class CoolRequest {
@@ -109,14 +92,14 @@ class CoolRequest {
         }
         $wopi_client_server = trim($wopi_client_server);
 
-        if (!strStartsWith($wopi_client_server, 'http')) {
+        if (!str_starts_with($wopi_client_server, 'http')) {
             throw new CoolRequestException(
                 'Warning! You have to specify the scheme protocol too (http|https) for the server address.',
                 204,
             );
         }
 
-        if (!strStartsWith($wopi_client_server, $_HOST_SCHEME . '://')) {
+        if (!str_starts_with($wopi_client_server, $_HOST_SCHEME . '://')) {
             throw new CoolRequestException(
                 'Collabora Online server address scheme does not match the current page url scheme.',
                 202,
