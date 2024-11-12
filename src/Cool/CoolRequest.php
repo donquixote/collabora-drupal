@@ -106,18 +106,10 @@ class CoolRequest {
     ];
 
     /**
-     * The WOPI url that was last fetched, or '' as initial value.
-     *
-     * @var int
-     */
-    private $wopi_src;
-
-    /**
      * Constructor.
      */
     public function __construct() {
         $this->error_code = 0;
-        $this->wopi_src = '';
     }
 
     /**
@@ -168,13 +160,13 @@ class CoolRequest {
             return NULL;
         }
 
-        $this->wopi_src = strval(getWopiSrcUrl($discovery_parsed, 'text/plain')[0]);
-        if (!$this->wopi_src) {
+        $wopi_src = strval(getWopiSrcUrl($discovery_parsed, 'text/plain')[0]);
+        if (!$wopi_src) {
             $this->error_code = 103;
             return NULL;
         }
 
-        return $this->wopi_src;
+        return $wopi_src;
     }
 
 }
