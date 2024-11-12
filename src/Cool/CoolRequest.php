@@ -14,6 +14,7 @@ namespace Drupal\collabora_online\Cool;
 
 use Drupal\collabora_online\Exception\CoolRequestException;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Service to fetch a WOPI client url.
@@ -25,9 +26,12 @@ class CoolRequest {
      *
      * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
      *   Config factory.
+     * @param \Symfony\Component\HttpFoundation\RequestStack $requestStack
+     *   Request stack.
      */
     public function __construct(
         protected readonly ConfigFactoryInterface $configFactory,
+        protected readonly RequestStack $requestStack,
     ) {}
 
     /**
@@ -40,7 +44,6 @@ class CoolRequest {
      *   The client url cannot be retrieved.
      */
     public function getWopiClientURL(): string {
-        $_HOST_SCHEME = isset($_SERVER['HTTPS']) ? 'https' : 'http';
         $default_config = $this->configFactory->get('collabora_online.settings');
         $wopi_client_server = $default_config->get('cool')['server'];
         if (!$wopi_client_server) {
@@ -58,7 +61,8 @@ class CoolRequest {
             );
         }
 
-        if (!str_starts_with($wopi_client_server, $_HOST_SCHEME . '://')) {
+        $current_request_scheme = $this->requestStack->getCurrentRequest()->getScheme();
+        if (!str_starts_with($wopi_client_server, $current_request_scheme . '://')) {
             throw new CoolRequestException(
                 'Collabora Online server address scheme does not match the current page url scheme.',
                 202,
