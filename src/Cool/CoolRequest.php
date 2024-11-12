@@ -13,11 +13,22 @@
 namespace Drupal\collabora_online\Cool;
 
 use Drupal\collabora_online\Exception\CoolRequestException;
+use Drupal\Core\Config\ConfigFactoryInterface;
 
 /**
  * Service to fetch a WOPI client url.
  */
 class CoolRequest {
+
+    /**
+     * Constructor.
+     *
+     * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
+     *   Config factory.
+     */
+    public function __construct(
+        protected readonly ConfigFactoryInterface $configFactory,
+    ) {}
 
     /**
      * Gets the URL for the WOPI client.
@@ -30,7 +41,7 @@ class CoolRequest {
      */
     public function getWopiClientURL(): string {
         $_HOST_SCHEME = isset($_SERVER['HTTPS']) ? 'https' : 'http';
-        $default_config = \Drupal::config('collabora_online.settings');
+        $default_config = $this->configFactory->get('collabora_online.settings');
         $wopi_client_server = $default_config->get('cool')['server'];
         if (!$wopi_client_server) {
             throw new CoolRequestException(
@@ -93,7 +104,7 @@ class CoolRequest {
     protected function getDiscovery(string $server): string|false {
         $discovery_url = $server . '/hosting/discovery';
 
-        $default_config = \Drupal::config('collabora_online.settings');
+        $default_config = $this->configFactory->get('collabora_online.settings');
         if ($default_config === NULL) {
             return FALSE;
         }
