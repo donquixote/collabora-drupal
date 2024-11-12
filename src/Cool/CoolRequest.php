@@ -80,8 +80,7 @@ function getWopiSrcUrl($discovery_parsed, $mimetype) {
  * @see str_starts_with()
  */
 function strStartsWith($haystack, $needle) {
-    $pos = strrpos($haystack, $needle);
-    return !is_bool($pos) && $pos == 0;
+    return strrpos($haystack, $needle) === 0;
 }
 
 /**
