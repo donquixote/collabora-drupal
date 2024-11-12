@@ -80,8 +80,12 @@ class PermissionTest extends BrowserTestBase {
                 'title' => '<em class="placeholder">Public wiki</em>: Edit own media file in Collabora',
                 'dependencies' => ['config' => ['media.type.public_wiki']],
             ],
+            'preview own unpublished public_wiki in collabora' => [
+                'title' => '<em class="placeholder">Public wiki</em>: Preview own unpublished media file in Collabora',
+                'dependencies' => ['config' => ['media.type.public_wiki']],
+            ],
             'preview public_wiki in collabora' => [
-                'title' => '<em class="placeholder">Public wiki</em>: Preview media file in Collabora',
+                'title' => '<em class="placeholder">Public wiki</em>: Preview published media file in Collabora',
                 'dependencies' => ['config' => ['media.type.public_wiki']],
             ],
         ], $permissions);

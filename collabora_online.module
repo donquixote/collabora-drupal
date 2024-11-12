@@ -126,21 +126,55 @@ function collabora_online_media_access(MediaInterface $media, string $operation,
     $type = $media->bundle();
     switch ($operation) {
         case 'preview in collabora':
-            return AccessResult::allowedIfHasPermission($account, "preview $type in collabora");
+            if ($media->isPublished()) {
+                return AccessResult::allowedIfHasPermission($account, "preview $type in collabora")
+                    ->addCacheableDependency($media);
+            }
+            $preview_own_permission = "preview own unpublished $type in collabora";
+            if (!$account->hasPermission($preview_own_permission)) {
+                return AccessResult::neutral()
+                    ->cachePerPermissions()
+                    ->addCacheableDependency($media)
+                    ->setReason("The user does not have the '$preview_own_permission' permission.");
+            }
+            // Use '==' because Drupal sometimes loads integers as strings.
+            $is_owner = ($account->id() && $account->id() == $media->getOwnerId());
+            if ($is_owner) {
+                $access_result = AccessResult::allowed();
+            }
+            else {
+                $access_result = AccessResult::neutral()
+                    ->setReason("The user has the '$preview_own_permission' permission, but is not the owner of the media item.");
+            }
+            return $access_result
+                ->cachePerPermissions()
+                ->cachePerUser()
+                ->addCacheableDependency($media);
 
         case 'edit in collabora':
             if ($account->hasPermission("edit any $type in collabora")) {
-                return AccessResult::allowed()->cachePerPermissions();
+                return AccessResult::allowed()
+                    ->cachePerPermissions();
             }
-            if ($account->hasPermission("edit own $type in collabora")) {
-                // Use '==' because Drupal sometimes loads integers as strings.
-                $is_owner = ($account->id() && $account->id() == $media->getOwnerId());
-                return AccessResult::allowedIf($is_owner)
+            $edit_own_permission = "edit own $type in collabora";
+            if (!$account->hasPermission($edit_own_permission)) {
+                return AccessResult::neutral()
                     ->cachePerPermissions()
-                    ->cachePerUser()
-                    ->addCacheableDependency($media);
+                    ->setReason("The user does not have the '$edit_own_permission' permission.");
             }
-            return AccessResult::neutral()->cachePerPermissions();
+            // Use '==' because Drupal sometimes loads integers as strings.
+            $is_owner = ($account->id() && $account->id() == $media->getOwnerId());
+            if (!$is_owner) {
+                $access_result = AccessResult::neutral()
+                    ->setReason("The user has the '$edit_own_permission' permission, but is not the owner of the media item.");
+            }
+            else {
+                $access_result = AccessResult::allowed();
+            }
+            return $access_result
+                ->cachePerPermissions()
+                ->cachePerUser()
+                ->addCacheableDependency($media);
 
         default:
             return AccessResult::neutral();
