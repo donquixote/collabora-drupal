@@ -125,7 +125,7 @@ class CoolRequest {
     /**
      * Extracts a WOPI url from the parsed discovery.xml.
      *
-     * @param \SimpleXMLElement|null|false $discovery_parsed
+     * @param \SimpleXMLElement $discovery_parsed
      *   Parsed contents from discovery.xml from the Collabora server.
      *   Currently, NULL or FALSE are supported too, but lead to NULL return
      *   value.
@@ -137,9 +137,6 @@ class CoolRequest {
      *   none was found for the given MIME type.
      */
     protected function getWopiSrcUrl($discovery_parsed, $mimetype) {
-        if ($discovery_parsed === NULL || $discovery_parsed == FALSE) {
-            return NULL;
-        }
         $result = $discovery_parsed->xpath(sprintf('/wopi-discovery/net-zone/app[@name=\'%s\']/action', $mimetype));
         if ($result && count($result) > 0) {
             return $result[0]['urlsrc'];
