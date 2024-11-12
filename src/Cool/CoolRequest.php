@@ -69,9 +69,9 @@ function getWopiSrcUrl($discovery_parsed, $mimetype) {
 /**
  * Checks if a string starts with another string.
  *
- * @param string $s
+ * @param string $haystack
  *   Haystack.
- * @param string $ss
+ * @param string $needle
  *   Needle.
  *
  * @return bool
@@ -79,9 +79,9 @@ function getWopiSrcUrl($discovery_parsed, $mimetype) {
  *
  * @see str_starts_with()
  */
-function strStartsWith($s, $ss) {
-    $res = strrpos($s, $ss);
-    return !is_bool($res) && $res == 0;
+function strStartsWith($haystack, $needle) {
+    $pos = strrpos($haystack, $needle);
+    return !is_bool($pos) && $pos == 0;
 }
 
 /**
