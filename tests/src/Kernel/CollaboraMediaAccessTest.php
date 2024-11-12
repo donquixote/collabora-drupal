@@ -120,21 +120,31 @@ class CollaboraMediaAccessTest extends KernelTestBase {
 
         $this->assertEntityAccess(
             [
-                'published document' => [
-                    'preview in collabora' => ['Previewer', 'Media admin'],
-                    'edit in collabora' => ['Editor', 'Media admin'],
+                'anonymous' => [],
+                'authenticated' => [],
+                'media permissions only' => [],
+                'Bookworm' => [],
+                'Previewer' => [
+                    "published document" => ['preview in collabora'],
+                    "unpublished document" => ['preview in collabora'],
+                    "Kelly's published document" => ['preview in collabora'],
+                    "Kelly's unpublished document" => ['preview in collabora'],
                 ],
-                'unpublished document' => [
-                    'preview in collabora' => ['Previewer', 'Media admin'],
-                    'edit in collabora' => ['Editor', 'Media admin'],
+                'Editor' => [
+                    "published document" => ['edit in collabora'],
+                    "unpublished document" => ['edit in collabora'],
+                    "Kelly's published document" => ['edit in collabora'],
+                    "Kelly's unpublished document" => ['edit in collabora'],
                 ],
-                "Kelly's published document" => [
-                    'preview in collabora' => ['Previewer', 'Media admin'],
-                    'edit in collabora' => ['Editor', 'Kelly (edit own)', 'Media admin'],
+                'Kelly (edit own)' => [
+                    "Kelly's published document" => ['edit in collabora'],
+                    "Kelly's unpublished document" => ['edit in collabora'],
                 ],
-                "Kelly's unpublished document" => [
-                    'preview in collabora' => ['Previewer', 'Media admin'],
-                    'edit in collabora' => ['Editor', 'Kelly (edit own)', 'Media admin'],
+                'Media admin' => [
+                    "published document" => ['preview in collabora', 'edit in collabora'],
+                    "unpublished document" => ['preview in collabora', 'edit in collabora'],
+                    "Kelly's published document" => ['preview in collabora', 'edit in collabora'],
+                    "Kelly's unpublished document" => ['preview in collabora', 'edit in collabora'],
                 ],
             ],
             $accounts,
@@ -147,14 +157,36 @@ class CollaboraMediaAccessTest extends KernelTestBase {
 
         $this->assertEntityPathsAccess(
             [
-                "/cool/view/<published document>" => ['Previewer', 'Media admin'],
-                "/cool/edit/<published document>" => ['Editor', 'Media admin'],
-                "/cool/view/<unpublished document>" => ['Previewer', 'Media admin'],
-                "/cool/edit/<unpublished document>" => ['Editor', 'Media admin'],
-                "/cool/view/<Kelly's published document>" => ['Previewer', 'Media admin'],
-                "/cool/edit/<Kelly's published document>" => ['Editor', 'Kelly (edit own)', 'Media admin'],
-                "/cool/view/<Kelly's unpublished document>" => ['Previewer', 'Media admin'],
-                "/cool/edit/<Kelly's unpublished document>" => ['Editor', 'Kelly (edit own)', 'Media admin'],
+                'anonymous' => [],
+                'authenticated' => [],
+                'media permissions only' => [],
+                'Bookworm' => [],
+                'Previewer' => [
+                    "/cool/view/<published document>",
+                    "/cool/view/<unpublished document>",
+                    "/cool/view/<Kelly's published document>",
+                    "/cool/view/<Kelly's unpublished document>",
+                ],
+                'Editor' => [
+                    "/cool/edit/<published document>",
+                    "/cool/edit/<unpublished document>",
+                    "/cool/edit/<Kelly's published document>",
+                    "/cool/edit/<Kelly's unpublished document>",
+                ],
+                'Kelly (edit own)' => [
+                    "/cool/edit/<Kelly's published document>",
+                    "/cool/edit/<Kelly's unpublished document>",
+                ],
+                'Media admin' => [
+                    "/cool/view/<published document>",
+                    "/cool/edit/<published document>",
+                    "/cool/view/<unpublished document>",
+                    "/cool/edit/<unpublished document>",
+                    "/cool/view/<Kelly's published document>",
+                    "/cool/edit/<Kelly's published document>",
+                    "/cool/view/<Kelly's unpublished document>",
+                    "/cool/edit/<Kelly's unpublished document>",
+                ],
             ],
             $accounts,
             $media_entities,
@@ -184,12 +216,13 @@ class CollaboraMediaAccessTest extends KernelTestBase {
      */
     protected function assertEntityAccess(array $expected, array $accounts, array $entities, array $operations, bool $negate = FALSE): void {
         $actual = [];
-        foreach ($entities as $media_key => $media) {
-            foreach ($operations as $operation) {
-                foreach ($accounts as $account_key => $account) {
-                    $has_access = $media->access($operation, $account);
+        foreach ($accounts as $account_key => $account) {
+            $actual[$account_key] = [];
+            foreach ($entities as $entity_key => $entity) {
+                foreach ($operations as $operation) {
+                    $has_access = $entity->access($operation, $account);
                     if ($has_access xor $negate) {
-                        $actual[$media_key][$operation][] = $account_key;
+                        $actual[$account_key][$entity_key][] = $operation;
                     }
                 }
             }
@@ -258,13 +291,14 @@ class CollaboraMediaAccessTest extends KernelTestBase {
         // Build a report and assert it all at once, to have a more complete
         // overview on failure.
         $actual = [];
-        foreach ($paths as $path_key => $path) {
-            $url = Url::fromUserInput($path);
-            // Filter the user list by access to the url.
-            foreach ($accounts as $account_key => $account) {
+        foreach ($accounts as $account_key => $account) {
+            $actual[$account_key] = [];
+            foreach ($paths as $path_key => $path) {
+                $url = Url::fromUserInput($path);
+                // Filter the user list by access to the url.
                 $has_access = $url->access($account);
                 if ($has_access xor $negate) {
-                    $actual[$path_key][] = $account_key;
+                    $actual[$account_key][] = $path_key;
                 }
             }
         }
