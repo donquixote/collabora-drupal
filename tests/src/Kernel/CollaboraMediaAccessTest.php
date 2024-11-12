@@ -86,11 +86,15 @@ class CollaboraMediaAccessTest extends KernelTestBase {
             // Permissions for 'book' do not grant access to 'document'.
             'Bookworm' => $this->createUser([
                 'preview book in collabora',
+                'preview own unpublished book in collabora',
                 'edit any book in collabora',
                 'edit own book in collabora',
             ]),
             'Previewer' => $this->createUser([
                 'preview document in collabora',
+            ]),
+            'Sean (preview own)' => $this->createUser([
+                'preview own unpublished document in collabora',
             ]),
             'Editor' => $this->createUser([
                 'edit any document in collabora',
@@ -105,8 +109,11 @@ class CollaboraMediaAccessTest extends KernelTestBase {
 
         /** @var \Drupal\media\MediaInterface[] $media_entities */
         $media_entities = [
-            'published document' => $this->createMediaEntity('document'),
-            'unpublished document' => $this->createMediaEntity('document', [
+            "Sean's published document" => $this->createMediaEntity('document', [
+                'uid' => $accounts['Sean (preview own)']->id(),
+            ]),
+            "Sean's unpublished document" => $this->createMediaEntity('document', [
+                'uid' => $accounts['Sean (preview own)']->id(),
                 'status' => 0,
             ]),
             "Kelly's published document" => $this->createMediaEntity('document', [
@@ -125,14 +132,15 @@ class CollaboraMediaAccessTest extends KernelTestBase {
                 'media permissions only' => [],
                 'Bookworm' => [],
                 'Previewer' => [
-                    "published document" => ['preview in collabora'],
-                    "unpublished document" => ['preview in collabora'],
+                    "Sean's published document" => ['preview in collabora'],
                     "Kelly's published document" => ['preview in collabora'],
-                    "Kelly's unpublished document" => ['preview in collabora'],
+                ],
+                'Sean (preview own)' => [
+                    "Sean's unpublished document" => ['preview in collabora'],
                 ],
                 'Editor' => [
-                    "published document" => ['edit in collabora'],
-                    "unpublished document" => ['edit in collabora'],
+                    "Sean's published document" => ['edit in collabora'],
+                    "Sean's unpublished document" => ['edit in collabora'],
                     "Kelly's published document" => ['edit in collabora'],
                     "Kelly's unpublished document" => ['edit in collabora'],
                 ],
@@ -141,8 +149,8 @@ class CollaboraMediaAccessTest extends KernelTestBase {
                     "Kelly's unpublished document" => ['edit in collabora'],
                 ],
                 'Media admin' => [
-                    "published document" => ['preview in collabora', 'edit in collabora'],
-                    "unpublished document" => ['preview in collabora', 'edit in collabora'],
+                    "Sean's published document" => ['preview in collabora', 'edit in collabora'],
+                    "Sean's unpublished document" => ['preview in collabora', 'edit in collabora'],
                     "Kelly's published document" => ['preview in collabora', 'edit in collabora'],
                     "Kelly's unpublished document" => ['preview in collabora', 'edit in collabora'],
                 ],
@@ -162,14 +170,15 @@ class CollaboraMediaAccessTest extends KernelTestBase {
                 'media permissions only' => [],
                 'Bookworm' => [],
                 'Previewer' => [
-                    "/cool/view/<published document>",
-                    "/cool/view/<unpublished document>",
+                    "/cool/view/<Sean's published document>",
                     "/cool/view/<Kelly's published document>",
-                    "/cool/view/<Kelly's unpublished document>",
+                ],
+                'Sean (preview own)' => [
+                    "/cool/view/<Sean's unpublished document>",
                 ],
                 'Editor' => [
-                    "/cool/edit/<published document>",
-                    "/cool/edit/<unpublished document>",
+                    "/cool/edit/<Sean's published document>",
+                    "/cool/edit/<Sean's unpublished document>",
                     "/cool/edit/<Kelly's published document>",
                     "/cool/edit/<Kelly's unpublished document>",
                 ],
@@ -178,10 +187,10 @@ class CollaboraMediaAccessTest extends KernelTestBase {
                     "/cool/edit/<Kelly's unpublished document>",
                 ],
                 'Media admin' => [
-                    "/cool/view/<published document>",
-                    "/cool/edit/<published document>",
-                    "/cool/view/<unpublished document>",
-                    "/cool/edit/<unpublished document>",
+                    "/cool/view/<Sean's published document>",
+                    "/cool/edit/<Sean's published document>",
+                    "/cool/view/<Sean's unpublished document>",
+                    "/cool/edit/<Sean's unpublished document>",
                     "/cool/view/<Kelly's published document>",
                     "/cool/edit/<Kelly's published document>",
                     "/cool/view/<Kelly's unpublished document>",
@@ -202,6 +211,7 @@ class CollaboraMediaAccessTest extends KernelTestBase {
      */
     public function testAnonymousOwnAccess(): void {
         user_role_grant_permissions(RoleInterface::ANONYMOUS_ID, [
+            'preview own unpublished document in collabora',
             'edit own document in collabora',
         ]);
 
@@ -252,9 +262,9 @@ class CollaboraMediaAccessTest extends KernelTestBase {
             [
                 'anonymous' => [
                     "published document" => ['preview in collabora', 'edit in collabora'],
-                    "unpublished document" => ['preview in collabora', 'edit in collabora'],
+                    "unpublished document" => ['edit in collabora'],
                     "Emilia's published document" => ['preview in collabora', 'edit in collabora'],
-                    "Emilia's unpublished document" => ['preview in collabora', 'edit in collabora'],
+                    "Emilia's unpublished document" => ['edit in collabora'],
                 ],
                 'Emilia' => [],
             ],
