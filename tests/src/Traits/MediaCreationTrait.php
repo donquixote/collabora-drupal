@@ -10,8 +10,6 @@ use Drupal\media\MediaInterface;
 
 /**
  * Provides methods to create a media from given values.
- *
- * This trait is meant to be used only by test classes.
  */
 trait MediaCreationTrait {
 
