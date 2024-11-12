@@ -26,13 +26,6 @@
     <exclude name="Drupal.NamingConventions.ValidVariableName.LowerCamelName"/>
     <exclude name="Drupal.NamingConventions.ValidFunctionName.ScopeNotCamelCaps"/>
 
-    <!-- Fix doc comments later. -->
-    <exclude name="Drupal.Commenting.ClassComment"/>
-    <exclude name="Drupal.Commenting.DataTypeNamespace"/>
-    <exclude name="Drupal.Commenting.DocComment"/>
-    <exclude name="Drupal.Commenting.FunctionComment"/>
-    <exclude name="Drupal.Commenting.VariableComment"/>
-
     <!-- Fix translatable strings later. -->
     <exclude name="Drupal.Semantics.FunctionT.WhiteSpace"/>
   </rule>
