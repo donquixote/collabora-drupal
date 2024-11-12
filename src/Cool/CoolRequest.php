@@ -28,7 +28,7 @@ class CoolRequest {
      * @throws \Drupal\collabora_online\Exception\CoolRequestException
      *   The client url cannot be retrieved.
      */
-    public function getWopiClientURL() {
+    public function getWopiClientURL(): string {
         $_HOST_SCHEME = isset($_SERVER['HTTPS']) ? 'https' : 'http';
         $default_config = \Drupal::config('collabora_online.settings');
         $wopi_client_server = $default_config->get('cool')['server'];
@@ -90,7 +90,7 @@ class CoolRequest {
      * @return string|false
      *   The full contents of discovery.xml, or FALSE on failure.
      */
-    protected function getDiscovery($server) {
+    protected function getDiscovery(string $server): string|false {
         $discovery_url = $server . '/hosting/discovery';
 
         $default_config = \Drupal::config('collabora_online.settings');
@@ -136,7 +136,7 @@ class CoolRequest {
      *   WOPI url as configured for this MIME type in discovery.xml, or NULL if
      *   none was found for the given MIME type.
      */
-    protected function getWopiSrcUrl($discovery_parsed, $mimetype) {
+    protected function getWopiSrcUrl(\SimpleXMLElement $discovery_parsed, string $mimetype): string|null {
         $result = $discovery_parsed->xpath(sprintf('/wopi-discovery/net-zone/app[@name=\'%s\']/action', $mimetype));
         if ($result && count($result) > 0) {
             return (string) $result[0]['urlsrc'][0];
