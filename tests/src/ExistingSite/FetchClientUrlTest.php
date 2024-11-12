@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\collabora_online\ExistingSite;
 
 use Drupal\collabora_online\Cool\CoolRequest;
+use Drupal\collabora_online\Exception\CoolRequestException;
 use weitzman\DrupalTestTraits\ExistingSiteBase;
 
 /**
@@ -21,7 +22,6 @@ class FetchClientUrlTest extends ExistingSiteBase {
         // The protocol, domain and port are known when this test runs in the
         // docker-compose setup.
         $this->assertMatchesRegularExpression('@^http://collabora\.test:9980/browser/[0-9a-f]+/cool\.html\?$@', $client_url);
-        $this->assertSame('0: Success', $cool_request->errorString());
     }
 
     /**
@@ -36,9 +36,12 @@ class FetchClientUrlTest extends ExistingSiteBase {
                 ],
             ]);
         $cool_request = new CoolRequest();
-        $client_url = $cool_request->getWopiClientURL();
-        $this->assertNull($client_url);
-        $this->assertSame('204: Warning! You have to specify the scheme protocol too (http|https) for the server address.', $cool_request->errorString());
+
+        $this->expectException(CoolRequestException::class);
+        $this->expectExceptionMessage('Warning! You have to specify the scheme protocol too (http|https) for the server address.');
+        $this->expectExceptionCode(204);
+
+        $cool_request->getWopiClientURL();
     }
 
 }
