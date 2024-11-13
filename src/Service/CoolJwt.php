@@ -4,13 +4,39 @@ declare(strict_types=1);
 
 namespace Drupal\collabora_online\Service;
 
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\key\KeyRepositoryInterface;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
  * Service with functionality related to the JWT token.
  */
 class CoolJwt {
+
+    /**
+     * Constructor.
+     *
+     * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
+     *   Config factory service.
+     * @param \Drupal\key\KeyRepositoryInterface $keyRepository
+     *   Key repository service.
+     * @param \Psr\Log\LoggerInterface $logger
+     *   Logger channel for this module.
+     * @param \Drupal\Core\Session\AccountInterface $currentUser
+     *   Current user.
+     */
+    public function __construct(
+        protected readonly ConfigFactoryInterface $configFactory,
+        #[Autowire(service: 'key.repository')]
+        protected readonly KeyRepositoryInterface $keyRepository,
+        #[Autowire(service: 'logger.channel.collabora_online')]
+        protected readonly LoggerInterface $logger,
+        protected readonly AccountInterface $currentUser,
+    ) {}
 
     /**
      * Obtains the signing key from the key storage.
@@ -19,10 +45,10 @@ class CoolJwt {
      *   The key value.
      */
     protected function getKey() {
-        $default_config = \Drupal::config('collabora_online.settings');
+        $default_config = $this->configFactory->get('collabora_online.settings');
         $key_id = $default_config->get('cool')['key_id'];
 
-        $key = \Drupal::service('key.repository')->getKey($key_id)->getKeyValue();
+        $key = $this->keyRepository->getKey($key_id)->getKeyValue();
         return $key;
     }
 
@@ -57,7 +83,7 @@ class CoolJwt {
             }
         }
         catch (\Exception $e) {
-            \Drupal::logger('cool')->error($e->getMessage());
+            $this->logger->error($e->getMessage());
         }
         return NULL;
     }
@@ -88,7 +114,7 @@ class CoolJwt {
     public function tokenForFileId($id, $ttl, $can_write = FALSE) {
         $payload = [
             "fid" => $id,
-            "uid" => \Drupal::currentUser()->id(),
+            "uid" => $this->currentUser->id(),
             "exp" => $ttl,
             "wri" => $can_write,
         ];
@@ -105,7 +131,7 @@ class CoolJwt {
      *   Token TTL in seconds.
      */
     public function getAccessTokenTtl() {
-        $default_config = \Drupal::config('collabora_online.settings');
+        $default_config = $this->configFactory->get('collabora_online.settings');
         $ttl = $default_config->get('cool')['access_token_ttl'];
 
         return gettimeofday(TRUE) + $ttl;
