@@ -19,7 +19,6 @@ use GuzzleHttp\ClientInterface;
 use GuzzleHttp\RequestOptions;
 use Psr\Http\Client\ClientExceptionInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Service to fetch a WOPI client url.
@@ -33,8 +32,6 @@ class CoolRequest {
      *   Logger channel.
      * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
      *   Config factory.
-     * @param \Symfony\Component\HttpFoundation\RequestStack $requestStack
-     *   Request stack.
      * @param \GuzzleHttp\ClientInterface $client
      *   Http client.
      */
@@ -42,7 +39,6 @@ class CoolRequest {
         #[Autowire(service: 'logger.channel.collabora_online')]
         protected readonly LoggerChannelInterface $logger,
         protected readonly ConfigFactoryInterface $configFactory,
-        protected readonly RequestStack $requestStack,
         protected readonly ClientInterface $client,
     ) {}
 
@@ -96,28 +92,13 @@ class CoolRequest {
         }
         $wopi_client_server = trim($wopi_client_server);
 
-        if (!preg_match('@^(https?)://@', $wopi_client_server, $matches)) {
+        if (!preg_match('@^https?://@', $wopi_client_server)) {
             throw new CoolRequestException(
                 sprintf(
                     "The configured Collabora Online server address must begin with 'http://' or 'https://'. Found '%s'.",
                     $wopi_client_server,
                 ),
                 204,
-            );
-        }
-
-        $wopi_client_server_scheme = $matches[1];
-        $current_request_scheme = $this->requestStack->getCurrentRequest()->getScheme();
-
-        if ($wopi_client_server_scheme !== $current_request_scheme) {
-            throw new CoolRequestException(
-                sprintf(
-                    "The url scheme '%s' of the current request does not match the url scheme '%s' of the configured Collabora Online server address '%s'.",
-                    $current_request_scheme,
-                    $wopi_client_server_scheme,
-                    $wopi_client_server,
-                ),
-                202,
             );
         }
 
