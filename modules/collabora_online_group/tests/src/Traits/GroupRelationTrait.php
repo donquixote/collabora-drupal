@@ -8,7 +8,7 @@ use Drupal\group\Entity\GroupRelationshipTypeInterface;
 use Drupal\group\Entity\GroupTypeInterface;
 
 /**
- * Provides methods to create a media from given values.
+ * Provides a method to create a relation between a group type and a plugin.
  */
 trait GroupRelationTrait {
 

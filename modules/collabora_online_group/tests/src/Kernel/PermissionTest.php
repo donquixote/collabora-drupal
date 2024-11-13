@@ -31,16 +31,16 @@ class PermissionTest extends GroupKernelTestBase {
      */
     public function testGroupPermissions(): void {
         // Generate types: groups and medias.
-        $group_type_1 = $this->createGroupType(['id' => 'group_1']);
-        $group_type_2 = $this->createGroupType(['id' => 'group_2']);
-        $group_type_3 = $this->createGroupType(['id' => 'group_3']);
-        $this->createMediaType('file', ['id' => 'media_1']);
-        $this->createMediaType('file', ['id' => 'media_2']);
+        $group_type_1 = $this->createGroupType();
+        $group_type_2 = $this->createGroupType();
+        $group_type_3 = $this->createGroupType();
+        $this->createMediaType('file', ['id' => 'document']);
+        $this->createMediaType('file', ['id' => 'spreadsheet']);
 
         // Enable relation plugins in groups.
         $this->createPluginRelation(
             $group_type_1,
-            'group_media:media_1',
+            'group_media:document',
             [
                 'group_cardinality' => 0,
                 'entity_cardinality' => 1,
@@ -48,7 +48,7 @@ class PermissionTest extends GroupKernelTestBase {
         ]);
         $this->createPluginRelation(
             $group_type_2,
-            'group_media:media_1',
+            'group_media:document',
             [
                 'group_cardinality' => 0,
                 'entity_cardinality' => 1,
@@ -56,7 +56,7 @@ class PermissionTest extends GroupKernelTestBase {
         ]);
         $this->createPluginRelation(
             $group_type_2,
-            'group_media:media_2',
+            'group_media:spreadsheet',
             [
                 'group_cardinality' => 0,
                 'entity_cardinality' => 1,
@@ -84,26 +84,26 @@ class PermissionTest extends GroupKernelTestBase {
         $new_permissions_3 = array_diff_key($permissions_after_3, $permissions_before_3);
         ksort($new_permissions_3);
 
-        // The 'group_1' has only 'media_type_1' permissions.
+        // The 'group_1' has only 'document' permissions.
         $this->assertSame(
             [
-                'edit any group_media:media_1 in collabora' => 'Entity: Edit any <em class="placeholder">media item</em> in collabora',
-                'edit own group_media:media_1 in collabora' => 'Entity: Edit own <em class="placeholder">media item</em> in collabora',
-                'preview group_media:media_1 in collabora' => 'Entity: Preview <em class="placeholder">media item</em> in collabora',
+                'edit any group_media:document in collabora' => 'Entity: Edit any <em class="placeholder">media item</em> in collabora',
+                'edit own group_media:document in collabora' => 'Entity: Edit own <em class="placeholder">media item</em> in collabora',
+                'preview group_media:document in collabora' => 'Entity: Preview <em class="placeholder">media item</em> in collabora',
             ],
             array_map(
                 fn ($permission) => (string) $permission['title'],
                 $new_permissions_1,
         ));
-        // The 'group_2' has 'media_type_1' and 'media_type_2' permissions.
+        // The 'group_2' has 'document' and 'spreadsheet' permissions.
         $this->assertSame(
             [
-                'edit any group_media:media_1 in collabora' => 'Entity: Edit any <em class="placeholder">media item</em> in collabora',
-                'edit any group_media:media_2 in collabora' => 'Entity: Edit any <em class="placeholder">media item</em> in collabora',
-                'edit own group_media:media_1 in collabora' => 'Entity: Edit own <em class="placeholder">media item</em> in collabora',
-                'edit own group_media:media_2 in collabora' => 'Entity: Edit own <em class="placeholder">media item</em> in collabora',
-                'preview group_media:media_1 in collabora' => 'Entity: Preview <em class="placeholder">media item</em> in collabora',
-                'preview group_media:media_2 in collabora' => 'Entity: Preview <em class="placeholder">media item</em> in collabora',
+                'edit any group_media:document in collabora' => 'Entity: Edit any <em class="placeholder">media item</em> in collabora',
+                'edit any group_media:spreadsheet in collabora' => 'Entity: Edit any <em class="placeholder">media item</em> in collabora',
+                'edit own group_media:document in collabora' => 'Entity: Edit own <em class="placeholder">media item</em> in collabora',
+                'edit own group_media:spreadsheet in collabora' => 'Entity: Edit own <em class="placeholder">media item</em> in collabora',
+                'preview group_media:document in collabora' => 'Entity: Preview <em class="placeholder">media item</em> in collabora',
+                'preview group_media:spreadsheet in collabora' => 'Entity: Preview <em class="placeholder">media item</em> in collabora',
             ],
             array_map(
                 fn ($permission) => (string) $permission['title'],
