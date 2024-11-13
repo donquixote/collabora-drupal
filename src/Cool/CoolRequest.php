@@ -126,14 +126,7 @@ class CoolRequest {
     protected function getDiscovery(): string {
         $discovery_url = $this->getWopiClientServerBaseUrl() . '/hosting/discovery';
 
-        $default_config = $this->configFactory->get('collabora_online.settings');
-        if ($default_config === NULL) {
-            throw new CoolRequestException(
-                'Not able to retrieve the discovery.xml file from the Collabora Online server.',
-                203,
-            );
-        }
-        $cool_settings = $default_config->get('cool');
+        $cool_settings = $this->configFactory->get('collabora_online.settings')->get('cool');
         if (!$cool_settings) {
             throw new CoolRequestException(
                 'The Collabora Online connection is not configured.',
