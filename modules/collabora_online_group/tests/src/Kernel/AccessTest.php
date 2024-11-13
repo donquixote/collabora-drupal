@@ -53,9 +53,9 @@ class AccessTest extends GroupKernelTestBase {
      *
      * @param bool $expected_result
      *   The access result.
-     * @param array $permissions
+     * @param string[] $permissions
      *   The global permissions granted to the user.
-     * @param array $group_permissions
+     * @param string[] $group_permissions
      *   The group permissions granted to the user.
      * @param string $operation
      *   The operation to perform on the entity.
