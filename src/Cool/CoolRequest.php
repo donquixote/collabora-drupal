@@ -79,8 +79,8 @@ class CoolRequest {
      *   that of the current Drupal request.
      */
     protected function getWopiClientServerBaseUrl(): string {
-        $default_config = $this->configFactory->get('collabora_online.settings');
-        $wopi_client_server = $default_config->get('cool')['server'];
+        $cool_settings = $this->configFactory->get('collabora_online.settings')->get('cool');
+        $wopi_client_server = $cool_settings['server'];
         if (!$wopi_client_server) {
             throw new CoolRequestException(
                 'Collabora Online server address is not valid.',
@@ -126,7 +126,8 @@ class CoolRequest {
                 203,
             );
         }
-        $disable_checks = (bool) $default_config->get('cool')['disable_cert_check'];
+        $cool_settings = $default_config->get('cool');
+        $disable_checks = (bool) $cool_settings['disable_cert_check'];
 
         try {
             $response = $this->client->get($discovery_url, [
