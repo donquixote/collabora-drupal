@@ -80,6 +80,13 @@ class CoolRequest {
      */
     protected function getWopiClientServerBaseUrl(): string {
         $cool_settings = $this->configFactory->get('collabora_online.settings')->get('cool');
+        if (!$cool_settings) {
+            throw new CoolRequestException(
+                'The Collabora Online connection is not configured.',
+                // Use the same code as was previously used in this case.
+                201,
+            );
+        }
         $wopi_client_server = $cool_settings['server'];
         if (!$wopi_client_server) {
             throw new CoolRequestException(
@@ -127,6 +134,13 @@ class CoolRequest {
             );
         }
         $cool_settings = $default_config->get('cool');
+        if (!$cool_settings) {
+            throw new CoolRequestException(
+                'The Collabora Online connection is not configured.',
+                // Use the same code as was previously used in this case.
+                203,
+            );
+        }
         $disable_checks = (bool) $cool_settings['disable_cert_check'];
 
         try {
