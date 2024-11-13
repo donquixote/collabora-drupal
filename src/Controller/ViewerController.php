@@ -12,7 +12,9 @@
 
 namespace Drupal\collabora_online\Controller;
 
+use Drupal\collabora_online\Cool\CoolRequest;
 use Drupal\collabora_online\Cool\CoolUtils;
+use Drupal\collabora_online\Exception\CoolRequestException;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\media\Entity\Media;
@@ -67,19 +69,27 @@ class ViewerController extends ControllerBase {
             'closebutton' => 'true',
         ];
 
-        $render_array = CoolUtils::getViewerRender($media, $edit, $options);
-
-        if (!$render_array || array_key_exists('error', $render_array)) {
+        /** @var \Drupal\collabora_online\Cool\CoolRequest $req */
+        $req = \Drupal::service(CoolRequest::class);
+        try {
+            $wopi_client_url = $req->getWopiClientURL();
+        }
+        catch (CoolRequestException $e) {
+            $error_msg = $this->t('The Collabora Online server is not available: @message', [
+                '@message' => $e->getCode() . ': ' . $e->getMessage(),
+            ]);
             $error_msg = $this->t('Viewer error: @message', [
-                '@message' => $render_array ? $render_array['error'] : 'NULL',
+                '@message' => $error_msg,
             ]);
             \Drupal::logger('cool')->error($error_msg);
             return new Response(
                 $error_msg,
                 Response::HTTP_BAD_REQUEST,
-                ['content-type' => 'text/plain']
+                ['content-type' => 'text/plain'],
             );
         }
+
+        $render_array = CoolUtils::getViewerRender($media, $wopi_client_url, $edit, $options);
 
         $render_array['#theme'] = 'collabora_online_full';
         $render_array['#attached']['library'][] = 'collabora_online/cool.frame';
