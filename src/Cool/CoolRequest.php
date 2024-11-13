@@ -90,7 +90,7 @@ class CoolRequest {
         $wopi_client_server = $cool_settings['server'] ?? NULL;
         if (!$wopi_client_server) {
             throw new CoolRequestException(
-                'Collabora Online server address is not valid.',
+                'The configured Collabora Online server address is empty.',
                 201,
             );
         }
@@ -98,7 +98,10 @@ class CoolRequest {
 
         if (!preg_match('@^(https?)://@', $wopi_client_server, $matches)) {
             throw new CoolRequestException(
-                'Warning! You have to specify the scheme protocol too (http|https) for the server address.',
+                sprintf(
+                    "The configured Collabora Online server address must begin with 'http://' or 'https://'. Found '%s'.",
+                    $wopi_client_server,
+                ),
                 204,
             );
         }
@@ -108,7 +111,12 @@ class CoolRequest {
 
         if ($wopi_client_server_scheme !== $current_request_scheme) {
             throw new CoolRequestException(
-                'Collabora Online server address scheme does not match the current page url scheme.',
+                sprintf(
+                    "The url scheme '%s' of the current request does not match the url scheme '%s' of the configured Collabora Online server address '%s'.",
+                    $current_request_scheme,
+                    $wopi_client_server_scheme,
+                    $wopi_client_server,
+                ),
                 202,
             );
         }
