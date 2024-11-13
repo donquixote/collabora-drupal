@@ -87,7 +87,7 @@ class CoolRequest {
                 201,
             );
         }
-        $wopi_client_server = $cool_settings['server'];
+        $wopi_client_server = $cool_settings['server'] ?? NULL;
         if (!$wopi_client_server) {
             throw new CoolRequestException(
                 'Collabora Online server address is not valid.',
@@ -134,7 +134,7 @@ class CoolRequest {
                 203,
             );
         }
-        $disable_checks = (bool) $cool_settings['disable_cert_check'];
+        $disable_checks = !empty($cool_settings['disable_cert_check']);
 
         try {
             $response = $this->client->get($discovery_url, [
