@@ -6,3 +6,4 @@ services:
     arguments: ['cool']
   Drupal\collabora_online\Cool\CollaboraConnection: { }
   Drupal\collabora_online\Cool\CollaboraDiscovery: { }
+  Drupal\collabora_online\Service\CoolJwt: { }

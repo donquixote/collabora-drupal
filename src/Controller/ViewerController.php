@@ -28,15 +28,18 @@ use Symfony\Component\HttpFoundation\Response;
 class ViewerController extends ControllerBase {
 
     /**
-     * The controller constructor.
+     * Constructor.
      *
      * @param \Drupal\collabora_online\Cool\CollaboraDiscovery $discovery
      *   Service to fetch a WOPI client url.
+     * @param \Drupal\collabora_online\Service\CoolJwt $coolJwt
+     *   Service to manage the JWT token.
      * @param \Drupal\Core\Render\RendererInterface $renderer
      *   The renderer service.
      */
     public function __construct(
         protected readonly CollaboraDiscovery $discovery,
+        protected readonly CoolJwt $coolJwt,
         protected readonly RendererInterface $renderer,
     ) {}
 
@@ -125,11 +128,11 @@ class ViewerController extends ControllerBase {
 
         $id = $media->id();
 
-        $ttl = CoolJwt::getAccessTokenTtl();
+        $ttl = $this->coolJwt->getAccessTokenTtl();
         if ($ttl == 0) {
             $ttl = 86400;
         }
-        $access_token = CoolJwt::tokenForFileId($id, $ttl, $can_write);
+        $access_token = $this->coolJwt->tokenForFileId($id, $ttl, $can_write);
 
         $render_array = [
             '#wopiClient' => $wopi_client,

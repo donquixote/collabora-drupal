@@ -28,6 +28,16 @@ use Symfony\Component\HttpFoundation\Response;
 class WopiController extends ControllerBase {
 
     /**
+     * Constructor.
+     *
+     * @param \Drupal\collabora_online\Service\CoolJwt $coolJwt
+     *   Service to manage the JWT token.
+     */
+    public function __construct(
+       protected readonly CoolJwt $coolJwt,
+    ) {}
+
+    /**
      * Creates a failure response that is understood by Collabora.
      *
      * @return \Symfony\Component\HttpFoundation\Response
@@ -55,7 +65,7 @@ class WopiController extends ControllerBase {
     public function wopiCheckFileInfo(string $id, Request $request) {
         $token = $request->query->get('access_token');
 
-        $jwt_payload = CoolJwt::verifyTokenForId($token, $id);
+        $jwt_payload = $this->coolJwt->verifyTokenForId($token, $id);
         if ($jwt_payload == NULL) {
             return static::permissionDenied();
         }
@@ -123,7 +133,7 @@ class WopiController extends ControllerBase {
     public function wopiGetFile(string $id, Request $request) {
         $token = $request->query->get('access_token');
 
-        $jwt_payload = CoolJwt::verifyTokenForId($token, $id);
+        $jwt_payload = $this->coolJwt->verifyTokenForId($token, $id);
         if ($jwt_payload == NULL) {
             return static::permissionDenied();
         }
@@ -162,7 +172,7 @@ class WopiController extends ControllerBase {
         $autosave = $request->headers->get('x-cool-wopi-isautosave') == 'true';
         $exitsave = $request->headers->get('x-cool-wopi-isexitsave') == 'true';
 
-        $jwt_payload = CoolJwt::verifyTokenForId($token, $id);
+        $jwt_payload = $this->coolJwt->verifyTokenForId($token, $id);
         if ($jwt_payload == NULL || !$jwt_payload->wri) {
             return static::permissionDenied();
         }

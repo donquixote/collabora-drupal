@@ -8,7 +8,7 @@ use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 
 /**
- * Static methods related to the JWT token.
+ * Service with functionality related to the JWT token.
  */
 class CoolJwt {
 
@@ -18,7 +18,7 @@ class CoolJwt {
      * @return string
      *   The key value.
      */
-    public static function getKey() {
+    protected function getKey() {
         $default_config = \Drupal::config('collabora_online.settings');
         $key_id = $default_config->get('cool')['key_id'];
 
@@ -43,12 +43,12 @@ class CoolJwt {
      *   Data decoded from the token, or NULL on failure or if the token has
      *   expired.
      */
-    public static function verifyTokenForId(
+    public function verifyTokenForId(
         #[\SensitiveParameter]
         string $token,
         $id,
     ) {
-        $key = CoolJwt::getKey();
+        $key = $this->getKey();
         try {
             $payload = JWT::decode($token, new Key($key, 'HS256'));
 
@@ -85,14 +85,14 @@ class CoolJwt {
      * @return string
      *   The access token.
      */
-    public static function tokenForFileId($id, $ttl, $can_write = FALSE) {
+    public function tokenForFileId($id, $ttl, $can_write = FALSE) {
         $payload = [
             "fid" => $id,
             "uid" => \Drupal::currentUser()->id(),
             "exp" => $ttl,
             "wri" => $can_write,
         ];
-        $key = CoolJwt::getKey();
+        $key = $this->getKey();
         $jwt = JWT::encode($payload, $key, 'HS256');
 
         return $jwt;
@@ -104,7 +104,7 @@ class CoolJwt {
      * @return int
      *   Token TTL in seconds.
      */
-    public static function getAccessTokenTtl() {
+    public function getAccessTokenTtl() {
         $default_config = \Drupal::config('collabora_online.settings');
         $ttl = $default_config->get('cool')['access_token_ttl'];
 
