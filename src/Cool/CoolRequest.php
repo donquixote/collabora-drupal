@@ -96,15 +96,17 @@ class CoolRequest {
         }
         $wopi_client_server = trim($wopi_client_server);
 
-        if (!str_starts_with($wopi_client_server, 'http')) {
+        if (!preg_match('@^(https?)://@', $wopi_client_server, $matches)) {
             throw new CoolRequestException(
                 'Warning! You have to specify the scheme protocol too (http|https) for the server address.',
                 204,
             );
         }
 
+        $wopi_client_server_scheme = $matches[1];
         $current_request_scheme = $this->requestStack->getCurrentRequest()->getScheme();
-        if (!str_starts_with($wopi_client_server, $current_request_scheme . '://')) {
+
+        if ($wopi_client_server_scheme !== $current_request_scheme) {
             throw new CoolRequestException(
                 'Collabora Online server address scheme does not match the current page url scheme.',
                 202,
