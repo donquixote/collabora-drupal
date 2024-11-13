@@ -17,7 +17,7 @@ class CollaboraPermissionProvider extends GroupMediaPermissionProvider {
   public function buildPermissions(): array {
     $permissions = $this->parent->buildPermissions();
 
-    /** @see \Drupal\group\Plugin\Group\RelationHandlerDefault\PermissionProvider::buildPermissions() */
+    /* @see \Drupal\group\Plugin\Group\RelationHandlerDefault\PermissionProvider::buildPermissions() */
     $provider_chain = $this->groupRelationTypeManager()->getPermissionProvider($this->pluginId);
 
     // Add Collabora permissions.
