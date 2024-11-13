@@ -56,7 +56,7 @@ class CoolRequest {
      *   The client url cannot be retrieved.
      */
     public function getWopiClientURL(): string {
-        $discovery = $this->getDiscovery();
+        $discovery = $this->getDiscoveryXml();
 
         $discovery_parsed = simplexml_load_string($discovery);
         if (!$discovery_parsed) {
@@ -133,7 +133,7 @@ class CoolRequest {
      * @throws \Drupal\collabora_online\Exception\CoolRequestException
      *   The client url cannot be retrieved.
      */
-    protected function getDiscovery(): string {
+    protected function getDiscoveryXml(): string {
         $discovery_url = $this->getWopiClientServerBaseUrl() . '/hosting/discovery';
 
         $cool_settings = $this->configFactory->get('collabora_online.settings')->get('cool');
@@ -150,7 +150,7 @@ class CoolRequest {
             $response = $this->client->get($discovery_url, [
                 RequestOptions::VERIFY => !$disable_checks,
             ]);
-            $res = $response->getBody()->getContents();
+            $xml = $response->getBody()->getContents();
         }
         catch (ClientExceptionInterface $e) {
             // The backtrace of a client exception is typically not very
@@ -165,7 +165,7 @@ class CoolRequest {
                 $e,
             );
         }
-        return $res;
+        return $xml;
     }
 
     /**
