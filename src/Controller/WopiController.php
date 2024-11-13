@@ -13,6 +13,7 @@
 namespace Drupal\collabora_online\Controller;
 
 use Drupal\collabora_online\Cool\CoolUtils;
+use Drupal\collabora_online\Service\CoolJwt;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\file\Entity\File;
@@ -54,7 +55,7 @@ class WopiController extends ControllerBase {
     public function wopiCheckFileInfo(string $id, Request $request) {
         $token = $request->query->get('access_token');
 
-        $jwt_payload = CoolUtils::verifyTokenForId($token, $id);
+        $jwt_payload = CoolJwt::verifyTokenForId($token, $id);
         if ($jwt_payload == NULL) {
             return static::permissionDenied();
         }
@@ -122,7 +123,7 @@ class WopiController extends ControllerBase {
     public function wopiGetFile(string $id, Request $request) {
         $token = $request->query->get('access_token');
 
-        $jwt_payload = CoolUtils::verifyTokenForId($token, $id);
+        $jwt_payload = CoolJwt::verifyTokenForId($token, $id);
         if ($jwt_payload == NULL) {
             return static::permissionDenied();
         }
@@ -161,7 +162,7 @@ class WopiController extends ControllerBase {
         $autosave = $request->headers->get('x-cool-wopi-isautosave') == 'true';
         $exitsave = $request->headers->get('x-cool-wopi-isexitsave') == 'true';
 
-        $jwt_payload = CoolUtils::verifyTokenForId($token, $id);
+        $jwt_payload = CoolJwt::verifyTokenForId($token, $id);
         if ($jwt_payload == NULL || !$jwt_payload->wri) {
             return static::permissionDenied();
         }

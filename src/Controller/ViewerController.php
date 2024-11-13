@@ -13,8 +13,8 @@
 namespace Drupal\collabora_online\Controller;
 
 use Drupal\collabora_online\Cool\CollaboraDiscovery;
-use Drupal\collabora_online\Cool\CoolUtils;
 use Drupal\collabora_online\Exception\CollaboraNotAvailableException;
+use Drupal\collabora_online\Service\CoolJwt;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Utility\Error;
@@ -125,11 +125,11 @@ class ViewerController extends ControllerBase {
 
         $id = $media->id();
 
-        $ttl = CoolUtils::getAccessTokenTtl();
+        $ttl = CoolJwt::getAccessTokenTtl();
         if ($ttl == 0) {
             $ttl = 86400;
         }
-        $access_token = CoolUtils::tokenForFileId($id, $ttl, $can_write);
+        $access_token = CoolJwt::tokenForFileId($id, $ttl, $can_write);
 
         $render_array = [
             '#wopiClient' => $wopi_client,
