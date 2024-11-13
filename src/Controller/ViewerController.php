@@ -64,7 +64,7 @@ class ViewerController extends ControllerBase {
             $error_msg = $this->t('Viewer error: @message', [
                 '@message' => $error_msg,
             ]);
-            \Drupal::logger('cool')->error($error_msg);
+            $this->getLogger('cool')->error($error_msg);
             return new Response(
                 $error_msg,
                 Response::HTTP_BAD_REQUEST,
