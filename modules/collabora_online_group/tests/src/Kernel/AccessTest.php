@@ -50,28 +50,15 @@ class AccessTest extends GroupKernelTestBase {
 
     /**
      * Tests that access to Collabora group permissions is handled.
-     *
-     * @param bool $expected_result
-     *   The access result.
-     * @param string[] $permissions
-     *   The global permissions granted to the user.
-     * @param string[] $group_permissions
-     *   The group permissions granted to the user.
-     * @param string $operation
-     *   The operation to perform on the entity.
-     * @param string $scope
-     *   Sets the user as author of the entity.
-     *
-     * @dataProvider dataProvider
      */
-    public function testCollaboraAccess(bool $expected_result, array $permissions, array $group_permissions, string $operation, string $scope = ''): void {
+    public function testCollaboraAccess(): void {
         // Create group type, media type and enable plugin.
         $group_type = $this->createGroupType();
-        $this->createGroupRole([
+        $group_role = $this->createGroupRole([
             'group_type' => $group_type->id(),
             'scope' => PermissionScopeInterface::INSIDER_ID,
             'global_role' => RoleInterface::AUTHENTICATED_ID,
-            'permissions' => $group_permissions
+            'permissions' => [],
         ]);
         $this->createMediaType('file', ['id' => 'document']);
         $this->createPluginRelation($group_type, 'group_media:document', [
@@ -85,43 +72,103 @@ class AccessTest extends GroupKernelTestBase {
         $media = $this->createMediaEntity('document');
         $group->addRelationship($media, 'group_media:document');
 
-        // Create the user with the given permissions and as member of the group.
-        $user = $this->createUser($permissions);
-        $group->addMember($user);
+        // Iterate over each scenario.
+        foreach ($this->dataProvider() as $scenario) {
+            // Set the current permissions for the existing role.
+            $group_role->set('permissions', $scenario['group_permissions'])->save();
+            // Create the user with the given permissions and as member of the group.
+            $user = $this->createUser($scenario['permissions']);
+            $group->addMember($user);
+            // Set user as owner if the scope is 'own'.
+            $owner = $scenario['scope'] === 'own' ? $user->id() : 0;
+            $media->setOwnerId($owner)->save();
 
-        if ($scope === 'own') {
-            $media->setOwnerId($user->id())->save();
+            // Check access.
+            $this->assertEquals($scenario['result'], $media->access($scenario['operation'], $user));
         }
-
-        // Check access.
-        $this->assertEquals($expected_result, $media->access($operation, $user));
    }
 
     /**
      * Data provider.
      *
-     * @return \Generator
+     * @return array
      *   The test data.
      */
-    protected function dataProvider(): \Generator {
-        // Preview: user with no permissions at all.
-        yield [FALSE, [], [], 'preview in collabora'];
-        // Preview: user with global permissions doesn't have access.
-        yield [FALSE, ['preview document in collabora'], [], 'preview in collabora'];
-        // Preview: user with group permissions have access.
-        yield [TRUE, [], ['preview group_media:document in collabora'], 'preview in collabora'];
-        // Edit any: user with no permissions at all.
-        yield [FALSE, [], [], 'edit in collabora'];
-        // Edit any: user with global permissions doesn't have access.
-        yield [FALSE, ['edit any document in collabora'], [], 'edit in collabora'];
-        // Edit any: User with group permissions have access.
-        yield [TRUE, [], ['edit any group_media:document in collabora'], 'edit in collabora'];
-        // Edit own: user with no permissions at all.
-        yield [FALSE, [], [], 'edit in collabora', 'own'];
-        // Edit own: user with global permissions doesn't have access.
-        yield [FALSE, ['edit own document in collabora'], [], 'edit in collabora', 'own' ];
-        // Edit own: user with group permissions have access.
-        yield [TRUE, [], ['edit own group_media:document in collabora'], 'edit in collabora', 'own'];
+    protected function dataProvider(): array {
+        return [
+            // Preview: user with no permissions at all.
+            [
+                'result' => FALSE,
+                'permissions' => [],
+                'group_permissions' => [],
+                'operation' => 'preview in collabora',
+                'scope' => 'any'
+            ],
+            // Preview: user with global permissions doesn't have access.
+            [
+                'result' => FALSE,
+                'permissions' => ['preview document in collabora'],
+                'group_permissions' => [],
+                'operation' => 'preview in collabora',
+                'scope' => 'any'
+            ],
+            // Preview: user with group permissions have access.
+            [
+                'result' => TRUE,
+                'permissions' => [],
+                'group_permissions' => ['preview group_media:document in collabora'],
+                'operation' => 'preview in collabora',
+                'scope' => 'any'
+            ],
+            // Edit any: user with no permissions at all.
+            [
+                'result' => FALSE,
+                'permissions' => [],
+                'group_permissions' => [],
+                'operation' => 'edit in collabora',
+                'scope' => 'any'
+            ],
+            // Edit any: user with global permissions doesn't have access.
+            [
+                'result' => FALSE,
+                'permissions' => ['edit any document in collabora'],
+                'group_permissions' => [],
+                'operation' => 'edit in collabora',
+                'scope' => 'any'
+            ],
+            // Edit any: User with group permissions have access.
+            [
+                'result' => TRUE,
+                'permissions' => [],
+                'group_permissions' => ['edit any group_media:document in collabora'],
+                'operation' => 'edit in collabora',
+                'scope' => 'any'
+            ],
+            // Edit own: user with no permissions at all.
+            [
+                'result' => FALSE,
+                'permissions' => [],
+                'group_permissions' => [],
+                'operation' => 'edit in collabora',
+                'scope' => 'own'
+            ],
+            // Edit own: user with global permissions doesn't have access.
+            [
+                'result' => FALSE,
+                'permissions' => ['edit own document in collabora'],
+                'group_permissions' => [],
+                'operation' => 'edit in collabora',
+                'scope' => 'own'
+            ],
+            // Edit own: user with group permissions have access.
+            [
+                'result' => TRUE,
+                'permissions' => [],
+                'group_permissions' => ['edit own group_media:document in collabora'],
+                'operation' => 'edit in collabora',
+                'scope' => 'own'
+            ],
+        ];
    }
 
 }
