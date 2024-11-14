@@ -130,7 +130,7 @@ class CoolJwt {
      * @return int
      *   Token TTL in seconds.
      */
-    public function getAccessTokenTtl() {
+    public function getTtlSeconds() {
         $default_config = $this->configFactory->get('collabora_online.settings');
         $ttl = $default_config->get('cool')['access_token_ttl'];
 
