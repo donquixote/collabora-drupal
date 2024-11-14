@@ -12,7 +12,6 @@ jobs:
       fail-fast: true
       matrix:
         php: [8.1, 8.2, 8.3]
-        groupmedia: [3, 4]
 
     steps:
       - uses: actions/checkout@v4
@@ -55,7 +54,7 @@ jobs:
       - name: Composer install
         run: |
           docker-compose exec -T web composer config --merge --json "extra.patches" '{"drupal/group": {"Using a translatable string as a category for field type is deprecated - https://www.drupal.org/project/group/issues/3458530": "https://www.drupal.org/files/issues/2024-07-02/group-translate-string-as-category-is-deprecated_0.patch"}}'
-          docker-compose exec -T web composer require --dev cweagans/composer-patches drupal/groupmedia:~${{ matrix.groupmedia }}
+          docker-compose exec -T web composer require --dev cweagans/composer-patches
 
       - name: PhpCS
         run: |
@@ -66,13 +65,10 @@ jobs:
           docker-compose exec -T web ./vendor/bin/run drupal:site-install
 
       - name: PhpUnit
-        if: ${{ matrix.groupmedia != '3' }}
         run: |
-            docker-compose exec -T web ./vendor/bin/phpunit -vvv --debug
+          docker-compose exec -T web ./vendor/bin/phpunit -vvv --debug
 
-      - name: PhpUnit
-        if: ${{ matrix.groupmedia == '3' }}
+      - name: PhpUnit - groupmedia 3
         run: |
-            docker-compose exec -T web ./vendor/bin/phpunit -vvv --debug --testsuite "Collabora Online Group"
-
-
+          docker-compose exec -T web composer require --dev drupal/groupmedia:^3 -W
+          docker-compose exec -T web ./vendor/bin/phpunit -vvv --debug --testsuite "Collabora Online Group"
