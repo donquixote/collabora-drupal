@@ -45,13 +45,17 @@ class CoolRequest {
     /**
      * Gets the URL for the WOPI client.
      *
+     * @param string $mimetype
+     *   Mime type for which to get the WOPI client url.
+     *   This refers to config entries in the discovery.xml file.
+     *
      * @return string
      *   The WOPI client url, or NULL on failure.
      *
      * @throws \Drupal\collabora_online\Exception\CoolRequestException
      *   The client url cannot be retrieved.
      */
-    public function getWopiClientURL(): string {
+    public function getWopiClientURL(string $mimetype = 'text/plain'): string {
         $discovery = $this->getDiscoveryXml();
 
         $discovery_parsed = simplexml_load_string($discovery);
@@ -62,7 +66,7 @@ class CoolRequest {
             );
         }
 
-        $wopi_src = $this->getWopiSrcUrl($discovery_parsed, 'text/plain');
+        $wopi_src = $this->getWopiSrcUrl($discovery_parsed, $mimetype);
 
         return $wopi_src;
     }
