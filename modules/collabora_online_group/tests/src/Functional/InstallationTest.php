@@ -7,15 +7,16 @@ namespace Drupal\Tests\collabora_online_group\Functional;
 use Drupal\Tests\BrowserTestBase;
 
 /**
- * Smoke test to check that CI is working.
+ * Test module installation with groupmedia view override.
  */
-class SmokeTest extends BrowserTestBase {
+class InstallationTest extends BrowserTestBase {
 
   /**
    * {@inheritdoc}
    */
   protected static $modules = [
     'collabora_online_group',
+    'views',
   ];
 
   /**
@@ -25,8 +26,6 @@ class SmokeTest extends BrowserTestBase {
 
   /**
    * Tests that the module install correctly.
-   *
-   * To be removed when other tests are implemented.
    */
   public function testModuleInstallation(): void {
     $this->drupalGet('<front>');
