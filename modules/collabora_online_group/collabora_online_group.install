@@ -1,0 +1,22 @@
+<?php
+
+use Drupal\Core\Config\FileStorage;
+
+/**
+ * Implements hook_install().
+ */
+function collabora_online_group_install(): void {
+  if (
+    \Drupal::moduleHandler()->moduleExists('views') &&
+    \Drupal::entityTypeManager()->getStorage('view')->load('group_media')
+  ) {
+    // Update view with module configuration.
+    $name = 'views.view.group_media';
+    $module_path = Drupal::moduleHandler()->getModule('collabora_online_group')->getPath();
+    $source = new FileStorage($module_path . '/config/override');
+    /** @var \Drupal\Core\Config\StorageInterface $active_storage */
+    $active_storage = \Drupal::service('config.storage');
+    $config = $source->read( $name);
+    $active_storage->write($name, $config);
+  }
+}
