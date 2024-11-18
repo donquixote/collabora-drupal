@@ -12,11 +12,17 @@ function collabora_online_group_install(): void {
   ) {
     // Update view with module configuration.
     $name = 'views.view.group_media';
+
+    // Fallback for older versions.
+     if (\Drupal::entityTypeManager()->getDefinition('group_relationship_type', FALSE) === NULL) {
+      $name = 'views.view.group_media-3';
+    }
+
     $module_path = Drupal::moduleHandler()->getModule('collabora_online_group')->getPath();
     $source = new FileStorage($module_path . '/config/override');
     /** @var \Drupal\Core\Config\StorageInterface $active_storage */
     $active_storage = \Drupal::service('config.storage');
     $config = $source->read( $name);
-    $active_storage->write($name, $config);
+    $active_storage->write('views.view.group_media', $config);
   }
 }
