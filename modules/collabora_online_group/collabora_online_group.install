@@ -1,6 +1,6 @@
 <?php
 
-use Drupal\Core\Config\FileStorage;
+use Drupal\views\Entity\View;
 
 /**
  * Implements hook_install().
@@ -8,21 +8,44 @@ use Drupal\Core\Config\FileStorage;
 function collabora_online_group_install(): void {
   if (
     \Drupal::moduleHandler()->moduleExists('views') &&
-    \Drupal::entityTypeManager()->getStorage('view')->load('group_media')
+    $view = View::load('group_media')
   ) {
-    // Update view with module configuration.
-    $name = 'views.view.group_media';
-
-    // Fallback for older versions.
-     if (\Drupal::entityTypeManager()->getDefinition('group_relationship_type', FALSE) === NULL) {
-      $name = 'views.view.group_media-3';
+    // Load display and apply changes.
+    $display = &$view->getDisplay('default');
+    if ($display === NULL) {
+      return;
     }
 
-    $module_path = Drupal::moduleHandler()->getModule('collabora_online_group')->getPath();
-    $source = new FileStorage($module_path . '/config/override');
-    /** @var \Drupal\Core\Config\StorageInterface $active_storage */
-    $active_storage = \Drupal::service('config.storage');
-    $config = $source->read( $name);
-    $active_storage->write('views.view.group_media', $config);
+    // Add new fields to the display.
+    $display['display_options']['fields'] += [
+      'collabora_preview' => [
+        'id' => 'collabora_preview',
+        'table' => 'media',
+        'field'=> 'collabora_preview',
+        'plugin_id' => 'media_collabora_preview',
+        'label' => '',
+        'exclude' => TRUE,
+        'text' => t('Preview in Collabora'),
+    ]];
+    $display['display_options']['fields'] += [
+      'collabora_edit' => [
+          'id' => 'collabora_edit',
+          'table' => 'media',
+          'field'=> 'collabora_edit',
+          'plugin_id' => 'media_collabora_edit',
+          'label' => '',
+          'exclude' => TRUE,
+          'text' => t('Edit in Collabora'),
+    ]];
+    // Add new fields as options for the dropbutton and move the element to the end.
+    $dropbutton = $display['display_options']['fields']['dropbutton'];
+    $dropbutton['fields'] += [
+      'collabora_preview' => 'collabora_preview',
+      'collabora_edit' => 'collabora_edit',
+    ];
+    unset($display['display_options']['fields']['dropbutton']);
+    $display['display_options']['fields']['dropbutton'] = $dropbutton;
+
+    $view->save();
   }
 }
