@@ -369,263 +369,6 @@ display:
           empty_zero: false
           hide_alter_empty: true
           text: 'Edit in Collabora'
-        view_group_content:
-          id: view_group_content
-          table: group_relationship
-          field: view_group_content
-          relationship: group_content
-          group_type: group
-          admin_label: ''
-          entity_type: group_content
-          plugin_id: entity_link
-          label: 'View relation link'
-          exclude: true
-          alter:
-            alter_text: false
-            text: ''
-            make_link: false
-            path: ''
-            absolute: false
-            external: false
-            replace_spaces: false
-            path_case: none
-            trim_whitespace: false
-            alt: ''
-            rel: ''
-            link_class: ''
-            prefix: ''
-            suffix: ''
-            target: ''
-            nl2br: false
-            max_length: 0
-            word_boundary: true
-            ellipsis: true
-            more_link: false
-            more_link_text: ''
-            more_link_path: ''
-            strip_tags: false
-            trim: false
-            preserve_tags: ''
-            html: false
-          element_type: ''
-          element_class: ''
-          element_label_type: ''
-          element_label_class: ''
-          element_label_colon: true
-          element_wrapper_type: ''
-          element_wrapper_class: ''
-          element_default_classes: true
-          empty: ''
-          hide_empty: false
-          empty_zero: false
-          hide_alter_empty: true
-          text: 'View relation'
-          output_url_as_text: false
-          absolute: false
-        edit_group_content:
-          id: edit_group_content
-          table: group_relationship
-          field: edit_group_content
-          relationship: group_content
-          group_type: group
-          admin_label: ''
-          entity_type: group_content
-          plugin_id: entity_link_edit
-          label: 'Edit relation link'
-          exclude: true
-          alter:
-            alter_text: false
-            text: ''
-            make_link: false
-            path: ''
-            absolute: false
-            external: false
-            replace_spaces: false
-            path_case: none
-            trim_whitespace: false
-            alt: ''
-            rel: ''
-            link_class: ''
-            prefix: ''
-            suffix: ''
-            target: ''
-            nl2br: false
-            max_length: 0
-            word_boundary: true
-            ellipsis: true
-            more_link: false
-            more_link_text: ''
-            more_link_path: ''
-            strip_tags: false
-            trim: false
-            preserve_tags: ''
-            html: false
-          element_type: ''
-          element_class: ''
-          element_label_type: ''
-          element_label_class: ''
-          element_label_colon: true
-          element_wrapper_type: ''
-          element_wrapper_class: ''
-          element_default_classes: true
-          empty: ''
-          hide_empty: false
-          empty_zero: false
-          hide_alter_empty: true
-          text: 'Edit relation'
-        delete_group_content:
-          id: delete_group_content
-          table: group_relationship
-          field: delete_group_content
-          relationship: group_content
-          group_type: group
-          admin_label: ''
-          entity_type: group_content
-          plugin_id: entity_link_delete
-          label: 'Delete relation link'
-          exclude: true
-          alter:
-            alter_text: false
-            text: ''
-            make_link: false
-            path: ''
-            absolute: false
-            external: false
-            replace_spaces: false
-            path_case: none
-            trim_whitespace: false
-            alt: ''
-            rel: ''
-            link_class: ''
-            prefix: ''
-            suffix: ''
-            target: ''
-            nl2br: false
-            max_length: 0
-            word_boundary: true
-            ellipsis: true
-            more_link: false
-            more_link_text: ''
-            more_link_path: ''
-            strip_tags: false
-            trim: false
-            preserve_tags: ''
-            html: false
-          element_type: ''
-          element_class: ''
-          element_label_type: ''
-          element_label_class: ''
-          element_label_colon: true
-          element_wrapper_type: ''
-          element_wrapper_class: ''
-          element_default_classes: true
-          empty: ''
-          hide_empty: false
-          empty_zero: false
-          hide_alter_empty: true
-          text: 'Delete relation'
-        edit_media:
-          id: edit_media
-          table: media
-          field: edit_media
-          relationship: none
-          group_type: group
-          admin_label: ''
-          entity_type: media
-          plugin_id: entity_link_edit
-          label: 'Edit media'
-          exclude: true
-          alter:
-            alter_text: false
-            text: ''
-            make_link: false
-            path: ''
-            absolute: false
-            external: false
-            replace_spaces: false
-            path_case: none
-            trim_whitespace: false
-            alt: ''
-            rel: ''
-            link_class: ''
-            prefix: ''
-            suffix: ''
-            target: ''
-            nl2br: false
-            max_length: 0
-            word_boundary: true
-            ellipsis: true
-            more_link: false
-            more_link_text: ''
-            more_link_path: ''
-            strip_tags: false
-            trim: false
-            preserve_tags: ''
-            html: false
-          element_type: ''
-          element_class: ''
-          element_label_type: ''
-          element_label_class: ''
-          element_label_colon: true
-          element_wrapper_type: ''
-          element_wrapper_class: ''
-          element_default_classes: true
-          empty: ''
-          hide_empty: false
-          empty_zero: false
-          hide_alter_empty: true
-          text: Edit
-        delete_media:
-          id: delete_media
-          table: media
-          field: delete_media
-          relationship: none
-          group_type: group
-          admin_label: ''
-          entity_type: media
-          plugin_id: entity_link_delete
-          label: 'Delete Media'
-          exclude: true
-          alter:
-            alter_text: false
-            text: ''
-            make_link: false
-            path: ''
-            absolute: false
-            external: false
-            replace_spaces: false
-            path_case: none
-            trim_whitespace: false
-            alt: ''
-            rel: ''
-            link_class: ''
-            prefix: ''
-            suffix: ''
-            target: ''
-            nl2br: false
-            max_length: 0
-            word_boundary: true
-            ellipsis: true
-            more_link: false
-            more_link_text: ''
-            more_link_path: ''
-            strip_tags: false
-            trim: false
-            preserve_tags: ''
-            html: false
-          element_type: ''
-          element_class: ''
-          element_label_type: ''
-          element_label_class: ''
-          element_label_colon: true
-          element_wrapper_type: ''
-          element_wrapper_class: ''
-          element_default_classes: true
-          empty: ''
-          hide_empty: false
-          empty_zero: false
-          hide_alter_empty: true
-          text: Delete
         dropbutton:
           id: dropbutton
           table: views
@@ -634,7 +377,7 @@ display:
           group_type: group
           admin_label: ''
           plugin_id: dropbutton
-          label: Dropbutton
+          label: Operations
           exclude: false
           alter:
             alter_text: false
@@ -679,14 +422,15 @@ display:
           fields:
             collabora_preview: collabora_preview
             collabora_edit: collabora_edit
-            view_group_content: view_group_content
-            edit_group_content: edit_group_content
-            delete_group_content: delete_group_content
             edit_media: edit_media
             delete_media: delete_media
+            edit_group_relationship: edit_group_relationship
+            delete_group_relationship: delete_group_relationship
+            view_group_relationship: view_group_relationship
             name: '0'
             bundle: '0'
             status: '0'
+            uid: '0'
       pager:
         type: mini
         options:
@@ -729,10 +473,10 @@ display:
           id: gid
           table: group_relationship_field_data
           field: gid
-          relationship: group_content
+          relationship: group_relationship
           group_type: group
           admin_label: ''
-          entity_type: group_content
+          entity_type: group_relationship
           entity_field: gid
           plugin_id: group_id
           default_action: ignore
@@ -956,19 +700,19 @@ display:
           replica: false
           query_tags: {}
       relationships:
-        group_content:
-          id: group_content
+        group_relationship:
+          id: group_relationship
           table: media_field_data
-          field: group_content
+          field: group_relationship
           relationship: none
           group_type: group
-          admin_label: 'Media group content'
+          admin_label: 'Media group relationship'
           entity_type: media
-          plugin_id: group_content_to_entity_reverse
+          plugin_id: group_relationship_to_entity_reverse
           required: false
-          group_content_plugins:
+          group_relation_plugins:
             'group_media:audio': '0'
-            'group_media:file': '0'
+            'group_media:document': '0'
             'group_media:image': '0'
             'group_media:remote_video': '0'
             'group_media:video': '0'
