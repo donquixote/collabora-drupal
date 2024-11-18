@@ -92,7 +92,8 @@ class ViewTest extends BrowserTestBase {
     $this->assertEquals('Bundle', $cols[1]->getText());
     $this->assertEquals('Status', $cols[2]->getText());
     $this->assertEquals('Publisher', $cols[3]->getText());
-    $this->assertEquals('Operations', $cols[4]->getText());
+    // Support for different vesrions of groupmedia.
+    $this->assertEquals($this->isGroupRelationShipType() ? 'Operations' : 'Dropbutton', $cols[4]->getText());
 
     // Check that rows contain new links for operations in Collabora.
     $table_body = $assert_session->elementExists('css', 'tbody', $table);
