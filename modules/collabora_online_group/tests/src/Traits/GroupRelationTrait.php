@@ -31,7 +31,7 @@ trait GroupRelationTrait {
     $entity_type_id = 'group_relationship_type';
 
     // Fallback for older versions.
-     if ($this->entityTypeManager()->getDefinition($entity_type_id, FALSE) === NULL) {
+     if (!$this->isGroupRelationShipType()) {
       $entity_type_id = 'group_content_type';
     }
 
@@ -41,6 +41,16 @@ trait GroupRelationTrait {
     $entity->save();
 
     return $entity;
+  }
+
+  /**
+   * Checks if 'group_relationship_type' group type entity exists.
+   *
+   * @return bool
+   * If the entity type exists.
+   */
+  protected function isGroupRelationshipType(): bool {
+    return ($this->entityTypeManager()->getDefinition('group_relationship_type', FALSE) !== NULL);
   }
 
 }
