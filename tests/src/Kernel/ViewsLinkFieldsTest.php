@@ -55,13 +55,14 @@ class ViewsLinkFieldsTest extends KernelTestBase {
         $this->installEntitySchema('user');
         $this->installConfig(['user', 'views', 'collabora_online_test']);
         $this->installSchema('file', ['file_usage']);
-        // Install user module avoid user 1 permissions bypass.
+        // Install user module to avoid user 1 permissions bypass.
         \Drupal::moduleHandler()->loadInclude('user', 'install');
         user_install();
 
         // Create two medias to check access with different scopes, 'any' and 'own'.
         $this->createMediaEntity('document');
-        $this->ownMedia = $this->createMediaEntity('document');;
+        $this->ownMedia = $this->createMediaEntity('document');
+        ;
     }
 
     /**
@@ -69,46 +70,54 @@ class ViewsLinkFieldsTest extends KernelTestBase {
      */
     public function testLinks(): void {
         // User without permissions can't see links.
-        $this->doTestLinks([
-            'preview' => [FALSE, FALSE],
-            'edit' => [FALSE, FALSE],
-        ],
-        $this->createUser([]));
+        $this->doTestLinks(
+            [
+                'preview' => [FALSE, FALSE],
+                'edit' => [FALSE, FALSE],
+            ],
+            $this->createUser([])
+        );
         // User with 'Preview' permission can see preview link.
-        $this->doTestLinks([
-            'preview' => [TRUE, TRUE],
-            'edit' => [FALSE, FALSE],
-        ],
-        $this->createUser([
-        'preview document in collabora'
-        ]));
+        $this->doTestLinks(
+            [
+                'preview' => [TRUE, TRUE],
+                'edit' => [FALSE, FALSE],
+            ],
+            $this->createUser([
+                'preview document in collabora'
+            ])
+        );
         // User with 'Edit any' permission can see edit link.
-        $this->doTestLinks([
-            'preview' => [FALSE, FALSE],
-            'edit' => [TRUE, TRUE],
-        ],
-        $this->createUser([
-            'edit any document in collabora'
-        ]));
+        $this->doTestLinks(
+            [
+                'preview' => [FALSE, FALSE],
+                'edit' => [TRUE, TRUE],
+            ],
+            $this->createUser([
+                'edit any document in collabora'
+            ])
+        );
         // User with 'Edit own' permission can see edit link for entities they own.
-        $this->doTestLinks([
-            'preview' => [FALSE, FALSE],
-            'edit' => [FALSE, TRUE],
-        ],
-    $this->createUser([
-            'edit own document in collabora'
-        ]));
+        $this->doTestLinks(
+            [
+                'preview' => [FALSE, FALSE],
+                'edit' => [FALSE, TRUE],
+            ],
+            $this->createUser([
+                'edit own document in collabora'
+            ])
+        );
     }
 
     /**
      * Tests that links behave as expected.
      *
-     * @param [] $expected_results
+     * @param array $expected_results
      *   An associative array of expected results keyed by operation.
      * @param \Drupal\Core\Session\AccountInterface $account
-     *   The user account to be used to run the test;
+     *   The user account to be used to run the test.
      */
-    protected function doTestLinks(array $expected_results, AccountInterface $account) {
+    protected function doTestLinks(array $expected_results, AccountInterface $account): void {
         $this->setCurrentUser(account: $account);
         // Set the current user as the owner to check 'edit own' access.
         $this->ownMedia->setOwnerId($account->id())->save();
@@ -116,21 +125,21 @@ class ViewsLinkFieldsTest extends KernelTestBase {
         $view->preview();
 
         $info = [
-        'preview' => [
-            'label' => 'Preview in Collabora',
-            'field_id' => 'collabora_preview',
-            'route' => 'collabora-online.view'
-        ],
-        'edit' => [
-            'label' => 'Edit in Collabora',
-            'field_id' => 'collabora_edit',
-            'route' => 'collabora-online.edit'
-        ],
+            'preview' => [
+                'label' => 'Preview in Collabora',
+                'field_id' => 'collabora_preview',
+                'route' => 'collabora-online.view'
+            ],
+            'edit' => [
+                'label' => 'Edit in Collabora',
+                'field_id' => 'collabora_edit',
+                'route' => 'collabora-online.edit'
+            ],
         ];
 
         $i = 0;
         // Check each expected results for every media.
-        foreach(Media::loadMultiple() as $media) {
+        foreach (Media::loadMultiple() as $media) {
             foreach ($expected_results as $operation => $expected_result) {
                 $expected_link = '';
                 // The operation array contains results for each of the entities.
@@ -142,7 +151,7 @@ class ViewsLinkFieldsTest extends KernelTestBase {
                 $link = $view->style_plugin->getField($i, $info[$operation]['field_id']);
                 $this->assertEquals($expected_link, (string) $link);
             }
-        $i++;
+            $i++;
         }
     }
 

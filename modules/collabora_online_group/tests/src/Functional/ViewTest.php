@@ -54,7 +54,7 @@ class ViewTest extends BrowserTestBase {
         'view group_media:document entity',
         'edit any group_media:document in collabora',
         'preview group_media:document in collabora',
-        ],
+      ],
     ]);
     $this->createPluginRelation($group_type, 'group_media:document', [
       'group_cardinality' => 0,
@@ -64,7 +64,7 @@ class ViewTest extends BrowserTestBase {
 
     // Create content.
     $group = $this->createGroup(['type' => 'group_type_1']);
-    for ($i = 1;$i < 4;$i++) {
+    for ($i = 1; $i < 4; $i++) {
       $media = $this->createMediaEntity('document', [
         'id' => 'media_' . $i,
         'name' => 'Media ' . $i,
@@ -93,13 +93,13 @@ class ViewTest extends BrowserTestBase {
     $this->assertEquals('Status', $cols[2]->getText());
     $this->assertEquals('Publisher', $cols[3]->getText());
     // Support for different vesrions of groupmedia.
-    $this->assertEquals($this->isGroupRelationShipType() ? 'Operations' : 'Dropbutton', $cols[4]->getText());
+    $this->assertEquals($this->isGroupRelationshipType() ? 'Operations' : 'Dropbutton', $cols[4]->getText());
 
     // Check that rows contain new links for operations in Collabora.
     $table_body = $assert_session->elementExists('css', 'tbody', $table);
     $rows = $table_body->findAll('css', 'tr');
     $i = 0;
-    foreach(Media::loadMultiple() as $media) {
+    foreach (Media::loadMultiple() as $media) {
       $cols = $rows[$i]->findAll('css', 'td');
       $this->assertEquals($media->getName(), $cols[0]->getText());
       $this->assertEquals($media_type->label(), $cols[1]->getText());
