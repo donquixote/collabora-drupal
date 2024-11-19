@@ -5,8 +5,9 @@ use Drupal\views\Entity\View;
 /**
  * Implements hook_install().
  */
-function collabora_online_group_install(): void {
+function collabora_online_group_install(bool $is_syncing): void {
   if (
+    $is_syncing ||
     !\Drupal::moduleHandler()->moduleExists('views') ||
     !($view = View::load('group_media'))
   ) {
