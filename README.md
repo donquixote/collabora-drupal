@@ -219,9 +219,6 @@ In the current version of this module, the 'administer media' permission
 from Drupal core grants access to all media operations, including the use
 of the Collabora Online editor for preview and edit.
 
-For a consistent experience, it is recommended that a role with edit
-permissions should also be granted respective preview permissions.
-
 Developers can use entity access hooks to alter which users may edit
 or preview media files in Collabora. This would allow to grant access
 based on e.g. membership in a group.
