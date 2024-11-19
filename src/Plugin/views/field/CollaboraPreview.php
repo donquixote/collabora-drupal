@@ -18,6 +18,9 @@ use Drupal\views\ResultRow;
  */
 class CollaboraPreview extends LinkBase {
 
+  /**
+   * {@inheritdoc}
+   */
   protected function getUrlInfo(ResultRow $row): Url|null {
     /** @var \Drupal\media\MediaInterface $entity */
     $entity = $this->getEntity($row);
