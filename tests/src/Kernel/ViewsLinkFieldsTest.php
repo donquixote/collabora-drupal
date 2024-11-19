@@ -118,7 +118,7 @@ class ViewsLinkFieldsTest extends KernelTestBase {
      *   The user account to be used to run the test.
      */
     protected function doTestLinks(array $expected_results, AccountInterface $account): void {
-        $this->setCurrentUser(account: $account);
+        $this->setCurrentUser($account);
         // Set the current user as the owner to check 'edit own' access.
         $this->ownMedia->setOwnerId($account->id())->save();
         $view = Views::getView('test_collabora_links');
