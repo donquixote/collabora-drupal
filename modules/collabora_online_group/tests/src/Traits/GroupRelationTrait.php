@@ -31,7 +31,7 @@ trait GroupRelationTrait {
     $entity_type_id = 'group_relationship_type';
 
     // Fallback for older versions.
-     if (!$this->isGroupRelationShipType()) {
+    if (!$this->isGroupRelationshipType()) {
       $entity_type_id = 'group_content_type';
     }
 
