@@ -302,10 +302,9 @@ class CollaboraMediaAccessTest extends KernelTestBase {
                 }
             }
         }
-        // Use yaml to avoid integer keys in list output.
-        $this->assertSame(
-            "\n" . Yaml::encode($expected),
-            "\n" . Yaml::encode($actual),
+        $this->assertSameYaml(
+            $expected,
+            $actual,
             'Users with access to given entities',
         );
     }
@@ -369,10 +368,9 @@ class CollaboraMediaAccessTest extends KernelTestBase {
                 }
             }
         }
-        // Use yaml to avoid integer keys in list output.
-        $this->assertSame(
-            "\n" . Yaml::encode($expected),
-            "\n" . Yaml::encode($actual),
+        $this->assertSameYaml(
+            $expected,
+            $actual,
             'Users with access to given paths',
         );
     }
@@ -401,6 +399,26 @@ class CollaboraMediaAccessTest extends KernelTestBase {
         $media = Media::create($values);
         $media->save();
         return $media;
+    }
+
+    /**
+     * Asserts that two values are the same when exported to yaml.
+     *
+     * This provides a nicer diff output, without numeric array keys.
+     *
+     * @param mixed $expected
+     *   Expected value.
+     * @param mixed $actual
+     *   Actual value.
+     * @param string $message
+     *   Message.
+     */
+    protected function assertSameYaml(mixed $expected, mixed $actual, string $message = ''): void {
+        $this->assertSame(
+            "\n" . Yaml::encode($expected),
+            "\n" . Yaml::encode($actual),
+            $message,
+        );
     }
 
 }
