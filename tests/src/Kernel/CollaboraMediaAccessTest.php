@@ -291,18 +291,15 @@ class CollaboraMediaAccessTest extends KernelTestBase {
      *   Operations to check.
      * @param list<string> $operations
      *   User accounts to check.
-     * @param bool $negate
-     *   FALSE, if $expected describes access being granted.
-     *   TRUE, if $expecte describes access being denied.
      */
-    protected function assertEntityAccess(array $expected, array $accounts, array $entities, array $operations, bool $negate = FALSE): void {
+    protected function assertEntityAccess(array $expected, array $accounts, array $entities, array $operations): void {
         $actual = [];
         foreach ($accounts as $account_key => $account) {
             $actual[$account_key] = [];
             foreach ($entities as $entity_key => $entity) {
                 foreach ($operations as $operation) {
                     $has_access = $entity->access($operation, $account);
-                    if ($has_access xor $negate) {
+                    if ($has_access) {
                         $actual[$account_key][$entity_key][] = $operation;
                     }
                 }
@@ -312,9 +309,7 @@ class CollaboraMediaAccessTest extends KernelTestBase {
         $this->assertSame(
             "\n" . Yaml::encode($expected),
             "\n" . Yaml::encode($actual),
-            $negate
-                ? 'Users without access to given entities'
-                : 'Users with access to given entities',
+            'Users with access to given entities',
         );
     }
 
@@ -332,11 +327,8 @@ class CollaboraMediaAccessTest extends KernelTestBase {
      *   Entities for which to build paths.
      * @param array<string, string> $sprintf_path_patterns
      *   Path patterns with '%s' placeholder for the entity id.
-     * @param bool $negate
-     *   FALSE, if $expected describes access being granted.
-     *   TRUE, if $expected describes access being denied.
      */
-    protected function assertEntityPathsAccess(array $expected, array $accounts, array $entities, array $sprintf_path_patterns, bool $negate = FALSE) {
+    protected function assertEntityPathsAccess(array $expected, array $accounts, array $entities, array $sprintf_path_patterns) {
         $paths = [];
         // Build Collabora media paths for all media entities.
         foreach ($entities as $entity_key => $entity) {
@@ -344,7 +336,7 @@ class CollaboraMediaAccessTest extends KernelTestBase {
                 $paths[sprintf($pattern, "<$entity_key>")] = sprintf($pattern, $entity->id());
             }
         }
-        $this->assertPathsAccessByUsers($expected, $accounts, $paths, $negate);
+        $this->assertPathsAccessByUsers($expected, $accounts, $paths);
     }
 
     /**
@@ -360,11 +352,8 @@ class CollaboraMediaAccessTest extends KernelTestBase {
      * @param array<string, string>|null $paths
      *   An array of paths, or NULL to just use the array keys from $expected.
      *   This parameter is useful if the paths all look very similar.
-     * @param bool $negate
-     *   FALSE, if $expected describes access being granted.
-     *   TRUE, if $expecte describes access being denied.
      */
-    protected function assertPathsAccessByUsers(array $expected, array $accounts, ?array $paths = NULL, bool $negate = FALSE): void {
+    protected function assertPathsAccessByUsers(array $expected, array $accounts, ?array $paths = NULL): void {
         if ($paths === NULL) {
             $paths = array_keys($expected);
             $paths = array_combine($paths, $paths);
@@ -378,7 +367,7 @@ class CollaboraMediaAccessTest extends KernelTestBase {
                 $url = Url::fromUserInput($path);
                 // Filter the user list by access to the url.
                 $has_access = $url->access($account);
-                if ($has_access xor $negate) {
+                if ($has_access) {
                     $actual[$account_key][] = $path_key;
                 }
             }
@@ -387,9 +376,7 @@ class CollaboraMediaAccessTest extends KernelTestBase {
         $this->assertSame(
             "\n" . Yaml::encode($expected),
             "\n" . Yaml::encode($actual),
-            $negate
-                ? 'Users without access to given paths'
-                : 'Users with access to given paths',
+            'Users with access to given paths',
         );
     }
 
