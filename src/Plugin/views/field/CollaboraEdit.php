@@ -18,7 +18,7 @@ use Drupal\views\ResultRow;
  */
 class CollaboraEdit extends LinkBase {
 
-  protected function getUrlInfo(ResultRow $row): Url|NULL {
+  protected function getUrlInfo(ResultRow $row): Url|null {
     /** @var \Drupal\media\MediaInterface $entity */
     $entity = $this->getEntity($row);
 
