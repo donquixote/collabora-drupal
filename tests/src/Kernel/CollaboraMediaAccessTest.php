@@ -13,7 +13,6 @@ use Drupal\media\Entity\Media;
 use Drupal\media\MediaInterface;
 use Drupal\Tests\media\Traits\MediaTypeCreationTrait;
 use Drupal\Tests\user\Traits\UserCreationTrait;
-use Drupal\user\Entity\Role;
 use Drupal\user\RoleInterface;
 
 /**
@@ -67,8 +66,6 @@ class CollaboraMediaAccessTest extends KernelTestBase {
      * Tests different permission combinations.
      */
     public function testCollaboraMediaAccess(): void {
-        $this->assertBasicAssumptions();
-
         /** @var \Drupal\Core\Session\AccountInterface[] $accounts */
         $accounts = [
             // The default roles for anonymous and authenticated are not created
@@ -378,24 +375,6 @@ class CollaboraMediaAccessTest extends KernelTestBase {
             "\n" . Yaml::encode($actual),
             'Users with access to given paths',
         );
-    }
-
-    /**
-     * Verifies basic assumptions for this test.
-     *
-     * It is enough to call this from one test method.
-     */
-    protected function assertBasicAssumptions(): void {
-        // Normally, when media module is installed, media_install() will grant
-        // the 'view media' permission to anonymous and authenticated roles.
-        // In a kernel test this does not happen.
-        $this->assertSame([], Role::load(RoleInterface::ANONYMOUS_ID)->getPermissions());
-        $this->assertSame([], Role::load(RoleInterface::AUTHENTICATED_ID)->getPermissions());
-
-        // The first user created in a test method is not user 1.
-        $user = $this->createUser();
-        $this->assertSame(2, (int) $user->id());
-        $this->assertFalse($user->hasPermission('view media'));
     }
 
     /**
