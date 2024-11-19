@@ -7,45 +7,47 @@ use Drupal\views\Entity\View;
  */
 function collabora_online_group_install(): void {
   if (
-    \Drupal::moduleHandler()->moduleExists('views') &&
-    $view = View::load('group_media')
+    !\Drupal::moduleHandler()->moduleExists('views') ||
+    !($view = View::load('group_media'))
   ) {
-    // Load display and apply changes.
-    $display = &$view->getDisplay('default');
-    if ($display === NULL) {
-      return;
-    }
-
-    // Add new fields to the display.
-    $display['display_options']['fields'] += [
-      'collabora_preview' => [
-        'id' => 'collabora_preview',
-        'table' => 'media',
-        'field' => 'collabora_preview',
-        'plugin_id' => 'media_collabora_preview',
-        'label' => '',
-        'exclude' => TRUE,
-        'text' => t('Preview in Collabora'),
-      ]];
-    $display['display_options']['fields'] += [
-      'collabora_edit' => [
-        'id' => 'collabora_edit',
-        'table' => 'media',
-        'field' => 'collabora_edit',
-        'plugin_id' => 'media_collabora_edit',
-        'label' => '',
-        'exclude' => TRUE,
-        'text' => t('Edit in Collabora'),
-      ]];
-    // Add new fields as options for the dropbutton and move the element to the end.
-    $dropbutton = $display['display_options']['fields']['dropbutton'];
-    $dropbutton['fields'] += [
-      'collabora_preview' => 'collabora_preview',
-      'collabora_edit' => 'collabora_edit',
-    ];
-    unset($display['display_options']['fields']['dropbutton']);
-    $display['display_options']['fields']['dropbutton'] = $dropbutton;
-
-    $view->save();
+    return;
   }
+
+  // Load display and apply changes.
+  $display = &$view->getDisplay('default');
+  if ($display === NULL) {
+    return;
+  }
+
+  // Add new fields to the display.
+  $display['display_options']['fields'] += [
+    'collabora_preview' => [
+      'id' => 'collabora_preview',
+      'table' => 'media',
+      'field' => 'collabora_preview',
+      'plugin_id' => 'media_collabora_preview',
+      'label' => '',
+      'exclude' => TRUE,
+      'text' => t('Preview in Collabora'),
+    ]];
+  $display['display_options']['fields'] += [
+    'collabora_edit' => [
+      'id' => 'collabora_edit',
+      'table' => 'media',
+      'field' => 'collabora_edit',
+      'plugin_id' => 'media_collabora_edit',
+      'label' => '',
+      'exclude' => TRUE,
+      'text' => t('Edit in Collabora'),
+    ]];
+  // Add new fields as options for the dropbutton and move the element to the end.
+  $dropbutton = $display['display_options']['fields']['dropbutton'];
+  $dropbutton['fields'] += [
+    'collabora_preview' => 'collabora_preview',
+    'collabora_edit' => 'collabora_edit',
+  ];
+  unset($display['display_options']['fields']['dropbutton']);
+  $display['display_options']['fields']['dropbutton'] = $dropbutton;
+
+  $view->save();
 }
