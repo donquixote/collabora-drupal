@@ -137,8 +137,8 @@ class ViewsLinkFieldsTest extends KernelTestBase {
             ],
         ];
 
-        $i = 0;
         // Check each expected results for every media.
+        $i = 0;
         foreach (Media::loadMultiple() as $media) {
             foreach ($expected_results as $operation => $expected_result) {
                 $expected_link = '';
