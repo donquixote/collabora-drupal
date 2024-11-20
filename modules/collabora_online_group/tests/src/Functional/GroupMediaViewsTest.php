@@ -106,7 +106,7 @@ class GroupMediaViewsTest extends BrowserTestBase {
       $this->assertEquals('Yes', $cols[2]->getText());
       $this->assertEquals('Anonymous', $cols[3]->getText());
       $operation_links = $cols[4]->findAll('css', 'a');
-      $this->assertEquals('Preview in Collabora', $operation_links[0]->getText());
+      $this->assertEquals('View in Collabora Online', $operation_links[0]->getText());
       $this->assertEquals(
         Url::fromRoute(
           'collabora-online.view',
@@ -121,7 +121,7 @@ class GroupMediaViewsTest extends BrowserTestBase {
         )->toString(),
         $operation_links[0]->getAttribute('href')
       );
-      $this->assertEquals('Edit in Collabora', $operation_links[1]->getText());
+      $this->assertEquals('Edit in Collabora Online', $operation_links[1]->getText());
       $this->assertEquals(
         Url::fromRoute(
           'collabora-online.edit',
