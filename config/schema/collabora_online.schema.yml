@@ -27,7 +27,7 @@ collabora_online.settings:
 
 views.field.media_collabora_preview:
   type: views_field
-  label: 'Collabora preview link'
+  label: 'Collabora view link'
   mapping:
     text:
       type: label
