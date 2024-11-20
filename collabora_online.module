@@ -146,7 +146,6 @@ function collabora_online_media_access(MediaInterface $media, string $operation,
                     ->setReason("The user has the '$preview_own_permission' permission, but is not the owner of the media item.");
             }
             return $access_result
-                ->cachePerPermissions()
                 ->cachePerUser()
                 ->addCacheableDependency($media);
 
@@ -170,7 +169,6 @@ function collabora_online_media_access(MediaInterface $media, string $operation,
                 $access_result = AccessResult::allowed();
             }
             return $access_result
-                ->cachePerPermissions()
                 ->cachePerUser()
                 ->addCacheableDependency($media);
 
