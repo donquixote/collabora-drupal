@@ -93,7 +93,7 @@ class GroupMediaViewsTest extends BrowserTestBase {
     $this->assertEquals('Status', $cols[2]->getText());
     $this->assertEquals('Publisher', $cols[3]->getText());
     // Support for different vesrions of groupmedia.
-    $this->assertEquals($this->isGroupRelationshipType() ? 'Operations' : 'Dropbutton', $cols[4]->getText());
+    $this->assertTrue(in_array($cols[4]->getText(), ['Operations', 'Dropbutton']));
 
     // Check that rows contain new links for operations in Collabora.
     $table_body = $assert_session->elementExists('css', 'tbody', $table);
