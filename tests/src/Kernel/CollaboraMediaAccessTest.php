@@ -64,7 +64,7 @@ class CollaboraMediaAccessTest extends KernelTestBase {
     }
 
     /**
-     * Tests different permission combinations.
+     * Tests media access for Collabora routes and operations.
      */
     public function testCollaboraMediaAccess(): void {
         $this->assertCollaboraMediaAccess(
