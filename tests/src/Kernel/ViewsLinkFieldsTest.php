@@ -126,12 +126,12 @@ class ViewsLinkFieldsTest extends KernelTestBase {
 
         $info = [
             'preview' => [
-                'label' => 'Preview in Collabora',
+                'label' => 'View in Collabora Online',
                 'field_id' => 'collabora_preview',
                 'route' => 'collabora-online.view'
             ],
             'edit' => [
-                'label' => 'Edit in Collabora',
+                'label' => 'Edit in Collabora Online',
                 'field_id' => 'collabora_edit',
                 'route' => 'collabora-online.edit'
             ],

@@ -29,8 +29,9 @@ function collabora_online_group_install(bool $is_syncing): void {
       'plugin_id' => 'media_collabora_preview',
       'label' => '',
       'exclude' => TRUE,
-      'text' => t('Preview in Collabora'),
-    ]];
+      'text' => t('View in Collabora Online'),
+    ],
+  ];
   $display['display_options']['fields'] += [
     'collabora_edit' => [
       'id' => 'collabora_edit',
@@ -39,8 +40,9 @@ function collabora_online_group_install(bool $is_syncing): void {
       'plugin_id' => 'media_collabora_edit',
       'label' => '',
       'exclude' => TRUE,
-      'text' => t('Edit in Collabora'),
-    ]];
+      'text' => t('Edit in Collabora Online'),
+    ],
+  ];
   // Add new fields as options for the dropbutton and move the element to the end.
   $dropbutton = $display['display_options']['fields']['dropbutton'];
   $dropbutton['fields'] += [
