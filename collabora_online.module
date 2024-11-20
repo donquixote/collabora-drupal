@@ -131,11 +131,10 @@ function collabora_online_media_access(MediaInterface $media, string $operation,
                     ->addCacheableDependency($media);
             }
             $preview_own_permission = "preview own unpublished $type in collabora";
-            if (!$account->hasPermission($preview_own_permission)) {
-                return AccessResult::neutral()
-                    ->cachePerPermissions()
-                    ->addCacheableDependency($media)
-                    ->setReason("The user does not have the '$preview_own_permission' permission.");
+            $access_result = AccessResult::allowedIfHasPermission($account, $preview_own_permission)
+                ->addCacheableDependency($media);
+            if (!$access_result->isAllowed()) {
+                return $access_result;
             }
             // Use '==' because Drupal sometimes loads integers as strings.
             $is_owner = ($account->id() && $account->id() == $media->getOwnerId());
@@ -157,10 +156,9 @@ function collabora_online_media_access(MediaInterface $media, string $operation,
                     ->cachePerPermissions();
             }
             $edit_own_permission = "edit own $type in collabora";
-            if (!$account->hasPermission($edit_own_permission)) {
-                return AccessResult::neutral()
-                    ->cachePerPermissions()
-                    ->setReason("The user does not have the '$edit_own_permission' permission.");
+            $access_result = AccessResult::allowedIfHasPermission($account, $edit_own_permission);
+            if (!$access_result->isAllowed()) {
+                return $access_result;
             }
             // Use '==' because Drupal sometimes loads integers as strings.
             $is_owner = ($account->id() && $account->id() == $media->getOwnerId());
