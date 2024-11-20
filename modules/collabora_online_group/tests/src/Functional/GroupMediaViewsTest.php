@@ -43,7 +43,10 @@ class GroupMediaViewsTest extends BrowserTestBase {
   public function testViewLinks(): void {
     // Add configuration needed for testing.
     $group_type = $this->createGroupType(['id' => 'group_type_1']);
-    $media_type = $this->createMediaType('file', ['id' => 'document']);
+    $this->createMediaType('file', [
+      'id' => 'document',
+      'label' => 'Document',
+    ]);
     $this->createGroupRole([
       'group_type' => 'group_type_1',
       'scope' => PermissionScopeInterface::INSIDER_ID,
@@ -64,7 +67,7 @@ class GroupMediaViewsTest extends BrowserTestBase {
 
     // Create content.
     $group = $this->createGroup(['type' => 'group_type_1']);
-    for ($i = 1; $i < 4; $i++) {
+    for ($i = 0; $i < 3; $i++) {
       $media = $this->createMediaEntity('document', [
         'id' => 'media_' . $i,
         'name' => 'Media ' . $i,
@@ -101,8 +104,8 @@ class GroupMediaViewsTest extends BrowserTestBase {
     $i = 0;
     foreach (Media::loadMultiple() as $media) {
       $cols = $rows[$i]->findAll('css', 'td');
-      $this->assertEquals($media->getName(), $cols[0]->getText());
-      $this->assertEquals($media_type->label(), $cols[1]->getText());
+      $this->assertEquals('Media ' . $i, $cols[0]->getText());
+      $this->assertEquals('Document', $cols[1]->getText());
       $this->assertEquals('Yes', $cols[2]->getText());
       $this->assertEquals('Anonymous', $cols[3]->getText());
       $operation_links = $cols[4]->findAll('css', 'a');
