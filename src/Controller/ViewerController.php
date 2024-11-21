@@ -33,7 +33,7 @@ class ViewerController extends ControllerBase {
      *   The renderer service.
      */
     public function __construct(
-        private readonly RendererInterface $renderer,
+        protected readonly RendererInterface $renderer,
     ) {}
 
     /**
