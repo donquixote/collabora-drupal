@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Provide views data for collabora_online.module.
+ */
+
 declare(strict_types=1);
 
 /**

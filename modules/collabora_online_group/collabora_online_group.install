@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Install, update and uninstall functions for collabora_online_group.
+ */
+
 use Drupal\views\Entity\View;
 
 /**
@@ -43,7 +48,8 @@ function collabora_online_group_install(bool $is_syncing): void {
       'text' => t('Edit in Collabora Online'),
     ],
   ];
-  // Add new fields as options for the dropbutton and move the element to the end.
+  // Add new fields as options for the dropbutton, and move the dropbutton to
+  // the end of the array.
   $dropbutton = $display['display_options']['fields']['dropbutton'];
   $dropbutton['fields'] += [
     'collabora_preview' => 'collabora_preview',

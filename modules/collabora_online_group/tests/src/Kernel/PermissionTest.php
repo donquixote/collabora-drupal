@@ -45,7 +45,7 @@ class PermissionTest extends GroupKernelTestBase {
                 'group_cardinality' => 0,
                 'entity_cardinality' => 1,
                 'use_creation_wizard' => FALSE,
-        ]);
+            ]);
         $this->createPluginRelation(
             $group_type_2,
             'group_media:document',
@@ -53,7 +53,7 @@ class PermissionTest extends GroupKernelTestBase {
                 'group_cardinality' => 0,
                 'entity_cardinality' => 1,
                 'use_creation_wizard' => FALSE,
-        ]);
+            ]);
         $this->createPluginRelation(
             $group_type_2,
             'group_media:spreadsheet',
@@ -61,7 +61,7 @@ class PermissionTest extends GroupKernelTestBase {
                 'group_cardinality' => 0,
                 'entity_cardinality' => 1,
                 'use_creation_wizard' => FALSE,
-        ]);
+            ]);
 
         // Check that permissions are generated for the groups.
         // Save current permissions.
@@ -117,4 +117,5 @@ class PermissionTest extends GroupKernelTestBase {
                 $new_permissions_3,
         ));
     }
+
 }
