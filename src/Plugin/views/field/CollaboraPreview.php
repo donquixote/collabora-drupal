@@ -39,4 +39,5 @@ class CollaboraPreview extends LinkBase {
     protected function getDefaultLabel(): TranslatableMarkup {
         return $this->t('View in Collabora Online');
     }
+
 }
