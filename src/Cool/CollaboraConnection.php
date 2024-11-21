@@ -26,7 +26,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 /**
  * Service to load the discovery.xml from the Collabora server.
  */
-class CoolDiscoveryXmlEndpoint {
+class CollaboraConnection {
 
     /**
      * Constructor.

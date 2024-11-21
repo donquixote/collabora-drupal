@@ -22,11 +22,11 @@ class CollaboraDiscovery {
     /**
      * Constructor.
      *
-     * @param \Drupal\collabora_online\Cool\CoolDiscoveryXmlEndpoint $discoveryXmlEndpoint
+     * @param \Drupal\collabora_online\Cool\CollaboraConnection $collaboraConnection
      *   Service to load the discovery.xml from the Collabora server.
      */
     public function __construct(
-        protected readonly CoolDiscoveryXmlEndpoint $discoveryXmlEndpoint,
+        protected readonly CollaboraConnection $collaboraConnection,
     ) {}
 
     /**
@@ -62,7 +62,7 @@ class CollaboraDiscovery {
      *   Fetching the discovery.xml failed, or the result is not valid xml.
      */
     protected function getParsedXml(): \SimpleXMLElement {
-        $xml = $this->discoveryXmlEndpoint->getDiscoveryXml();
+        $xml = $this->collaboraConnection->getDiscoveryXml();
 
         $discovery_parsed = simplexml_load_string($xml);
         if (!$discovery_parsed) {

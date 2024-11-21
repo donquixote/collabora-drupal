@@ -4,5 +4,5 @@ services:
   logger.channel.collabora_online:
     parent: logger.channel_base
     arguments: ['cool']
-  Drupal\collabora_online\Cool\CoolDiscoveryXmlEndpoint: { }
+  Drupal\collabora_online\Cool\CollaboraConnection: { }
   Drupal\collabora_online\Cool\CollaboraDiscovery: { }
