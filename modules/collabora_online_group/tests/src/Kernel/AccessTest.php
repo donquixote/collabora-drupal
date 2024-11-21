@@ -137,7 +137,7 @@ class AccessTest extends GroupKernelTestBase {
                 'status' => 1,
                 'scope' => 'own',
             ],
-            'FAIL preview:unpublished:any::preview' => [
+            'preview:unpublished:any::preview' => [
                 'result' => FALSE,
                 'permissions' => [],
                 'group_permissions' => ['preview group_media:document in collabora'],
@@ -145,7 +145,7 @@ class AccessTest extends GroupKernelTestBase {
                 'status' => 0,
                 'scope' => 'any',
             ],
-            'FAIL preview:unpublished:own::preview' => [
+            'preview:unpublished:own::preview' => [
                 'result' => FALSE,
                 'permissions' => [],
                 'group_permissions' => ['preview group_media:document in collabora'],
@@ -169,7 +169,7 @@ class AccessTest extends GroupKernelTestBase {
                 'status' => 0,
                 'scope' => 'own',
             ],
-            'FAIL preview:published:own::preview_own' => [
+            'preview:published:own::preview_own' => [
                 'result' => FALSE,
                 'permissions' => [],
                 'group_permissions' => ['preview own unpublished group_media:document in collabora'],
