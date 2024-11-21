@@ -62,9 +62,9 @@ class CoolRequest {
      *   Fetching the discovery.xml failed, or the result is not valid xml.
      */
     protected function getParsedXml(): \SimpleXMLElement {
-        $discovery = $this->discoveryXmlEndpoint->getDiscoveryXml();
+        $xml = $this->discoveryXmlEndpoint->getDiscoveryXml();
 
-        $discovery_parsed = simplexml_load_string($discovery);
+        $discovery_parsed = simplexml_load_string($xml);
         if (!$discovery_parsed) {
             throw new CoolRequestException('The retrieved discovery.xml file is not a valid XML file.');
         }
