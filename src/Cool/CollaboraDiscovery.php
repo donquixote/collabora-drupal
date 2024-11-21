@@ -17,7 +17,7 @@ use Drupal\collabora_online\Exception\CoolRequestException;
 /**
  * Service to fetch a WOPI client url.
  */
-class CoolRequest {
+class CollaboraDiscovery {
 
     /**
      * Constructor.

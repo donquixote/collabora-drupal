@@ -12,7 +12,7 @@
 
 namespace Drupal\collabora_online\Controller;
 
-use Drupal\collabora_online\Cool\CoolRequest;
+use Drupal\collabora_online\Cool\CollaboraDiscovery;
 use Drupal\collabora_online\Cool\CoolUtils;
 use Drupal\collabora_online\Exception\CoolRequestException;
 use Drupal\Core\Controller\ControllerBase;
@@ -29,13 +29,13 @@ class ViewerController extends ControllerBase {
     /**
      * The controller constructor.
      *
-     * @param \Drupal\collabora_online\Cool\CoolRequest $coolRequest
+     * @param \Drupal\collabora_online\Cool\CollaboraDiscovery $discovery
      *   Service to fetch a WOPI client url.
      * @param \Drupal\Core\Render\RendererInterface $renderer
      *   The renderer service.
      */
     public function __construct(
-        protected readonly CoolRequest $coolRequest,
+        protected readonly CollaboraDiscovery $discovery,
         protected readonly RendererInterface $renderer,
     ) {}
 
@@ -59,7 +59,7 @@ class ViewerController extends ControllerBase {
         ];
 
         try {
-            $wopi_client_url = $this->coolRequest->getWopiClientURL();
+            $wopi_client_url = $this->discovery->getWopiClientURL();
         }
         catch (CoolRequestException $e) {
             $error_msg = $this->t('The Collabora Online server is not available: @message', [
