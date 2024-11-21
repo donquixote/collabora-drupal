@@ -33,20 +33,20 @@ class AccessTest extends GroupKernelTestBase {
         'groupmedia',
         'collabora_online',
         'collabora_online_group',
-        'user'
+        'user',
     ];
 
     /**
-   * {@inheritdoc}
-   */
-  protected function setUp(): void {
-    parent::setUp();
+     * {@inheritdoc}
+     */
+    protected function setUp(): void {
+        parent::setUp();
 
-    $this->installEntitySchema('file');
-    $this->installEntitySchema('media');
-    $this->installEntitySchema('group_role');
-    $this->installSchema('file', ['file_usage']);
-  }
+        $this->installEntitySchema('file');
+        $this->installEntitySchema('media');
+        $this->installEntitySchema('group_role');
+        $this->installSchema('file', ['file_usage']);
+    }
 
     /**
      * Tests that access to Collabora group permissions is handled.
@@ -76,7 +76,8 @@ class AccessTest extends GroupKernelTestBase {
         foreach ($this->getTestScenarios() as $scenario_name => $scenario) {
             // Set the current permissions for the existing role.
             $group_role->set('permissions', $scenario['group_permissions'])->save();
-            // Create the user with the given permissions and as member of the group.
+            // Create the user with the given permissions and as member of the
+            // group.
             $user = $this->createUser($scenario['permissions']);
             $group->addMember($user);
             // Set user as owner if the scope is 'own'.
@@ -90,7 +91,7 @@ class AccessTest extends GroupKernelTestBase {
                 sprintf('Access check failed for scenario: %s', $scenario_name)
             );
         }
-   }
+    }
 
     /**
      * Retrieves the scenarios to be tested.
@@ -105,65 +106,65 @@ class AccessTest extends GroupKernelTestBase {
                 'permissions' => [],
                 'group_permissions' => [],
                 'operation' => 'preview in collabora',
-                'scope' => 'any'
+                'scope' => 'any',
             ],
             'preview_global_permisions' => [
                 'result' => FALSE,
                 'permissions' => ['preview document in collabora'],
                 'group_permissions' => [],
                 'operation' => 'preview in collabora',
-                'scope' => 'any'
+                'scope' => 'any',
             ],
-            'preview_group_permisions' =>[
+            'preview_group_permisions' => [
                 'result' => TRUE,
                 'permissions' => [],
                 'group_permissions' => ['preview group_media:document in collabora'],
                 'operation' => 'preview in collabora',
-                'scope' => 'any'
+                'scope' => 'any',
             ],
             'edit_any_no_permisions' => [
                 'result' => FALSE,
                 'permissions' => [],
                 'group_permissions' => [],
                 'operation' => 'edit in collabora',
-                'scope' => 'any'
+                'scope' => 'any',
             ],
             'edit_any_global_permisions' => [
                 'result' => FALSE,
                 'permissions' => ['edit any document in collabora'],
                 'group_permissions' => [],
                 'operation' => 'edit in collabora',
-                'scope' => 'any'
+                'scope' => 'any',
             ],
             'edit_any_group_permisions' => [
                 'result' => TRUE,
                 'permissions' => [],
                 'group_permissions' => ['edit any group_media:document in collabora'],
                 'operation' => 'edit in collabora',
-                'scope' => 'any'
+                'scope' => 'any',
             ],
             'edit_own_no_permisions' => [
                 'result' => FALSE,
                 'permissions' => [],
                 'group_permissions' => [],
                 'operation' => 'edit in collabora',
-                'scope' => 'own'
+                'scope' => 'own',
             ],
             'edit_own_global_permisions' => [
                 'result' => FALSE,
                 'permissions' => ['edit own document in collabora'],
                 'group_permissions' => [],
                 'operation' => 'edit in collabora',
-                'scope' => 'own'
+                'scope' => 'own',
             ],
             'edit_own_group_permisions' => [
                 'result' => TRUE,
                 'permissions' => [],
                 'group_permissions' => ['edit own group_media:document in collabora'],
                 'operation' => 'edit in collabora',
-                'scope' => 'own'
+                'scope' => 'own',
             ],
         ];
-   }
+    }
 
 }
