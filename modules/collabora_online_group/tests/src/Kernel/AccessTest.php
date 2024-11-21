@@ -74,6 +74,8 @@ class AccessTest extends GroupKernelTestBase {
 
         // Iterate over each scenario.
         foreach ($this->getTestScenarios() as $scenario_name => $scenario) {
+            // Apply status to media.
+            $media->set('status', $scenario['status'])->save();
             // Set the current permissions for the existing role.
             $group_role->set('permissions', $scenario['group_permissions'])->save();
             // Create the user with the given permissions and as member of the
@@ -88,7 +90,7 @@ class AccessTest extends GroupKernelTestBase {
             $this->assertEquals(
                 $scenario['result'],
                 $media->access($scenario['operation'], $user),
-                sprintf('Access check failed for scenario: %s', $scenario_name)
+                sprintf('Access check failed for scenario: "%s"', $scenario_name)
             );
         }
     }
@@ -100,69 +102,144 @@ class AccessTest extends GroupKernelTestBase {
      *   An array of test scenarios.
      */
     protected function getTestScenarios(): array {
+        // The scenario keys contains values used for each scenario:
+        // 'operation:status:scope:global_permission:group_permission'.
         return [
-            'preview_no_permisions' => [
+            'preview:published:any:::' => [
                 'result' => FALSE,
                 'permissions' => [],
                 'group_permissions' => [],
                 'operation' => 'preview in collabora',
+                'status' => 1,
                 'scope' => 'any',
             ],
-            'preview_global_permisions' => [
+            'preview:published:any:preview::' => [
                 'result' => FALSE,
                 'permissions' => ['preview document in collabora'],
                 'group_permissions' => [],
                 'operation' => 'preview in collabora',
+                'status' => 1,
                 'scope' => 'any',
             ],
-            'preview_group_permisions' => [
+            'preview:published:any::preview' => [
                 'result' => TRUE,
                 'permissions' => [],
                 'group_permissions' => ['preview group_media:document in collabora'],
                 'operation' => 'preview in collabora',
+                'status' => 1,
                 'scope' => 'any',
             ],
-            'edit_any_no_permisions' => [
+            'preview:published:own::preview' => [
+                'result' => TRUE,
+                'permissions' => [],
+                'group_permissions' => ['preview group_media:document in collabora'],
+                'operation' => 'preview in collabora',
+                'status' => 1,
+                'scope' => 'own',
+            ],
+            'FAIL preview:unpublished:any::preview' => [
+                'result' => FALSE,
+                'permissions' => [],
+                'group_permissions' => ['preview group_media:document in collabora'],
+                'operation' => 'preview in collabora',
+                'status' => 0,
+                'scope' => 'any',
+            ],
+            'FAIL preview:unpublished:own::preview' => [
+                'result' => FALSE,
+                'permissions' => [],
+                'group_permissions' => ['preview group_media:document in collabora'],
+                'operation' => 'preview in collabora',
+                'status' => 0,
+                'scope' => 'own',
+            ],
+            'preview:unpublished:own:preview_own::' => [
+                'result' => FALSE,
+                'permissions' => ['preview own unpublished document in collabora'],
+                'group_permissions' => [],
+                'operation' => 'preview in collabora',
+                'status' => 0,
+                'scope' => 'own',
+            ],
+            'preview:unpublished:own::preview_own' => [
+                'result' => TRUE,
+                'permissions' => [],
+                'group_permissions' => ['preview own unpublished group_media:document in collabora'],
+                'operation' => 'preview in collabora',
+                'status' => 0,
+                'scope' => 'own',
+            ],
+            'FAIL preview:published:own::preview_own' => [
+                'result' => FALSE,
+                'permissions' => [],
+                'group_permissions' => ['preview own unpublished group_media:document in collabora'],
+                'operation' => 'preview in collabora',
+                'status' => 1,
+                'scope' => 'own',
+            ],
+            'edit:published:any:::' => [
                 'result' => FALSE,
                 'permissions' => [],
                 'group_permissions' => [],
                 'operation' => 'edit in collabora',
+                'status' => 1,
                 'scope' => 'any',
             ],
-            'edit_any_global_permisions' => [
+            'edit:published:any:edit_any::' => [
                 'result' => FALSE,
                 'permissions' => ['edit any document in collabora'],
                 'group_permissions' => [],
                 'operation' => 'edit in collabora',
+                'status' => 1,
                 'scope' => 'any',
             ],
-            'edit_any_group_permisions' => [
+            'edit:published:any::edit_any' => [
                 'result' => TRUE,
                 'permissions' => [],
                 'group_permissions' => ['edit any group_media:document in collabora'],
                 'operation' => 'edit in collabora',
+                'status' => 1,
                 'scope' => 'any',
             ],
-            'edit_own_no_permisions' => [
+            'edit:published:own::edit_any' => [
+                'result' => TRUE,
+                'permissions' => [],
+                'group_permissions' => ['edit any group_media:document in collabora'],
+                'operation' => 'edit in collabora',
+                'status' => 1,
+                'scope' => 'own',
+            ],
+            'edit:published:own::' => [
                 'result' => FALSE,
                 'permissions' => [],
                 'group_permissions' => [],
                 'operation' => 'edit in collabora',
+                'status' => 1,
                 'scope' => 'own',
             ],
-            'edit_own_global_permisions' => [
+            'edit:published:own:edit_own:' => [
                 'result' => FALSE,
                 'permissions' => ['edit own document in collabora'],
                 'group_permissions' => [],
                 'operation' => 'edit in collabora',
+                'status' => 1,
                 'scope' => 'own',
             ],
-            'edit_own_group_permisions' => [
+            'edit:published:own::edit_own' => [
                 'result' => TRUE,
                 'permissions' => [],
                 'group_permissions' => ['edit own group_media:document in collabora'],
                 'operation' => 'edit in collabora',
+                'status' => 1,
                 'scope' => 'own',
+            ],
+            'edit:published:any::edit_own' => [
+                'result' => FALSE,
+                'permissions' => [],
+                'group_permissions' => ['edit own group_media:document in collabora'],
+                'operation' => 'edit in collabora',
+                'status' => 1,
+                'scope' => 'any',
             ],
         ];
     }
