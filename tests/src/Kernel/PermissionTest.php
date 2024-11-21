@@ -12,30 +12,46 @@
 
 declare(strict_types=1);
 
-namespace Drupal\Tests\collabora_online\Functional;
+namespace Drupal\Tests\collabora_online\Kernel;
 
-use Drupal\Tests\BrowserTestBase;
+use Drupal\KernelTests\KernelTestBase;
 use Drupal\Tests\media\Traits\MediaTypeCreationTrait;
+use Drupal\Tests\user\Traits\UserCreationTrait;
 use Drupal\user\PermissionHandlerInterface;
 
 /**
  * Tests dynamically created permissions.
  */
-class PermissionTest extends BrowserTestBase {
+class PermissionTest extends KernelTestBase {
 
     use MediaTypeCreationTrait;
+    use UserCreationTrait;
 
     /**
      * {@inheritdoc}
      */
     protected static $modules = [
         'collabora_online',
+        'media',
+        'user',
+        'field',
+        'system',
+        'file',
+        'image',
     ];
 
     /**
      * {@inheritdoc}
      */
-    protected $defaultTheme = 'stark';
+    protected function setUp(): void {
+        parent::setUp();
+
+        $this->installEntitySchema('user');
+        $this->installEntitySchema('file');
+        $this->installSchema('file', 'file_usage');
+        $this->installEntitySchema('media');
+        $this->installConfig(['field', 'system', 'user', 'file', 'media']);
+    }
 
     /**
      * Tests that dynamic permissions are properly created.
@@ -80,8 +96,12 @@ class PermissionTest extends BrowserTestBase {
                 'title' => '<em class="placeholder">Public wiki</em>: Edit own media file in Collabora',
                 'dependencies' => ['config' => ['media.type.public_wiki']],
             ],
+            'preview own unpublished public_wiki in collabora' => [
+                'title' => '<em class="placeholder">Public wiki</em>: Preview own unpublished media file in Collabora',
+                'dependencies' => ['config' => ['media.type.public_wiki']],
+            ],
             'preview public_wiki in collabora' => [
-                'title' => '<em class="placeholder">Public wiki</em>: Preview media file in Collabora',
+                'title' => '<em class="placeholder">Public wiki</em>: Preview published media file in Collabora',
                 'dependencies' => ['config' => ['media.type.public_wiki']],
             ],
         ], $permissions);
