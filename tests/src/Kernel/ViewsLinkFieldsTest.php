@@ -62,7 +62,6 @@ class ViewsLinkFieldsTest extends KernelTestBase {
         // Create two medias to check access with different scopes, 'any' and 'own'.
         $this->createMediaEntity('document');
         $this->ownMedia = $this->createMediaEntity('document');
-        ;
     }
 
     /**
