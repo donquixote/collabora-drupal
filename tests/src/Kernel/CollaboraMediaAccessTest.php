@@ -169,7 +169,6 @@ class CollaboraMediaAccessTest extends KernelTestBase {
             'preview document in collabora',
             'edit any document in collabora',
         ]);
-        drupal_flush_all_caches();
         $this->assertCollaboraMediaAccess(
             [
                 'published document' => ['preview', 'edit'],
