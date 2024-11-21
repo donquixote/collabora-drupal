@@ -29,10 +29,13 @@ class ViewerController extends ControllerBase {
     /**
      * The controller constructor.
      *
+     * @param \Drupal\collabora_online\Cool\CoolRequest $coolRequest
+     *   Service to fetch a WOPI client url.
      * @param \Drupal\Core\Render\RendererInterface $renderer
      *   The renderer service.
      */
     public function __construct(
+        protected readonly CoolRequest $coolRequest,
         protected readonly RendererInterface $renderer,
     ) {}
 
@@ -55,10 +58,8 @@ class ViewerController extends ControllerBase {
             'closebutton' => 'true',
         ];
 
-        /** @var \Drupal\collabora_online\Cool\CoolRequest $req */
-        $req = \Drupal::service(CoolRequest::class);
         try {
-            $wopi_client_url = $req->getWopiClientURL();
+            $wopi_client_url = $this->coolRequest->getWopiClientURL();
         }
         catch (CoolRequestException $e) {
             $error_msg = $this->t('The Collabora Online server is not available: @message', [
