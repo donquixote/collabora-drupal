@@ -25,7 +25,7 @@ class CollaboraPermissionProvider extends GroupMediaPermissionProvider {
     if ($name = $provider_chain->getPermission('preview in collabora', 'entity')) {
       $permissions[$name] = $this->buildPermission("$prefix Preview published %entity_type in collabora");
     }
-    if ($name = $provider_chain->getPermission('preview in collabora', 'entity', 'own')) {
+    if ($name = $provider_chain->getPermission('preview in collabora unpublished', 'entity', 'own')) {
       $permissions[$name] = $this->buildPermission("$prefix Preview own unpublished %entity_type in collabora");
     }
     if ($name = $provider_chain->getPermission('edit in collabora', 'entity')) {
@@ -49,11 +49,18 @@ class CollaboraPermissionProvider extends GroupMediaPermissionProvider {
     ) {
       switch ($operation) {
         case 'preview in collabora':
-          if ($scope === 'own') {
+          if ($scope === 'any') {
+            return "preview $this->pluginId in collabora";
+          }
+
+          return FALSE;
+
+        case 'preview in collabora unpublished':
+          if ($this->implementsPublishedInterface && $scope === 'own') {
             return "preview $scope unpublished $this->pluginId in collabora";
           }
 
-          return "preview $this->pluginId in collabora";
+          return FALSE;
 
         case 'edit in collabora':
           return "edit $scope $this->pluginId in collabora";
