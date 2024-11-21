@@ -50,28 +50,6 @@ class CoolRequest {
             throw new CoolRequestException('The retrieved discovery.xml file is not a valid XML file.');
         }
 
-        $wopi_src = $this->getWopiSrcUrl($discovery_parsed, $mimetype);
-
-        return $wopi_src;
-    }
-
-    /**
-     * Extracts a WOPI url from the parsed discovery.xml.
-     *
-     * @param \SimpleXMLElement $discovery_parsed
-     *   Parsed contents from discovery.xml from the Collabora server.
-     *   Currently, NULL or FALSE are supported too, but lead to NULL return
-     *   value.
-     * @param string $mimetype
-     *   MIME type for which to fetch the WOPI url. E.g. 'text/plain'.
-     *
-     * @return string
-     *   WOPI url as configured for this MIME type in discovery.xml.
-     *
-     * @throws \Drupal\collabora_online\Exception\CoolRequestException
-     *   No WOPI url was found for this MIME type.
-     */
-    protected function getWopiSrcUrl(\SimpleXMLElement $discovery_parsed, string $mimetype): string {
         $result = $discovery_parsed->xpath(sprintf('/wopi-discovery/net-zone/app[@name=\'%s\']/action', $mimetype));
         if (!empty($result[0]['urlsrc'][0])) {
             return (string) $result[0]['urlsrc'][0];
