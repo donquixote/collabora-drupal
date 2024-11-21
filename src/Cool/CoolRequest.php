@@ -47,10 +47,7 @@ class CoolRequest {
 
         $discovery_parsed = simplexml_load_string($discovery);
         if (!$discovery_parsed) {
-            throw new CoolRequestException(
-                'The retrieved discovery.xml file is not a valid XML file.',
-                102,
-            );
+            throw new CoolRequestException('The retrieved discovery.xml file is not a valid XML file.');
         }
 
         $wopi_src = $this->getWopiSrcUrl($discovery_parsed, $mimetype);
@@ -79,10 +76,7 @@ class CoolRequest {
         if (!empty($result[0]['urlsrc'][0])) {
             return (string) $result[0]['urlsrc'][0];
         }
-        throw new CoolRequestException(
-            'The requested mime type is not handled.',
-            103,
-        );
+        throw new CoolRequestException('The requested mime type is not handled.');
     }
 
 }

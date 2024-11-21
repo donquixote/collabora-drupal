@@ -41,7 +41,6 @@ class FetchClientUrlTest extends ExistingSiteBase {
 
         $this->expectException(CoolRequestException::class);
         $this->expectExceptionMessage("The configured Collabora Online server address must begin with 'http://' or 'https://'. Found 'httx://example.com'.");
-        $this->expectExceptionCode(204);
 
         $cool_request->getWopiClientURL();
     }
