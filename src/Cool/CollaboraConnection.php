@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Drupal\collabora_online\Cool;
 
-use Drupal\collabora_online\Exception\CoolRequestException;
+use Drupal\collabora_online\Exception\CollaboraNotAvailableException;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Logger\LoggerChannelInterface;
 use GuzzleHttp\ClientInterface;
@@ -51,23 +51,23 @@ class CollaboraConnection {
     /**
      * Loads the WOPI server url from configuration.
      *
-     * @throws \Drupal\collabora_online\Exception\CoolRequestException
+     * @throws \Drupal\collabora_online\Exception\CollaboraNotAvailableException
      *   The WOPI server url is misconfigured, or the protocol does not match
      *   that of the current Drupal request.
      */
     protected function getWopiClientServerBaseUrl(): string {
         $cool_settings = $this->configFactory->get('collabora_online.settings')->get('cool');
         if (!$cool_settings) {
-            throw new CoolRequestException('The Collabora Online connection is not configured.');
+            throw new CollaboraNotAvailableException('The Collabora Online connection is not configured.');
         }
         $wopi_client_server = $cool_settings['server'] ?? NULL;
         if (!$wopi_client_server) {
-            throw new CoolRequestException('The configured Collabora Online server address is empty.');
+            throw new CollaboraNotAvailableException('The configured Collabora Online server address is empty.');
         }
         $wopi_client_server = trim($wopi_client_server);
 
         if (!preg_match('@^https?://@', $wopi_client_server)) {
-            throw new CoolRequestException(sprintf(
+            throw new CollaboraNotAvailableException(sprintf(
                 "The configured Collabora Online server address must begin with 'http://' or 'https://'. Found '%s'.",
                 $wopi_client_server,
             ));
@@ -82,7 +82,7 @@ class CollaboraConnection {
      * @return string
      *   The full contents of discovery.xml.
      *
-     * @throws \Drupal\collabora_online\Exception\CoolRequestException
+     * @throws \Drupal\collabora_online\Exception\CollaboraNotAvailableException
      *   The client url cannot be retrieved.
      */
     public function getDiscoveryXml(): string {
@@ -90,7 +90,7 @@ class CollaboraConnection {
 
         $cool_settings = $this->configFactory->get('collabora_online.settings')->get('cool');
         if (!$cool_settings) {
-            throw new CoolRequestException('The Collabora Online connection is not configured.');
+            throw new CollaboraNotAvailableException('The Collabora Online connection is not configured.');
         }
         $disable_checks = !empty($cool_settings['disable_cert_check']);
 
@@ -107,7 +107,7 @@ class CollaboraConnection {
                 '@url' => $discovery_url,
                 '@message' => $e->getMessage(),
             ]);
-            throw new CoolRequestException(
+            throw new CollaboraNotAvailableException(
                 'Not able to retrieve the discovery.xml file from the Collabora Online server.',
                 previous: $e,
             );

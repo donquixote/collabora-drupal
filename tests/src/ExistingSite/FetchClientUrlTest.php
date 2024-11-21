@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\collabora_online\ExistingSite;
 
 use Drupal\collabora_online\Cool\CollaboraDiscovery;
-use Drupal\collabora_online\Exception\CoolRequestException;
+use Drupal\collabora_online\Exception\CollaboraNotAvailableException;
 use weitzman\DrupalTestTraits\ExistingSiteBase;
 
 /**
@@ -39,7 +39,7 @@ class FetchClientUrlTest extends ExistingSiteBase {
         /** @var \Drupal\collabora_online\Cool\CollaboraDiscovery $discovery */
         $discovery = \Drupal::service(CollaboraDiscovery::class);
 
-        $this->expectException(CoolRequestException::class);
+        $this->expectException(CollaboraNotAvailableException::class);
         $this->expectExceptionMessage("The configured Collabora Online server address must begin with 'http://' or 'https://'. Found 'httx://example.com'.");
 
         $discovery->getWopiClientURL();

@@ -12,7 +12,7 @@
 
 namespace Drupal\collabora_online\Cool;
 
-use Drupal\collabora_online\Exception\CoolRequestException;
+use Drupal\collabora_online\Exception\CollaboraNotAvailableException;
 
 /**
  * Service to fetch a WOPI client url.
@@ -39,7 +39,7 @@ class CollaboraDiscovery {
      * @return string
      *   The WOPI client url, or NULL on failure.
      *
-     * @throws \Drupal\collabora_online\Exception\CoolRequestException
+     * @throws \Drupal\collabora_online\Exception\CollaboraNotAvailableException
      *   The client url cannot be retrieved.
      */
     public function getWopiClientURL(string $mimetype = 'text/plain'): string {
@@ -49,7 +49,7 @@ class CollaboraDiscovery {
         if (!empty($result[0]['urlsrc'][0])) {
             return (string) $result[0]['urlsrc'][0];
         }
-        throw new CoolRequestException('The requested mime type is not handled.');
+        throw new CollaboraNotAvailableException('The requested mime type is not handled.');
     }
 
     /**
@@ -58,7 +58,7 @@ class CollaboraDiscovery {
      * @return \SimpleXMLElement
      *   Parsed xml from the discovery.xml.
      *
-     * @throws \Drupal\collabora_online\Exception\CoolRequestException
+     * @throws \Drupal\collabora_online\Exception\CollaboraNotAvailableException
      *   Fetching the discovery.xml failed, or the result is not valid xml.
      */
     protected function getParsedXml(): \SimpleXMLElement {
@@ -66,7 +66,7 @@ class CollaboraDiscovery {
 
         $discovery_parsed = simplexml_load_string($xml);
         if (!$discovery_parsed) {
-            throw new CoolRequestException('The retrieved discovery.xml file is not a valid XML file.');
+            throw new CollaboraNotAvailableException('The retrieved discovery.xml file is not a valid XML file.');
         }
 
         return $discovery_parsed;

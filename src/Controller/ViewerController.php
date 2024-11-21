@@ -14,7 +14,7 @@ namespace Drupal\collabora_online\Controller;
 
 use Drupal\collabora_online\Cool\CollaboraDiscovery;
 use Drupal\collabora_online\Cool\CoolUtils;
-use Drupal\collabora_online\Exception\CoolRequestException;
+use Drupal\collabora_online\Exception\CollaboraNotAvailableException;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\media\Entity\Media;
@@ -61,7 +61,7 @@ class ViewerController extends ControllerBase {
         try {
             $wopi_client_url = $this->discovery->getWopiClientURL();
         }
-        catch (CoolRequestException $e) {
+        catch (CollaboraNotAvailableException $e) {
             $error_msg = $this->t('The Collabora Online server is not available: @message', [
                 '@message' => $e->getCode() . ': ' . $e->getMessage(),
             ]);
