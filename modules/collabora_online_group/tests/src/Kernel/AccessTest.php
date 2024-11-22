@@ -105,7 +105,8 @@ class AccessTest extends GroupKernelTestBase {
         // The scenario keys contains values used for each scenario:
         // 'operation:status:scope:global_permission:group_permission'.
         return [
-            'preview:published:any:::' => [
+            // Preview no permissions cases.
+            'preview:published:any::' => [
                 'result' => FALSE,
                 'permissions' => [],
                 'group_permissions' => [],
@@ -113,7 +114,17 @@ class AccessTest extends GroupKernelTestBase {
                 'status' => 1,
                 'scope' => 'any',
             ],
-            'preview:published:any:preview::' => [
+            'preview:published:own::' => [
+                'result' => FALSE,
+                'permissions' => [],
+                'group_permissions' => [],
+                'operation' => 'preview in collabora',
+                'status' => 1,
+                'scope' => 'own',
+            ],
+            // The global permissions that would allow to preview, doesn't work
+            // in a media related to a group.
+            'preview:published:any:preview:' => [
                 'result' => FALSE,
                 'permissions' => ['preview document in collabora'],
                 'group_permissions' => [],
@@ -121,6 +132,16 @@ class AccessTest extends GroupKernelTestBase {
                 'status' => 1,
                 'scope' => 'any',
             ],
+            'preview:published:own:preview:' => [
+                'result' => FALSE,
+                'permissions' => ['preview document in collabora'],
+                'group_permissions' => [],
+                'operation' => 'preview in collabora',
+                'status' => 1,
+                'scope' => 'own',
+            ],
+            // User can only see published entities with the group preview
+            // permission.
             'preview:published:any::preview' => [
                 'result' => TRUE,
                 'permissions' => [],
@@ -153,7 +174,9 @@ class AccessTest extends GroupKernelTestBase {
                 'status' => 0,
                 'scope' => 'own',
             ],
-            'preview:unpublished:own:preview_own::' => [
+            // The global preview unpublished doesn't affect to medias related
+            // to a group.
+            'preview:unpublished:own:preview_own_unpublished:' => [
                 'result' => FALSE,
                 'permissions' => ['preview own unpublished document in collabora'],
                 'group_permissions' => [],
@@ -161,7 +184,25 @@ class AccessTest extends GroupKernelTestBase {
                 'status' => 0,
                 'scope' => 'own',
             ],
-            'preview:unpublished:own::preview_own' => [
+            // The group permission to preview own unpublished permission allows
+            // to see only entities with such properties.
+            'preview:published:any::preview_own_unpublished' => [
+                'result' => FALSE,
+                'permissions' => [],
+                'group_permissions' => ['preview own unpublished group_media:document in collabora'],
+                'operation' => 'preview in collabora',
+                'status' => 1,
+                'scope' => 'any',
+            ],
+            'preview:published:own::preview_own_unpublished' => [
+                'result' => FALSE,
+                'permissions' => [],
+                'group_permissions' => ['preview own unpublished group_media:document in collabora'],
+                'operation' => 'preview in collabora',
+                'status' => 1,
+                'scope' => 'own',
+            ],
+            'preview:unpublished:own::preview_own_unpublished' => [
                 'result' => TRUE,
                 'permissions' => [],
                 'group_permissions' => ['preview own unpublished group_media:document in collabora'],
@@ -169,15 +210,16 @@ class AccessTest extends GroupKernelTestBase {
                 'status' => 0,
                 'scope' => 'own',
             ],
-            'preview:published:own::preview_own' => [
+            'preview:unpublished:any::preview_own_unpublished' => [
                 'result' => FALSE,
                 'permissions' => [],
                 'group_permissions' => ['preview own unpublished group_media:document in collabora'],
                 'operation' => 'preview in collabora',
-                'status' => 1,
-                'scope' => 'own',
+                'status' => 0,
+                'scope' => 'any',
             ],
-            'edit:published:any:::' => [
+            // Edit no permissions cases.
+            'edit:published:any::' => [
                 'result' => FALSE,
                 'permissions' => [],
                 'group_permissions' => [],
@@ -185,7 +227,16 @@ class AccessTest extends GroupKernelTestBase {
                 'status' => 1,
                 'scope' => 'any',
             ],
-            'edit:published:any:edit_any::' => [
+            'edit:published:own::' => [
+                'result' => FALSE,
+                'permissions' => [],
+                'group_permissions' => [],
+                'operation' => 'edit in collabora',
+                'status' => 1,
+                'scope' => 'own',
+            ],
+            // The global permission doesn't grant access to edit in a group.
+            'edit:published:any:edit_any:' => [
                 'result' => FALSE,
                 'permissions' => ['edit any document in collabora'],
                 'group_permissions' => [],
@@ -193,6 +244,23 @@ class AccessTest extends GroupKernelTestBase {
                 'status' => 1,
                 'scope' => 'any',
             ],
+            'edit:published:own:edit_any:' => [
+                'result' => FALSE,
+                'permissions' => ['edit any document in collabora'],
+                'group_permissions' => [],
+                'operation' => 'edit in collabora',
+                'status' => 1,
+                'scope' => 'own',
+            ],
+            'edit:published:own:edit_own:' => [
+                'result' => FALSE,
+                'permissions' => ['edit own document in collabora'],
+                'group_permissions' => [],
+                'operation' => 'edit in collabora',
+                'status' => 1,
+                'scope' => 'own',
+            ],
+            // Only users with edit any permission in a group can edit all.
             'edit:published:any::edit_any' => [
                 'result' => TRUE,
                 'permissions' => [],
@@ -209,22 +277,23 @@ class AccessTest extends GroupKernelTestBase {
                 'status' => 1,
                 'scope' => 'own',
             ],
-            'edit:published:own::' => [
-                'result' => FALSE,
+            'edit:unpublished:any::edit_any' => [
+                'result' => TRUE,
                 'permissions' => [],
-                'group_permissions' => [],
+                'group_permissions' => ['edit any group_media:document in collabora'],
                 'operation' => 'edit in collabora',
-                'status' => 1,
+                'status' => 0,
+                'scope' => 'any',
+            ],
+            'edit:unpublished:own::edit_any' => [
+                'result' => TRUE,
+                'permissions' => [],
+                'group_permissions' => ['edit any group_media:document in collabora'],
+                'operation' => 'edit in collabora',
+                'status' => 0,
                 'scope' => 'own',
             ],
-            'edit:published:own:edit_own:' => [
-                'result' => FALSE,
-                'permissions' => ['edit own document in collabora'],
-                'group_permissions' => [],
-                'operation' => 'edit in collabora',
-                'status' => 1,
-                'scope' => 'own',
-            ],
+            // Or edit own permission for the entities the user owns.
             'edit:published:own::edit_own' => [
                 'result' => TRUE,
                 'permissions' => [],
@@ -233,12 +302,28 @@ class AccessTest extends GroupKernelTestBase {
                 'status' => 1,
                 'scope' => 'own',
             ],
+            'edit:unpublished:own::edit_own' => [
+                'result' => TRUE,
+                'permissions' => [],
+                'group_permissions' => ['edit own group_media:document in collabora'],
+                'operation' => 'edit in collabora',
+                'status' => 0,
+                'scope' => 'own',
+            ],
             'edit:published:any::edit_own' => [
                 'result' => FALSE,
                 'permissions' => [],
                 'group_permissions' => ['edit own group_media:document in collabora'],
                 'operation' => 'edit in collabora',
                 'status' => 1,
+                'scope' => 'any',
+            ],
+            'edit:unpublished:any::edit_own' => [
+                'result' => FALSE,
+                'permissions' => [],
+                'group_permissions' => ['edit own group_media:document in collabora'],
+                'operation' => 'edit in collabora',
+                'status' => 0,
                 'scope' => 'any',
             ],
         ];
