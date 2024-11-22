@@ -101,7 +101,7 @@ Minimal steps to see the editor in action:
 
 Advanced usage:
 - Configure roles and permissions as in "User permissions" section below.
-- Create a non-admin user with sufficient roles, login, 
+- Create a non-admin user with sufficient roles, login,
 
 ### Running the tests
 
@@ -198,19 +198,19 @@ not needed, if the Collabora instance is configured from outside of
 Drupal.
 
 For each media type, the module introduces four permissions:
-- "(media type): Edit any media file in Collabora"  
+- "(media type): Edit any media file in Collabora"
   Users with this permission are allowed to edit documents attached
   to a media entity of the given type, using the Collabora Online
   editor.
-- "(media type): Edit own media file in Collabora"  
+- "(media type): Edit own media file in Collabora"
   Users with this permission are allowed to edit documents attached
   to a media entity of the given type, using the Collabora Online
   editor, if they are the owner/author of that media entity.
-- "(media type): Preview published media file in Collabora"  
+- "(media type): Preview published media file in Collabora"
   Users with this permission are allowed to preview documents attached
   to a published media entity of the given type, using the Collabora
   Online editor in preview/readonly mode.
-- "(media type): Preview own unpublished media file in Collabora"  
+- "(media type): Preview own unpublished media file in Collabora"
   Users with this permission are allowed to preview documents attached
   to an unpublished media entity of the given type, using the Collabora Online
   editor in preview/readonly mode.
@@ -245,6 +245,13 @@ upload_max_filesize = 30M
 ```
 
 These set the limits to a maximum of 30M. You can change as appropriate.
+
+Sub-modules
+-------------
+
+### Collabora Online Group
+
+Integration of Collabora Online with Group module. Check out the [README](/modules/collabora_online_group/README.md) of the module.
 
 License
 -------
