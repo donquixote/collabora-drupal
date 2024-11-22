@@ -23,13 +23,6 @@ class ViewsLinkFieldsTest extends KernelTestBase {
     use MediaTypeCreationTrait;
 
     /**
-     * Media owned by current user.
-     *
-     * @var \Drupal\media\MediaInterface
-     */
-    protected $ownMedia = NULL;
-
-    /**
      * {@inheritdoc}
      */
     protected static $modules = [
@@ -58,10 +51,6 @@ class ViewsLinkFieldsTest extends KernelTestBase {
         // Install user module to avoid user 1 permissions bypass.
         \Drupal::moduleHandler()->loadInclude('user', 'install');
         user_install();
-
-        // Create two medias to check access with different scopes: any and own.
-        $this->createMediaEntity('document');
-        $this->ownMedia = $this->createMediaEntity('document');
     }
 
     /**
@@ -71,26 +60,37 @@ class ViewsLinkFieldsTest extends KernelTestBase {
         // User without permissions can't see links.
         $this->doTestLinks(
             [
-                'preview' => [FALSE, FALSE],
-                'edit' => [FALSE, FALSE],
+                'preview' => [FALSE, FALSE, FALSE, FALSE],
+                'edit' => [FALSE, FALSE, FALSE, FALSE],
             ],
             $this->createUser([])
         );
         // User with 'Preview' permission can see preview link.
         $this->doTestLinks(
             [
-                'preview' => [TRUE, TRUE],
-                'edit' => [FALSE, FALSE],
+                'preview' => [TRUE, FALSE, TRUE, FALSE],
+                'edit' => [FALSE, FALSE, FALSE, FALSE],
             ],
             $this->createUser([
                 'preview document in collabora',
             ])
         );
+        // User with 'Preview own unpublished' permission can see preview link
+        // for unpublished entity they own.
+        $this->doTestLinks(
+            [
+                'preview' => [FALSE, FALSE, FALSE, TRUE],
+                'edit' => [FALSE, FALSE, FALSE, FALSE],
+            ],
+            $this->createUser([
+                'preview own unpublished document in collabora',
+            ])
+        );
         // User with 'Edit any' permission can see edit link.
         $this->doTestLinks(
             [
-                'preview' => [FALSE, FALSE],
-                'edit' => [TRUE, TRUE],
+                'preview' => [FALSE, FALSE, FALSE, FALSE],
+                'edit' => [TRUE, TRUE, TRUE, TRUE],
             ],
             $this->createUser([
                 'edit any document in collabora',
@@ -100,8 +100,8 @@ class ViewsLinkFieldsTest extends KernelTestBase {
         // own.
         $this->doTestLinks(
             [
-                'preview' => [FALSE, FALSE],
-                'edit' => [FALSE, TRUE],
+                'preview' => [FALSE, FALSE, FALSE, FALSE],
+                'edit' => [FALSE, FALSE, TRUE, TRUE],
             ],
             $this->createUser([
                 'edit own document in collabora',
@@ -119,8 +119,22 @@ class ViewsLinkFieldsTest extends KernelTestBase {
      */
     protected function doTestLinks(array $expected_results, AccountInterface $account): void {
         $this->setCurrentUser($account);
-        // Set the current user as the owner to check 'edit own' access.
-        $this->ownMedia->setOwnerId($account->id())->save();
+        // Create medias: cover all combinations of status and ownership.
+        $this->createMediaEntity('document', [
+            'uid' => $this->createUser(),
+        ]);
+        $this->createMediaEntity('document', [
+            'uid' => $this->createUser(),
+            'status' => 0,
+        ]);
+        $this->createMediaEntity('document', [
+            'uid' => $account->id(),
+        ]);
+        $this->createMediaEntity('document', [
+            'uid' => $account->id(),
+            'status' => 0,
+        ]);
+
         $view = Views::getView('test_collabora_links');
         $view->preview();
 
@@ -152,6 +166,8 @@ class ViewsLinkFieldsTest extends KernelTestBase {
                 $this->assertEquals($expected_link, (string) $link);
             }
             $i++;
+            // Clean medias as we check results.
+            $media->delete();
         }
     }
 
