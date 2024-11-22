@@ -1,7 +1,10 @@
 Collabora Online Group
 =====================================
 
-This submodule integrates the Group module (https://www.drupal.org/project/group) by managing group-related permissions. It allows fine-grained control over user access within groups, enabling specific permissions for Collabora content and actions based on group membership.
+This submodule integrates the Group module (https://www.drupal.org/project/group)
+by managing group-related permissions. It allows fine-grained control over user
+access within groups, enabling specific permissions for Collabora content and
+actions based on group membership.
 
 ### Requirements
 
@@ -10,7 +13,8 @@ This submodule integrates the Group module (https://www.drupal.org/project/group
 
 ### User permissions
 
-The module maps existing Collabora media operation permissions to the group type instances.
+The module maps existing Collabora media operation permissions to the group type
+instances.
 
 #### Permissions:
 - "(media type): Edit any media file in Collabora"
@@ -22,7 +26,8 @@ Check [Collabora Online README](/README.md#user-permissions) for more informatio
 
 ### Views
 
-Additionally, the submodule modifies Groupmedia view configuration to add links for Collabora operations.
+Additionally, the submodule modifies Groupmedia view configuration to add links
+for Collabora operations.
 
 License
 -------
