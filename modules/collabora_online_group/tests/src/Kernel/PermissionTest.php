@@ -89,12 +89,13 @@ class PermissionTest extends GroupKernelTestBase {
             [
                 'edit any group_media:document in collabora' => 'Entity: Edit any <em class="placeholder">media item</em> in collabora',
                 'edit own group_media:document in collabora' => 'Entity: Edit own <em class="placeholder">media item</em> in collabora',
-                'preview group_media:document in collabora' => 'Entity: Preview <em class="placeholder">media item</em> in collabora',
+                'preview group_media:document in collabora' => 'Entity: Preview published <em class="placeholder">media item</em> in collabora',
+                'preview own unpublished group_media:document in collabora' => 'Entity: Preview own unpublished <em class="placeholder">media item</em> in collabora',
             ],
             array_map(
-                fn ($permission) => (string) $permission['title'],
+                fn($permission) => (string) $permission['title'],
                 $new_permissions_1,
-        ));
+            ));
         // The 'group_2' has 'document' and 'spreadsheet' permissions.
         $this->assertSame(
             [
@@ -102,20 +103,22 @@ class PermissionTest extends GroupKernelTestBase {
                 'edit any group_media:spreadsheet in collabora' => 'Entity: Edit any <em class="placeholder">media item</em> in collabora',
                 'edit own group_media:document in collabora' => 'Entity: Edit own <em class="placeholder">media item</em> in collabora',
                 'edit own group_media:spreadsheet in collabora' => 'Entity: Edit own <em class="placeholder">media item</em> in collabora',
-                'preview group_media:document in collabora' => 'Entity: Preview <em class="placeholder">media item</em> in collabora',
-                'preview group_media:spreadsheet in collabora' => 'Entity: Preview <em class="placeholder">media item</em> in collabora',
+                'preview group_media:document in collabora' => 'Entity: Preview published <em class="placeholder">media item</em> in collabora',
+                'preview group_media:spreadsheet in collabora' => 'Entity: Preview published <em class="placeholder">media item</em> in collabora',
+                'preview own unpublished group_media:document in collabora' => 'Entity: Preview own unpublished <em class="placeholder">media item</em> in collabora',
+                'preview own unpublished group_media:spreadsheet in collabora' => 'Entity: Preview own unpublished <em class="placeholder">media item</em> in collabora',
             ],
             array_map(
-                fn ($permission) => (string) $permission['title'],
+                fn($permission) => (string) $permission['title'],
                 $new_permissions_2,
-        ));
+            ));
         // The 'group_3' doesn't have any new permissions.
         $this->assertSame(
             [],
             array_map(
-                fn ($permission) => (string) $permission['title'],
+                fn($permission) => (string) $permission['title'],
                 $new_permissions_3,
-        ));
+            ));
     }
 
 }
