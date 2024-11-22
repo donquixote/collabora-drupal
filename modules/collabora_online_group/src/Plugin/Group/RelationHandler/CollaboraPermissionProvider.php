@@ -23,7 +23,10 @@ class CollaboraPermissionProvider extends GroupMediaPermissionProvider {
     // Add Collabora permissions.
     $prefix = 'Entity:';
     if ($name = $provider_chain->getPermission('preview in collabora', 'entity')) {
-      $permissions[$name] = $this->buildPermission("$prefix Preview %entity_type in collabora");
+      $permissions[$name] = $this->buildPermission("$prefix Preview published %entity_type in collabora");
+    }
+    if ($name = $provider_chain->getPermission('preview in collabora', 'entity', 'own')) {
+      $permissions[$name] = $this->buildPermission("$prefix Preview own unpublished %entity_type in collabora");
     }
     if ($name = $provider_chain->getPermission('edit in collabora', 'entity')) {
       $permissions[$name] = $this->buildPermission("$prefix Edit any %entity_type in collabora");
@@ -39,20 +42,21 @@ class CollaboraPermissionProvider extends GroupMediaPermissionProvider {
    * {@inheritdoc}
    */
   public function getPermission($operation, $target, $scope = 'any'): bool|string {
-    if ($target === 'entity') {
+    if (
+      $target === 'entity' &&
+      $this->definesEntityPermissions &&
+      ($this->implementsOwnerInterface || $scope === 'any')
+    ) {
       switch ($operation) {
         case 'preview in collabora':
+          if ($scope === 'own') {
+            return "preview $scope unpublished $this->pluginId in collabora";
+          }
+
           return "preview $this->pluginId in collabora";
 
         case 'edit in collabora':
-          if (
-            $this->definesEntityPermissions &&
-            ($this->implementsOwnerInterface || $scope === 'any')
-          ) {
-              return "edit $scope $this->pluginId in collabora";
-          }
-
-          return FALSE;
+          return "edit $scope $this->pluginId in collabora";
       }
     }
 
