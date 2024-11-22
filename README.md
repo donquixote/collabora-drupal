@@ -223,6 +223,14 @@ Developers can use entity access hooks to alter which users may edit
 or preview media files in Collabora. This would allow to grant access
 based on e.g. membership in a group.
 
+### Views
+
+The module integrates with Views by providing links as view fields, allowing
+users to perform specific operations on documents directly from the view display.
+
+These operations include actions such as "preview" and "edit," which can be
+easily accessed through the generated links.
+
 ### Other configuration
 
 If you need to change the accepted extensions to upload, go to
