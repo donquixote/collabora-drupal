@@ -28,7 +28,7 @@ class PermissionTest extends GroupKernelTestBase {
      * Tests that group permissions are properly created.
      */
     public function testGroupPermissions(): void {
-        // Generate types: group and media.
+        // Generate types: groups and medias.
         $group_type_1 = $this->createGroupType(['id' => 'group_1']);
         $group_type_2 = $this->createGroupType(['id' => 'group_2']);
         $group_type_3 = $this->createGroupType(['id' => 'group_3']);
@@ -59,13 +59,13 @@ class PermissionTest extends GroupKernelTestBase {
             ->save();
 
         // Check that permissions are generated for the groups.
-        // Save current permissions count for each group.
+        // Save current permissions count.
         $permission_handler = \Drupal::service('group.permissions');
-        $count_group_1 = count(\Drupal::service('group.permissions')->getPermissionsByGroupType($group_type_1));
-        $count_group_2 = count(\Drupal::service('group.permissions')->getPermissionsByGroupType($group_type_2));
-        $count_group_3 = count(\Drupal::service('group.permissions')->getPermissionsByGroupType($group_type_3));
+        $count_group_1 = count($permission_handler->getPermissionsByGroupType($group_type_1));
+        $count_group_2 = count($permission_handler->getPermissionsByGroupType($group_type_2));
+        $count_group_3 = count($permission_handler->getPermissionsByGroupType($group_type_3));
 
-        // Check collabora permissions in each group.
+        // Check collabora permissions after enabling the module.
         $this->enableModules(['collabora_online_group']);
         $permission_handler = \Drupal::service('group.permissions');
         // The 'group_1' has only 'media_type_1' permissions.
@@ -86,12 +86,12 @@ class PermissionTest extends GroupKernelTestBase {
     }
 
     /**
-     * Asserts that collabora permissions are present or not in a given array.
+     * Asserts whether collaboration permissions are present in a given array.
      *
      * @param string $id
      *   The entity ID.
      * @param array $permissions
-     *   The permission where to perform the checks.
+     *   The permission to check.
      * @param bool $enabled
      *   If the permissions are enabled.
      */

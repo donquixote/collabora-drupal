@@ -8,7 +8,7 @@ use Drupal\groupmedia\Plugin\Group\RelationHandler\GroupMediaPermissionProvider;
 use Drupal\group\Plugin\Group\RelationHandler\PermissionProviderInterface;
 
 /**
- * Provides group permissions for Collabora.
+ * Provides Collabora permissions for group.
  */
 class CollaboraPermissionProvider extends GroupMediaPermissionProvider {
 
@@ -61,30 +61,18 @@ class CollaboraPermissionProvider extends GroupMediaPermissionProvider {
           return "preview $this->pluginId in collabora";
 
         case 'edit in collabora':
-          return $this->getCollaboraEditPermission($scope);
+          if (
+            $this->definesEntityPermissions &&
+            ($this->implementsOwnerInterface || $scope === 'any')
+          ) {
+              return "edit $scope $this->pluginId in collabora";
+          }
+
+          return FALSE;
       }
     }
 
     return $this->parent->getPermission($operation, $target, $scope);
   }
 
-  /**
-   * Gets the name of the edit permission in Collabora.
-   *
-   * @param string $scope
-   *   (optional) Whether the 'any' or 'own' permission name should be returned.
-   *   Defaults to 'any'.
-   *
-   * @return string|false
-   *   The permission name or FALSE if it does not apply.
-   */
-  protected function getCollaboraEditPermission($scope = 'any'): bool|string {
-    if ($this->definesEntityPermissions) {
-      if ($this->implementsOwnerInterface || $scope === 'any') {
-        return "edit $scope $this->pluginId in collabora";
-      }
-    }
-
-    return FALSE;
-  }
 }
