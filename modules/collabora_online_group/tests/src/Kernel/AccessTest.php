@@ -33,20 +33,20 @@ class AccessTest extends GroupKernelTestBase {
         'groupmedia',
         'collabora_online',
         'collabora_online_group',
-        'user'
+        'user',
     ];
 
     /**
-   * {@inheritdoc}
-   */
-  protected function setUp(): void {
-    parent::setUp();
+     * {@inheritdoc}
+     */
+    protected function setUp(): void {
+        parent::setUp();
 
-    $this->installEntitySchema('file');
-    $this->installEntitySchema('media');
-    $this->installEntitySchema('group_role');
-    $this->installSchema('file', ['file_usage']);
-  }
+        $this->installEntitySchema('file');
+        $this->installEntitySchema('media');
+        $this->installEntitySchema('group_role');
+        $this->installSchema('file', ['file_usage']);
+    }
 
     /**
      * Tests that access to Collabora group permissions is handled.
@@ -74,9 +74,12 @@ class AccessTest extends GroupKernelTestBase {
 
         // Iterate over each scenario.
         foreach ($this->getTestScenarios() as $scenario_name => $scenario) {
+            // Apply status to media.
+            $media->set('status', $scenario['status'])->save();
             // Set the current permissions for the existing role.
             $group_role->set('permissions', $scenario['group_permissions'])->save();
-            // Create the user with the given permissions and as member of the group.
+            // Create the user with the given permissions and as member of the
+            // group.
             $user = $this->createUser($scenario['permissions']);
             $group->addMember($user);
             // Set user as owner if the scope is 'own'.
@@ -87,10 +90,10 @@ class AccessTest extends GroupKernelTestBase {
             $this->assertEquals(
                 $scenario['result'],
                 $media->access($scenario['operation'], $user),
-                sprintf('Access check failed for scenario: %s', $scenario_name)
+                sprintf('Access check failed for scenario: "%s"', $scenario_name)
             );
         }
-   }
+    }
 
     /**
      * Retrieves the scenarios to be tested.
@@ -99,71 +102,231 @@ class AccessTest extends GroupKernelTestBase {
      *   An array of test scenarios.
      */
     protected function getTestScenarios(): array {
+        // The scenario keys contains values used for each scenario:
+        // 'operation:status:scope:global_permission:group_permission'.
         return [
-            'preview_no_permisions' => [
+            // Preview no permissions cases.
+            'preview:published:any::' => [
                 'result' => FALSE,
                 'permissions' => [],
                 'group_permissions' => [],
                 'operation' => 'preview in collabora',
-                'scope' => 'any'
+                'status' => 1,
+                'scope' => 'any',
             ],
-            'preview_global_permisions' => [
+            'preview:published:own::' => [
+                'result' => FALSE,
+                'permissions' => [],
+                'group_permissions' => [],
+                'operation' => 'preview in collabora',
+                'status' => 1,
+                'scope' => 'own',
+            ],
+            // The global permissions that would allow to preview, doesn't work
+            // in a media related to a group.
+            'preview:published:any:preview:' => [
                 'result' => FALSE,
                 'permissions' => ['preview document in collabora'],
                 'group_permissions' => [],
                 'operation' => 'preview in collabora',
-                'scope' => 'any'
+                'status' => 1,
+                'scope' => 'any',
             ],
-            'preview_group_permisions' =>[
+            'preview:published:own:preview:' => [
+                'result' => FALSE,
+                'permissions' => ['preview document in collabora'],
+                'group_permissions' => [],
+                'operation' => 'preview in collabora',
+                'status' => 1,
+                'scope' => 'own',
+            ],
+            // User can only see published entities with the group preview
+            // permission.
+            'preview:published:any::preview' => [
                 'result' => TRUE,
                 'permissions' => [],
                 'group_permissions' => ['preview group_media:document in collabora'],
                 'operation' => 'preview in collabora',
-                'scope' => 'any'
+                'status' => 1,
+                'scope' => 'any',
             ],
-            'edit_any_no_permisions' => [
+            'preview:published:own::preview' => [
+                'result' => TRUE,
+                'permissions' => [],
+                'group_permissions' => ['preview group_media:document in collabora'],
+                'operation' => 'preview in collabora',
+                'status' => 1,
+                'scope' => 'own',
+            ],
+            'preview:unpublished:any::preview' => [
+                'result' => FALSE,
+                'permissions' => [],
+                'group_permissions' => ['preview group_media:document in collabora'],
+                'operation' => 'preview in collabora',
+                'status' => 0,
+                'scope' => 'any',
+            ],
+            'preview:unpublished:own::preview' => [
+                'result' => FALSE,
+                'permissions' => [],
+                'group_permissions' => ['preview group_media:document in collabora'],
+                'operation' => 'preview in collabora',
+                'status' => 0,
+                'scope' => 'own',
+            ],
+            // The global preview unpublished doesn't affect to medias related
+            // to a group.
+            'preview:unpublished:own:preview_own_unpublished:' => [
+                'result' => FALSE,
+                'permissions' => ['preview own unpublished document in collabora'],
+                'group_permissions' => [],
+                'operation' => 'preview in collabora',
+                'status' => 0,
+                'scope' => 'own',
+            ],
+            // The group permission to preview own unpublished permission allows
+            // to see only entities with such properties.
+            'preview:published:any::preview_own_unpublished' => [
+                'result' => FALSE,
+                'permissions' => [],
+                'group_permissions' => ['preview own unpublished group_media:document in collabora'],
+                'operation' => 'preview in collabora',
+                'status' => 1,
+                'scope' => 'any',
+            ],
+            'preview:published:own::preview_own_unpublished' => [
+                'result' => FALSE,
+                'permissions' => [],
+                'group_permissions' => ['preview own unpublished group_media:document in collabora'],
+                'operation' => 'preview in collabora',
+                'status' => 1,
+                'scope' => 'own',
+            ],
+            'preview:unpublished:own::preview_own_unpublished' => [
+                'result' => TRUE,
+                'permissions' => [],
+                'group_permissions' => ['preview own unpublished group_media:document in collabora'],
+                'operation' => 'preview in collabora',
+                'status' => 0,
+                'scope' => 'own',
+            ],
+            'preview:unpublished:any::preview_own_unpublished' => [
+                'result' => FALSE,
+                'permissions' => [],
+                'group_permissions' => ['preview own unpublished group_media:document in collabora'],
+                'operation' => 'preview in collabora',
+                'status' => 0,
+                'scope' => 'any',
+            ],
+            // Edit no permissions cases.
+            'edit:published:any::' => [
                 'result' => FALSE,
                 'permissions' => [],
                 'group_permissions' => [],
                 'operation' => 'edit in collabora',
-                'scope' => 'any'
+                'status' => 1,
+                'scope' => 'any',
             ],
-            'edit_any_global_permisions' => [
+            'edit:published:own::' => [
+                'result' => FALSE,
+                'permissions' => [],
+                'group_permissions' => [],
+                'operation' => 'edit in collabora',
+                'status' => 1,
+                'scope' => 'own',
+            ],
+            // The global permission doesn't grant access to edit in a group.
+            'edit:published:any:edit_any:' => [
                 'result' => FALSE,
                 'permissions' => ['edit any document in collabora'],
                 'group_permissions' => [],
                 'operation' => 'edit in collabora',
-                'scope' => 'any'
+                'status' => 1,
+                'scope' => 'any',
             ],
-            'edit_any_group_permisions' => [
-                'result' => TRUE,
-                'permissions' => [],
-                'group_permissions' => ['edit any group_media:document in collabora'],
-                'operation' => 'edit in collabora',
-                'scope' => 'any'
-            ],
-            'edit_own_no_permisions' => [
+            'edit:published:own:edit_any:' => [
                 'result' => FALSE,
-                'permissions' => [],
+                'permissions' => ['edit any document in collabora'],
                 'group_permissions' => [],
                 'operation' => 'edit in collabora',
-                'scope' => 'own'
+                'status' => 1,
+                'scope' => 'own',
             ],
-            'edit_own_global_permisions' => [
+            'edit:published:own:edit_own:' => [
                 'result' => FALSE,
                 'permissions' => ['edit own document in collabora'],
                 'group_permissions' => [],
                 'operation' => 'edit in collabora',
-                'scope' => 'own'
+                'status' => 1,
+                'scope' => 'own',
             ],
-            'edit_own_group_permisions' => [
+            // Only users with edit any permission in a group can edit all.
+            'edit:published:any::edit_any' => [
+                'result' => TRUE,
+                'permissions' => [],
+                'group_permissions' => ['edit any group_media:document in collabora'],
+                'operation' => 'edit in collabora',
+                'status' => 1,
+                'scope' => 'any',
+            ],
+            'edit:published:own::edit_any' => [
+                'result' => TRUE,
+                'permissions' => [],
+                'group_permissions' => ['edit any group_media:document in collabora'],
+                'operation' => 'edit in collabora',
+                'status' => 1,
+                'scope' => 'own',
+            ],
+            'edit:unpublished:any::edit_any' => [
+                'result' => TRUE,
+                'permissions' => [],
+                'group_permissions' => ['edit any group_media:document in collabora'],
+                'operation' => 'edit in collabora',
+                'status' => 0,
+                'scope' => 'any',
+            ],
+            'edit:unpublished:own::edit_any' => [
+                'result' => TRUE,
+                'permissions' => [],
+                'group_permissions' => ['edit any group_media:document in collabora'],
+                'operation' => 'edit in collabora',
+                'status' => 0,
+                'scope' => 'own',
+            ],
+            // Or edit own permission for the entities the user owns.
+            'edit:published:own::edit_own' => [
                 'result' => TRUE,
                 'permissions' => [],
                 'group_permissions' => ['edit own group_media:document in collabora'],
                 'operation' => 'edit in collabora',
-                'scope' => 'own'
+                'status' => 1,
+                'scope' => 'own',
+            ],
+            'edit:unpublished:own::edit_own' => [
+                'result' => TRUE,
+                'permissions' => [],
+                'group_permissions' => ['edit own group_media:document in collabora'],
+                'operation' => 'edit in collabora',
+                'status' => 0,
+                'scope' => 'own',
+            ],
+            'edit:published:any::edit_own' => [
+                'result' => FALSE,
+                'permissions' => [],
+                'group_permissions' => ['edit own group_media:document in collabora'],
+                'operation' => 'edit in collabora',
+                'status' => 1,
+                'scope' => 'any',
+            ],
+            'edit:unpublished:any::edit_own' => [
+                'result' => FALSE,
+                'permissions' => [],
+                'group_permissions' => ['edit own group_media:document in collabora'],
+                'operation' => 'edit in collabora',
+                'status' => 0,
+                'scope' => 'any',
             ],
         ];
-   }
+    }
 
 }

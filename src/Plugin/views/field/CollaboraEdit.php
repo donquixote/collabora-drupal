@@ -39,4 +39,5 @@ class CollaboraEdit extends LinkBase {
     protected function getDefaultLabel(): TranslatableMarkup {
         return $this->t('Edit in Collabora Online');
     }
+
 }
