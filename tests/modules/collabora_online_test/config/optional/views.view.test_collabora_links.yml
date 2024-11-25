@@ -199,27 +199,30 @@ display:
           sort_asc_label: Asc
           sort_desc_label: Desc
       access:
-        type: perm
-        options:
-          perm: "view media"
+        type: none
+        options: {  }
       cache:
         type: tag
         options: {}
       empty: {}
-      sorts: {}
-      arguments: {}
-      filters:
-        status:
-          id: status
+      sorts:
+        mid:
+          id: mid
           table: media_field_data
-          field: status
+          field: mid
+          relationship: none
+          group_type: group
+          admin_label: ''
           entity_type: media
-          entity_field: status
-          plugin_id: boolean
-          value: "1"
-          group: 1
+          entity_field: mid
+          plugin_id: standard
+          order: ASC
           expose:
-            operator: ""
+            label: ''
+            field_identifier: ''
+          exposed: false
+      arguments: {}
+      filters: {}
       style:
         type: default
         options:
