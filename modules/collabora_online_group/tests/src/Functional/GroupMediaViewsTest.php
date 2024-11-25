@@ -114,12 +114,12 @@ class GroupMediaViewsTest extends BrowserTestBase {
         Url::fromRoute(
           'collabora-online.view',
           [
-            'media' => $media->id()
+            'media' => $media->id(),
           ],
           [
             'query' => [
               'destination' => "/group/{$group->id()}/media",
-            ]
+            ],
           ]
         )->toString(),
         $operation_links[0]->getAttribute('href')
@@ -129,12 +129,12 @@ class GroupMediaViewsTest extends BrowserTestBase {
         Url::fromRoute(
           'collabora-online.edit',
           [
-            'media' => $media->id()
+            'media' => $media->id(),
           ],
           [
             'query' => [
               'destination' => "/group/{$group->id()}/media",
-            ]
+            ],
           ]
         )->toString(),
         $operation_links[1]->getAttribute('href')

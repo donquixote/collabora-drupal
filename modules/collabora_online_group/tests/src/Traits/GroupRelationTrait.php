@@ -18,7 +18,7 @@ trait GroupRelationTrait {
    * Wrapper to support group 2.x and 3.x.
    *
    * @param \Drupal\group\Entity\GroupTypeInterface $group_type
-   *   The group type
+   *   The group type.
    * @param string $plugin_id
    *   The plugin.
    * @param array $values
