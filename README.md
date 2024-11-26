@@ -198,19 +198,19 @@ not needed, if the Collabora instance is configured from outside of
 Drupal.
 
 For each media type, the module introduces four permissions:
-- "(media type): Edit any media file in Collabora"
+- "(media type): Edit any media file in Collabora"\
   Users with this permission are allowed to edit documents attached
   to a media entity of the given type, using the Collabora Online
   editor.
-- "(media type): Edit own media file in Collabora"
+- "(media type): Edit own media file in Collabora"\
   Users with this permission are allowed to edit documents attached
   to a media entity of the given type, using the Collabora Online
   editor, if they are the owner/author of that media entity.
-- "(media type): Preview published media file in Collabora"
+- "(media type): Preview published media file in Collabora"\
   Users with this permission are allowed to preview documents attached
   to a published media entity of the given type, using the Collabora
   Online editor in preview/readonly mode.
-- "(media type): Preview own unpublished media file in Collabora"
+- "(media type): Preview own unpublished media file in Collabora"\
   Users with this permission are allowed to preview documents attached
   to an unpublished media entity of the given type, using the Collabora Online
   editor in preview/readonly mode.
