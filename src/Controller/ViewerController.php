@@ -12,11 +12,14 @@
 
 namespace Drupal\collabora_online\Controller;
 
+use Drupal\collabora_online\Cool\CollaboraDiscovery;
 use Drupal\collabora_online\Cool\CoolUtils;
+use Drupal\collabora_online\Exception\CollaboraNotAvailableException;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Render\RendererInterface;
+use Drupal\Core\Utility\Error;
 use Drupal\media\Entity\Media;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -25,36 +28,25 @@ use Symfony\Component\HttpFoundation\Response;
 class ViewerController extends ControllerBase {
 
     /**
-     * The renderer service.
-     *
-     * @var \Drupal\Core\Render\RendererInterface
-     */
-    private $renderer;
-
-    /**
      * The controller constructor.
      *
+     * @param \Drupal\collabora_online\Cool\CollaboraDiscovery $discovery
+     *   Service to fetch a WOPI client url.
      * @param \Drupal\Core\Render\RendererInterface $renderer
      *   The renderer service.
      */
-    public function __construct(RendererInterface $renderer) {
-        $this->renderer = $renderer;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function create(ContainerInterface $container): self {
-        return new self(
-            $container->get('renderer'),
-        );
-    }
+    public function __construct(
+        protected readonly CollaboraDiscovery $discovery,
+        protected readonly RendererInterface $renderer,
+    ) {}
 
     /**
      * Returns a raw page for the iframe embed.
      *
      * @param \Drupal\media\Entity\Media $media
      *   Media entity.
+     * @param \Symfony\Component\HttpFoundation\Request $request
+     *   The incoming request.
      * @param bool $edit
      *   TRUE to open Collabora Online in edit mode.
      *   FALSE to open Collabora Online in readonly mode.
@@ -62,22 +54,43 @@ class ViewerController extends ControllerBase {
      * @return \Symfony\Component\HttpFoundation\Response
      *   Response suitable for iframe, without the usual page decorations.
      */
-    public function editor(Media $media, $edit = FALSE) {
+    public function editor(Media $media, Request $request, $edit = FALSE) {
         $options = [
             'closebutton' => 'true',
         ];
 
-        $render_array = CoolUtils::getViewerRender($media, $edit, $options);
-
-        if (!$render_array || array_key_exists('error', $render_array)) {
-            $error_msg = 'Viewer error: ' . ($render_array ? $render_array['error'] : 'NULL');
-            \Drupal::logger('cool')->error($error_msg);
+        try {
+            $wopi_client_url = $this->discovery->getWopiClientURL();
+        }
+        catch (CollaboraNotAvailableException $e) {
+            $this->getLogger('cool')->warning(
+                "Collabora Online is not available.<br>\n" . Error::DEFAULT_ERROR_MESSAGE,
+                Error::decodeException($e) + [],
+            );
             return new Response(
-                $error_msg,
+                $this->t('The Collabora Online editor/viewer is not available.'),
                 Response::HTTP_BAD_REQUEST,
-                ['content-type' => 'text/plain']
+                ['content-type' => 'text/plain'],
             );
         }
+
+        $current_request_scheme = $request->getScheme();
+        if (!str_starts_with($wopi_client_url, $current_request_scheme . '://')) {
+            $this->getLogger('cool')->error($this->t(
+                "The current request uses '@current_request_scheme' url scheme, but the Collabora client url is '@wopi_client_url'.",
+                [
+                    '@current_request_scheme' => $current_request_scheme,
+                    '@wopi_client_url' => $wopi_client_url,
+                ],
+            ));
+            return new Response(
+                $this->t('Viewer error: Protocol mismatch.'),
+                Response::HTTP_BAD_REQUEST,
+                ['content-type' => 'text/plain'],
+            );
+        }
+
+        $render_array = CoolUtils::getViewerRender($media, $wopi_client_url, $edit, $options);
 
         $render_array['#theme'] = 'collabora_online_full';
         $render_array['#attached']['library'][] = 'collabora_online/cool.frame';
